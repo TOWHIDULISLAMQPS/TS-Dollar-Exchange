@@ -1,599 +1,124 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>TS Dollar Exchange Admin</title>
-
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
-
-<link rel="preconnect" href="https://fonts.googleapis.com">
-
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
-<link rel="stylesheet"
-href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"/>
-
-<style>
-
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:'Poppins',sans-serif;
-}
-
-body{
-
-background:#071826;
-
-padding:30px;
-
-}
-
-.wrapper{
-
-max-width:1200px;
-
-margin:auto;
-
-}
-
-.top-header{
-
-background:#0d6efd;
-
-color:#fff;
-
-padding:20px 30px;
-
-border-radius:15px;
-
-display:flex;
-
-justify-content:space-between;
-
-align-items:center;
-
-margin-bottom:25px;
-
-}
-
-.top-header h2{
-
-margin:0;
-
-font-weight:700;
-
-}
-
-.live{
-
-background:#16a34a;
-
-padding:8px 15px;
-
-border-radius:30px;
-
-font-size:14px;
-
-}
-
-.dashboard{
-
-display:grid;
-
-grid-template-columns:repeat(4,1fr);
-
-gap:20px;
-
-margin-bottom:25px;
-
-}
-
-.card-box{
-
-background:#fff;
-
-border-radius:15px;
-
-padding:25px;
-
-text-align:center;
-
-box-shadow:0 10px 30px rgba(0,0,0,.12);
-
-}
-
-.card-box h2{
-
-color:#0d6efd;
-
-font-size:35px;
-
-margin-bottom:10px;
-
-}
-
-.card-box p{
-
-margin:0;
-
-font-size:15px;
-
-font-weight:600;
-
-}
-
-.main-card{
-
-background:#fff;
-
-border-radius:15px;
-
-padding:25px;
-
-box-shadow:0 10px 30px rgba(0,0,0,.12);
-
-margin-bottom:25px;
-
-}
-
-.section-title{
-
-font-size:22px;
-
-font-weight:700;
-
-margin-bottom:20px;
-
-}
-
-input,
-select{
-
-height:50px!important;
-
-margin-bottom:15px;
-
-}
-
-.btn-save{
-
-height:50px;
-
-font-size:17px;
-
-font-weight:600;
-
-width:100%;
-
-}
-
-.table th{
-
-white-space:nowrap;
-
-}
-
-@media(max-width:991px){
-
-.dashboard{
-
-grid-template-columns:repeat(2,1fr);
-
-}
-
-}
-
-@media(max-width:576px){
-
-body{
-
-padding:15px;
-
-}
-
-.dashboard{
-
-grid-template-columns:1fr;
-
-}
-
-.top-header{
-
-flex-direction:column;
-
-gap:15px;
-
-text-align:center;
-
-}
-
-}
-
-</style>
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TS Dollar - Admin Panel</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body { background: #0a0a0a; color: #fff; }
+    .admin-card { background: #111; border: 1px solid #333; border-radius: 12px; padding: 25px; margin-bottom: 20px; }
+    .form-control { background: #1a1a1a; border: 1px solid #333; color: #fff; }
+    .form-control:focus { background: #1a1a1a; border-color: #00ff88; color: #fff; box-shadow: 0 0 0 0.25rem rgba(0,255,136,.25); }
+    .btn-save { background: linear-gradient(90deg, #00ff88, #00ccff); border: none; color: #000; font-weight: 700; }
+    .btn-save:hover { opacity: 0.9; }
+    table { color: #fff; }
+    .badge { font-size: 0.9rem; }
+  </style>
 </head>
-
 <body>
 
-<div class="wrapper">
-
-<div class="top-header">
-
-<div>
-
-<h2>
-
-TS Dollar Exchange Admin
-
-</h2>
-
-<p class="mb-0">
-
-Professional Admin Dashboard
-
-</p>
-
-</div>
-
-<div class="live" id="liveStatus">
-
-LIVE
-
-</div>
-
-</div>
-<!-- ========================= -->
-<!-- Dashboard Statistics -->
-<!-- ========================= -->
-
-<div class="dashboard">
-
-    <div class="card-box">
-        <h2 id="totalOrders">0</h2>
-        <p>Total Orders</p>
-    </div>
-
-    <div class="card-box">
-        <h2 id="pendingOrders">0</h2>
-        <p>Pending Orders</p>
-    </div>
-
-    <div class="card-box">
-        <h2 id="completedOrders">0</h2>
-        <p>Completed Orders</p>
-    </div>
-
-    <div class="card-box">
-        <h2 id="cancelledOrders">0</h2>
-        <p>Cancelled Orders</p>
-    </div>
-
-</div>
-
-<!-- ========================= -->
-<!-- Exchange Rate Management -->
-<!-- ========================= -->
-
-<div class="main-card">
-
-<h3 class="section-title">
-💱 Exchange Rate Management
-</h3>
-
-<div class="row">
-
-<div class="col-md-4">
-
-<label class="form-label fw-bold">
-Wallet
-</label>
-
-<select id="wallet" class="form-select">
-
-<option value="payoneer">Payoneer USD</option>
-
-<option value="wise">Wise USD</option>
-
-<option value="usdt">USDT</option>
-
-<option value="skrill">Skrill</option>
-
-</select>
-
-</div>
-
-<div class="col-md-4">
-
-<label class="form-label fw-bold">
-Buy Rate
-</label>
-
-<input
-id="buyRate"
-type="number"
-class="form-control"
-placeholder="Enter Buy Rate">
-
-</div>
-
-<div class="col-md-4">
-
-<label class="form-label fw-bold">
-Sell Rate
-</label>
-
-<input
-id="sellRate"
-type="number"
-class="form-control"
-placeholder="Enter Sell Rate">
-
-</div>
-
-</div>
-
-<div class="row mt-3">
-
-<div class="col-md-12">
-
-<button
-id="saveRate"
-class="btn btn-success btn-save">
-
-<i class="fa-solid fa-floppy-disk"></i>
-
-Save Exchange Rate
-
-</button>
-
-</div>
-
-</div>
-
-<div class="row mt-3">
-
-<div class="col-md-6">
-
-<p id="message" class="fw-bold mb-0"></p>
-
-</div>
-
-<div class="col-md-6 text-md-end">
-
-<p id="lastUpdate" class="text-secondary mb-0"></p>
-
-</div>
-
-</div>
-
-</div>
-<!-- ========================= -->
-<!-- Recent Orders -->
-<!-- ========================= -->
-
-<div class="main-card">
-
-    <div class="d-flex justify-content-between align-items-center flex-wrap mb-4">
-
-        <h3 class="section-title mb-3 mb-md-0">
-            📋 Recent Orders
-        </h3>
-
-        <div class="d-flex gap-2 flex-wrap">
-
-            <input
-                type="text"
-                id="searchOrder"
-                class="form-control"
-                placeholder="Search by Name / Order ID"
-                style="width:250px;">
-
-            <select
-                id="statusFilter"
-                class="form-select"
-                style="width:180px;">
-
-            <option value="all">All Status</option>
-
-<option value="Pending">Pending</option>
-
-<option value="Released">Released</option>
-
-<option value="Rejected">Rejected</option>
-                
-            </select>
-
-            <button
-                id="refreshBtn"
-                class="btn btn-primary">
-
-                <i class="fa-solid fa-rotate-right"></i>
-
-            </button>
-
+<nav class="navbar navbar-dark bg-dark">
+  <div class="container-fluid">
+    <span class="navbar-brand mb-0 h1"><i class="bi bi-shield-lock"></i> TS Dollar Admin</span>
+  </div>
+</nav>
+
+<div class="container mt-4">
+
+  <!-- 1. RATE UPDATE SECTION -->
+  <div class="admin-card">
+    <h4 class="mb-3"><i class="bi bi-graph-up-arrow text-success"></i> Update Exchange Rates</h4>
+    <div class="row g-3">
+      
+      <div class="col-md-6">
+        <h6>Payoneer</h6>
+        <div class="input-group mb-2">
+          <span class="input-group-text">Buy</span>
+          <input type="number" id="payoneerBuy" class="form-control" placeholder="125">
+          <span class="input-group-text">BDT</span>
         </div>
+        <div class="input-group mb-2">
+          <span class="input-group-text">Sell</span>
+          <input type="number" id="payoneerSell" class="form-control" placeholder="128">
+          <span class="input-group-text">BDT</span>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <h6>Wise</h6>
+        <div class="input-group mb-2">
+          <span class="input-group-text">Buy</span>
+          <input type="number" id="wiseBuy" class="form-control" placeholder="124">
+          <span class="input-group-text">BDT</span>
+        </div>
+        <div class="input-group mb-2">
+          <span class="input-group-text">Sell</span>
+          <input type="number" id="wiseSell" class="form-control" placeholder="127">
+          <span class="input-group-text">BDT</span>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <h6>USDT</h6>
+        <div class="input-group mb-2">
+          <span class="input-group-text">Buy</span>
+          <input type="number" id="usdtBuy" class="form-control" placeholder="122">
+          <span class="input-group-text">BDT</span>
+        </div>
+        <div class="input-group mb-2">
+          <span class="input-group-text">Sell</span>
+          <input type="number" id="usdtSell" class="form-control" placeholder="125">
+          <span class="input-group-text">BDT</span>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <h6>Skrill</h6>
+        <div class="input-group mb-2">
+          <span class="input-group-text">Buy</span>
+          <input type="number" id="skrillBuy" class="form-control" placeholder="123">
+          <span class="input-group-text">BDT</span>
+        </div>
+        <div class="input-group mb-2">
+          <span class="input-group-text">Sell</span>
+          <input type="number" id="skrillSell" class="form-control" placeholder="126">
+          <span class="input-group-text">BDT</span>
+        </div>
+      </div>
 
     </div>
+    <button id="saveRates" class="btn btn-save btn-lg w-100 mt-3"><i class="bi bi-check-circle"></i> Save All Rates</button>
+  </div>
 
+  <!-- 2. ORDER LIST SECTION -->
+  <div class="admin-card">
+    <h4 class="mb-3"><i class="bi bi-list-check text-info"></i> Recent Orders</h4>
     <div class="table-responsive">
-
-        <table class="table table-striped table-hover align-middle">
-
-            <thead class="table-dark">
-
-                <tr>
-
-                    <th>#</th>
-
-                    <th>Order ID</th>
-
-                    <th>Name</th>
-
-                    <th>Wallet</th>
-
-                    <th>Amount</th>
-
-                    <th>Status</th>
-
-                    <th>Date</th>
-
-                    <th>Action</th>
-
-                </tr>
-
-            </thead>
-
-            <tbody id="ordersTable">
-
-                <tr>
-
-                    <td colspan="8" class="text-center py-5">
-
-                        No Orders Available
-
-                    </td>
-
-                </tr>
-
-            </tbody>
-
-        </table>
-
+      <table class="table table-dark table-hover">
+        <thead>
+          <tr>
+            <th>Order ID</th>
+            <th>Name</th>
+            <th>Wallet</th>
+            <th>USD Amount</th>
+            <th>BDT Amount</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="ordersTable">
+          <tr><td colspan="6" class="text-center">Loading orders...</td></tr>
+        </tbody>
+      </table>
     </div>
-
-</div>
-<!-- ========================= -->
-<!-- Order Details Modal -->
-<!-- ========================= -->
-
-<div class="modal fade" id="orderModal" tabindex="-1">
-
-<div class="modal-dialog modal-lg">
-
-<div class="modal-content">
-
-<div class="modal-header bg-primary text-white">
-
-<h5 class="modal-title">
-Order Details
-</h5>
-
-<button
-type="button"
-class="btn-close btn-close-white"
-data-bs-dismiss="modal">
-</button>
+  </div>
 
 </div>
 
-<div class="modal-body">
-
-<div class="row">
-
-<div class="col-md-6 mb-3">
-<strong>Order ID</strong>
-<p id="mOrderId">-</p>
-</div>
-
-<div class="col-md-6 mb-3">
-<strong>Customer Name</strong>
-<p id="mCustomer">-</p>
-</div>
-
-<div class="col-md-6 mb-3">
-<strong>Phone</strong>
-<p id="mPhone">-</p>
-</div>
-
-<div class="col-md-6 mb-3">
-<strong>Wallet</strong>
-<p id="mWallet">-</p>
-</div>
-
-<div class="col-md-6 mb-3">
-<strong>Amount</strong>
-<p id="mAmount">-</p>
-</div>
-
-<div class="col-md-6 mb-3">
-<strong>Receive Method</strong>
-<p id="mReceiveMethod">-</p>
-</div>
-
-<div class="col-md-6 mb-3">
-<strong>Receive Account</strong>
-<p id="mReceiveAccount">-</p>
-</div>
-
-<div class="col-md-6 mb-3">
-<strong>Transaction ID</strong>
-<p id="mTrx">-</p>
-</div>
-
-<div class="col-md-6 mb-3">
-<strong>Status</strong>
-<p id="mStatus">-</p>
-</div>
-
-<div class="col-md-6 mb-3">
-<strong>Date</strong>
-<p id="mDate">-</p>
-</div>
-
-</div>
-
-</div>
-
-<div class="modal-footer">
-
-<button
-class="btn btn-secondary"
-data-bs-dismiss="modal">
-
-Close
-
-</button>
-
-<button
-id="releaseBtn"
-class="btn btn-success">
-
-<i class="fa-solid fa-circle-check"></i>
-Release
-
-</button>
-
-<button
-id="cancelBtn"
-class="btn btn-danger">
-
-<i class="fa-solid fa-ban"></i>
-Reject
-
-</button>
-
-</div>
-
-</div>
-
-</div>
-
-</div>
-
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
-
+<script type="module" src="firebase.js"></script>
 <script type="module" src="admin.js"></script>
 
 </body>
-
 </html>
