@@ -1,96 +1,120 @@
-import { db } from "./firebase.js";
-import { ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+import { auth, db } from "./firebase.js";
+import {
+    signInWithEmailAndPassword,
+    signOut,
+    onAuthStateChanged,
+    setPersistence,
+    browserLocalPersistence
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import {
+    ref,
+    onValue,
+    update
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
-// 1. SAVE RATES BUTTON
-const saveBtn = document.getElementById("saveRates");
-const ordersTable = document.getElementById("ordersTable");
+// Local এ Login save রাখবে যাতে বারবার Login না লাগে
+setPersistence(auth, browserLocalPersistence);
 
-saveBtn.addEventListener("click", async () => {
-    saveBtn.innerText = "Saving...";
-    saveBtn.disabled = true;
+let retryCount = 0;
 
-    const rates = {
-        payoneer: { 
-            buyRate: document.getElementById("payoneerBuy").value, 
-            sellRate: document.getElementById("payoneerSell").value 
-        },
-        wise: { 
-            buyRate: document.getElementById("wiseBuy").value, 
-            sellRate: document.getElementById("wiseSell").value 
-        },
-        usdt: { 
-            buyRate: document.getElementById("usdtBuy").value, 
-            sellRate: document.getElementById("usdtSell").value 
-        },
-        skrill: { 
-            buyRate: document.getElementById("skrillBuy").value, 
-            sellRate: document.getElementById("skrillSell").value 
-        }
-    };
-    
+// LOGIN SYSTEM
+const loginForm = document.getElementById("loginForm");
+const loginError = document.getElementById("loginError");
+
+if(loginForm){
+    loginForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const email = document.getElementById("email").value;
+        const password = document.getElementById("password").value;
+        const btn = document.getElementById("loginBtn");
+
+        btn.innerText = "Logging in...";
+        btn.disabled = true;
+        loginError.innerText = "";
+        retryCount = 0;
+
+        await tryLogin(email, password, btn);
+    });
+}
+
+async function tryLogin(email, password, btn){
     try {
-        await set(ref(db, "exchangeRates"), rates);
-        alert("✅ All Rates Saved Successfully!");
+        await signInWithEmailAndPassword(auth, email, password);
+        window.location.href = "dashboard.html";
     } catch (error) {
-        alert("❌ Error: " + error.message);
-    }
+        console.error("Login Error:", error.code);
+        retryCount++;
 
-    saveBtn.innerText = "Save All Rates";
-    saveBtn.disabled = false;
+        if(error.code === "auth/network-request-failed" && retryCount < 3){
+            loginError.innerText = `❌ Network Error! Retrying ${retryCount}/3...`;
+            setTimeout(() => tryLogin(email, password, btn), 2000); // 2 sec পর আবার Try
+        } else if(error.code === "auth/network-request-failed"){
+            loginError.innerText = "❌ Network Error! Firebase BD থেকে Block করতেছে। Authorized domain add করুন অথবা একটু পর Try করুন।";
+        } else if(error.code === "auth/invalid-credential"){
+            loginError.innerText = "❌ Email or Password vul.";
+        } else {
+            loginError.innerText = "❌ " + error.message;
+        }
+    }
+    btn.innerText = "Login";
+    btn.disabled = false;
+}
+
+// LOGOUT
+const logoutBtn = document.getElementById("logoutBtn");
+if(logoutBtn){
+    logoutBtn.addEventListener("click", async () => {
+        await signOut(auth);
+        window.location.href = "admin.html";
+    });
+}
+
+// CHECK LOGIN
+onAuthStateChanged(auth, (user) => {
+    if(!user && window.location.pathname.includes("dashboard.html")){
+        window.location.href = "admin.html";
+    }
+    if(user && window.location.pathname.includes("admin.html")){
+        window.location.href = "dashboard.html";
+    }
 });
 
-// 2. LOAD EXISTING RATES WHEN ADMIN PAGE OPENS
-function loadExistingRates() {
-    onValue(ref(db, "exchangeRates"), (snapshot) => {
-        if (snapshot.exists()) {
-            const data = snapshot.val();
-            
-            if(data.payoneer){
-                document.getElementById("payoneerBuy").value = data.payoneer.buyRate;
-                document.getElementById("payoneerSell").value = data.payoneer.sellRate;
-            }
-            if(data.wise){
-                document.getElementById("wiseBuy").value = data.wise.buyRate;
-                document.getElementById("wiseSell").value = data.wise.sellRate;
-            }
-            if(data.usdt){
-                document.getElementById("usdtBuy").value = data.usdt.buyRate;
-                document.getElementById("usdtSell").value = data.usdt.sellRate;
-            }
-            if(data.skrill){
-                document.getElementById("skrillBuy").value = data.skrill.buyRate;
-                document.getElementById("skrillSell").value = data.skrill.sellRate;
+// LOAD & UPDATE RATES
+const ratesRef = ref(db, "exchangeRates");
+function loadRates(){
+    onValue(ratesRef, (snapshot) => {
+        if(snapshot.exists()){
+            const rates = snapshot.val();
+            for(const wallet in rates){
+                if(document.getElementById(`${wallet}Buy`)){
+                    document.getElementById(`${wallet}Buy`).value = rates[wallet].buyRate || 0;
+                }
+                if(document.getElementById(`${wallet}Sell`)){
+                    document.getElementById(`${wallet}Sell`).value = rates[wallet].sellRate || 0;
+                }
             }
         }
     });
 }
-loadExistingRates();
 
-// 3. LOAD ORDERS IN REALTIME
-onValue(ref(db, "orders"), (snapshot) => {
-    ordersTable.innerHTML = "";
-    
-    if (!snapshot.exists()) {
-        ordersTable.innerHTML = `<tr><td colspan="6" class="text-center">No orders yet</td></tr>`;
-        return;
-    }
+const rateForm = document.getElementById("rateForm");
+if(rateForm){
+    loadRates();
+    rateForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const btn = document.getElementById("updateBtn");
+        btn.innerText = "Updating...";
+        btn.disabled = true;
 
-    snapshot.forEach(child => {
-        const order = child.val();
-        let badgeColor = "bg-warning";
-        if(order.status === "Completed") badgeColor = "bg-success";
-        if(order.status === "Cancelled") badgeColor = "bg-danger";
-
-        ordersTable.innerHTML += `
-        <tr>
-            <td>${order.orderId || 'N/A'}</td>
-            <td>${order.name || 'N/A'}</td>
-            <td>${order.wallet || 'N/A'}</td>
-            <td>${order.amount || '0'} USD</td>
-            <td>${order.bdtAmount || '0'} BDT</td>
-            <td><span class="badge ${badgeColor}">${order.status || 'Pending'}</span></td>
-        </tr>`;
+        const updatedRates = {
+            payoneer: { buyRate: parseFloat(document.getElementById("payoneerBuy").value), sellRate: parseFloat(document.getElementById("payoneerSell").value) },
+            wise: { buyRate: parseFloat(document.getElementById("wiseBuy").value), sellRate: parseFloat(document.getElementById("wiseSell").value) },
+            usdt: { buyRate: parseFloat(document.getElementById("usdtBuy").value), sellRate: parseFloat(document.getElementById("usdtSell").value) },
+            skrill: { buyRate: parseFloat(document.getElementById("skrillBuy").value), sellRate: parseFloat(document.getElementById("skrillSell").value) }
+        };
+        await update(ratesRef, updatedRates);
+        alert("✅ Rates Updated Successfully!");
+        btn.innerText = "Update Rates";
+        btn.disabled = false;
     });
-});
-
-console.log("✅ Admin JS Loaded");
+}
