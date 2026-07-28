@@ -3,15 +3,28 @@ import { ref, onValue, push, set } from "https://www.gstatic.com/firebasejs/10.1
 
 let currentRates = {};
 
-// 1. URL থেকে Data নিয়ে Form Fill করা
+// 1. URL থেকে Data নেয়া
 const params = new URLSearchParams(window.location.search);
-document.getElementById("walletType").value = params.get("wallet") || "payoneer";
-document.getElementById("usdAmount").value = params.get("amount") || "1";
+const walletFromUrl = params.get("wallet") || "payoneer";
+const amountFromUrl = params.get("amount") || "1";
 
-// 2. Live Rate নিয়ে BDT হিসাব
+document.getElementById("usdAmount").value = amountFromUrl;
+
+// 2. Live Rate নিয়ে Form Fill
 onValue(ref(db, "exchangeRates"), (snapshot) => {
     if (snapshot.exists()) {
         currentRates = snapshot.val();
+
+        // Wallet Dropdown Fill
+        const walletSelect = document.getElementById("walletType");
+        walletSelect.innerHTML = `
+            <option value="payoneer">Payoneer USD</option>
+            <option value="wise">Wise USD</option>
+            <option value="usdt">USDT</option>
+            <option value="skrill">Skrill</option>
+        `;
+        walletSelect.value = walletFromUrl;
+
         calculateBDT();
     }
 });
@@ -25,9 +38,13 @@ function calculateBDT() {
     }
 }
 
-// 3. Form Submit
+// 3. Form Submit to Firebase
 document.getElementById("orderForm").addEventListener("submit", async (e) => {
     e.preventDefault();
+    const submitBtn = e.target.querySelector("button[type='submit']");
+    submitBtn.innerText = "Submitting...";
+    submitBtn.disabled = true;
+
     const orderData = {
         orderId: "TS" + Date.now(),
         name: document.getElementById("name").value,
@@ -39,7 +56,15 @@ document.getElementById("orderForm").addEventListener("submit", async (e) => {
         status: "Pending",
         timestamp: Date.now()
     };
-    await set(push(ref(db, "orders")), orderData);
-    alert("✅ Order Submitted Successfully!");
-    window.location.href = "index.html"; // Submit এর পর Home এ পাঠাবে
+
+    try {
+        await set(push(ref(db, "orders")), orderData);
+        alert("✅ Order Submitted Successfully! We will contact you soon.");
+        window.location.href = "index.html";
+    } catch (error) {
+        alert("❌ Error: " + error.message);
+    }
+
+    submitBtn.innerText = "Confirm & Submit Order";
+    submitBtn.disabled = false;
 });
