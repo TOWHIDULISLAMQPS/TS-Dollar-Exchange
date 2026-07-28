@@ -25,11 +25,12 @@ body{background:#071826;color:white;}
 <div class="container mt-4">
 <h2 class="text-center mb-4">Welcome to Admin Panel ✅</h2>
 
-<!-- 1. Stats Card -->
+<!-- 1. Wallet - 4 Cards -->
 <div class="row g-3 mb-4">
-<div class="col-6 col-md-4"><div class="card p-3 text-center"><h6>Total Users</h6><h2 id="totalUsers">0</h2></div></div>
-<div class="col-6 col-md-4"><div class="card p-3 text-center"><h6>Total Dollar</h6><h2 id="totalDollar">$0</h2></div></div>
-<div class="col-12 col-md-4"><div class="card p-3 text-center"><h6>Total BDT</h6><h2 id="totalBDT">৳0</h2></div></div>
+<div class="col-6 col-md-3"><div class="card p-3 text-center"><h6>Total Users</h6><h2 id="totalUsers">0</h2></div></div>
+<div class="col-6 col-md-3"><div class="card p-3 text-center"><h6>Total Dollar</h6><h2 id="totalDollar">$0</h2></div></div>
+<div class="col-6 col-md-3"><div class="card p-3 text-center"><h6>Total BDT</h6><h2 id="totalBDT">৳0</h2></div></div>
+<div class="col-6 col-md-3"><div class="card p-3 text-center"><h6>Total Profit</h6><h2 id="totalProfit">৳0</h2></div></div>
 </div>
 
 <!-- 2. Rate Control -->
@@ -65,41 +66,4 @@ databaseURL:"https://ts-dollar-exchange-default-rtdb.asia-southeast1.firebasedat
 const auth = firebase.auth();
 const db = firebase.database();
 
-// 1. Login Check
-auth.onAuthStateChanged((user) => {
-if (!user) {
-window.location.href = "login.html";
-}
-});
-
-// 2. Rate Load
-db.ref('rates').on('value',(snap)=>{
-let data=snap.val() || {buy:120,sell:122};
-document.getElementById('buyRate').value=data.buy;
-document.getElementById('sellRate').value=data.sell;
-});
-
-// 3. Rate Update
-function updateRate(){
-let buy=document.getElementById('buyRate').value;
-let sell=document.getElementById('sellRate').value;
-db.ref('rates').set({buy:buy,sell:sell});
-alert("✅ Rate Updated! Home + Exchange এ Auto Update হবে");
-}
-
-// 4. Order Load
-db.ref('orders').on('child_added',(snap)=>{
-let o=snap.val();
-if(document.getElementById('orderTable').innerHTML.includes("No Orders")){
-document.getElementById('orderTable').innerHTML = "";
-}
-document.getElementById('orderTable').innerHTML=`<tr><td>${o.email}</td><td>${o.amount}</td><td>${o.type}</td><td>${o.time}</td></tr>` + document.getElementById('orderTable').innerHTML;
-});
-
-// 5. Logout
-function logout(){
-auth.signOut().then(()=>{window.location.href="login.html";});
-}
-</script>
-</body>
-</html>
+// 
