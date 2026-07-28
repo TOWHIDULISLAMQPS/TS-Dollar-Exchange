@@ -3,43 +3,100 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dashboard - TS Dollar Exchange</title>
+<title>Admin Panel - TS Dollar Exchange</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
 <style>
 body{background:#071826;color:white;}
 .navbar{background:#0d6efd;}
 .card{background:#1a2b3c;color:white;border:none;border-radius:15px;}
+.table-dark{background:#1a2b3c;}
 </style>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 </head>
 <body>
 
 <nav class="navbar navbar-dark px-3">
 <span class="navbar-brand fw-bold">TS Dollar Exchange - Admin</span>
-<button onclick="logout()" class="btn btn-danger">Logout</button>
+<button onclick="logout()" class="btn btn-danger btn-sm">Logout</button>
 </nav>
 
 <div class="container mt-4">
-<h1 class="text-center mb-4">Welcome to Dashboard ✅</h1>
-<div class="row g-3">
-<div class="col-6 col-md-4"><div class="card p-3 text-center"><h5>Total Users</h5><h2>0</h2></div></div>
-<div class="col-6 col-md-4"><div class="card p-3 text-center"><h5>Total Dollar</h5><h2>$0</h2></div></div>
-<div class="col-12 col-md-4"><div class="card p-3 text-center"><h5>Total BDT</h5><h2>৳0</h2></div></div>
+<h2 class="text-center mb-4">Welcome to Admin Panel ✅</h2>
+
+<!-- 1. Stats Card -->
+<div class="row g-3 mb-4">
+<div class="col-6 col-md-4"><div class="card p-3 text-center"><h6>Total Users</h6><h2 id="totalUsers">0</h2></div></div>
+<div class="col-6 col-md-4"><div class="card p-3 text-center"><h6>Total Dollar</h6><h2 id="totalDollar">$0</h2></div></div>
+<div class="col-12 col-md-4"><div class="card p-3 text-center"><h6>Total BDT</h6><h2 id="totalBDT">৳0</h2></div></div>
 </div>
+
+<!-- 2. Rate Control -->
+<div class="card p-3 mb-4">
+<h4 class="mb-3">Rate Control</h4>
+<div class="row g-2">
+<div class="col-md-4"><input id="buyRate" type="number" placeholder="Buy Rate BDT" class="form-control"></div>
+<div class="col-md-4"><input id="sellRate" type="number" placeholder="Sell Rate BDT" class="form-control"></div>
+<div class="col-md-4"><button onclick="updateRate()" class="btn btn-success w-100">Update Rate</button></div>
+</div>
+<small class="text-success">Update করলেই Home + Exchange Page এ Auto Update হবে</small>
+</div>
+
+<!-- 3. Orders -->
+<div class="card p-3">
+<h4 class="mb-3">New Orders</h4>
+<div class="table-responsive">
+<table class="table table-dark table-striped">
+<thead><tr><th>Email</th><th>Amount $</th><th>Type</th><th>Time</th></tr></thead>
+<tbody id="orderTable"><tr><td colspan="4" class="text-center">No Orders Yet</td></tr></tbody>
+</table>
+</div>
+</div>
+
 </div>
 
 <script>
-firebase.initializeApp({apiKey:"AIzaSyBC0OA7gEWg1dfVzqVpI1YgbKzNKllz4pg",authDomain:"ts-dollar-exchange.firebaseapp.com"});
+firebase.initializeApp({
+apiKey:"AIzaSyBC0OA7gEWg1dfVzqVpI1YgbKzNKllz4pg",
+authDomain:"ts-dollar-exchange.firebaseapp.com",
+databaseURL:"https://ts-dollar-exchange-default-rtdb.asia-southeast1.firebasedatabase.app"
+});
 const auth = firebase.auth();
+const db = firebase.database();
 
-// Login না থাকলে login.html এ পাঠাবে
+// 1. Login Check
 auth.onAuthStateChanged((user) => {
 if (!user) {
 window.location.href = "login.html";
 }
 });
 
+// 2. Rate Load
+db.ref('rates').on('value',(snap)=>{
+let data=snap.val() || {buy:120,sell:122};
+document.getElementById('buyRate').value=data.buy;
+document.getElementById('sellRate').value=data.sell;
+});
+
+// 3. Rate Update
+function updateRate(){
+let buy=document.getElementById('buyRate').value;
+let sell=document.getElementById('sellRate').value;
+db.ref('rates').set({buy:buy,sell:sell});
+alert("✅ Rate Updated! Home + Exchange এ Auto Update হবে");
+}
+
+// 4. Order Load
+db.ref('orders').on('child_added',(snap)=>{
+let o=snap.val();
+if(document.getElementById('orderTable').innerHTML.includes("No Orders")){
+document.getElementById('orderTable').innerHTML = "";
+}
+document.getElementById('orderTable').innerHTML=`<tr><td>${o.email}</td><td>${o.amount}</td><td>${o.type}</td><td>${o.time}</td></tr>` + document.getElementById('orderTable').innerHTML;
+});
+
+// 5. Logout
 function logout(){
 auth.signOut().then(()=>{window.location.href="login.html";});
 }
