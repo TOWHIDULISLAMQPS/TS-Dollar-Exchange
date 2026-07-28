@@ -150,18 +150,23 @@ onValue(ordersRef, (snapshot) => {
 
     if (snapshot.exists()) {
 
-snapshot.forEach((child) => {
+        snapshot.forEach((child) => {
 
-    const order = child.val();
+            const order = child.val();
 
-    ordersData.push({
-        id: order.orderId,
-        firebaseKey: child.key,
-        ...order
-    });
+            ordersData.push({
+                id: order.orderId,
+                firebaseKey: child.key,
+                ...order
+            });
+
+        });
+
+    }
+
+    renderOrders();
 
 });
-
 // ======================================
 // RENDER ORDERS TABLE
 // ======================================
@@ -380,39 +385,14 @@ console.log("✅ Part 3 Loaded");
 // RELEASE ORDER
 // ======================================
 
-if (releaseBtn) {
+const order = ordersData.find(item => item.id === selectedOrderId);
 
-    releaseBtn.addEventListener("click", async () => {
-
-        if (!selectedOrderId) return;
-
-        try {
-
-            await update(
-               ref(db, "orders/" + order.firebaseKey)
-                {
-                    status: "Released"
-                }
-            );
-
-            alert("✅ Order Released");
-
-            bootstrap.Modal.getInstance(
-                document.getElementById("orderModal")
-            ).hide();
-
-        } catch (error) {
-
-            console.error(error);
-
-            alert("❌ Failed to Release Order");
-
-        }
-
-    });
-
-}
-
+await update(
+    ref(db, "orders/" + order.firebaseKey),
+    {
+        status: "Released"
+    }
+);
 // ======================================
 // REJECT ORDER
 // ======================================
