@@ -24,7 +24,7 @@ body{background:#071826;color:white;}
 <div class="container mt-4">
 <h2 class="text-center mb-4">Admin Dashboard ✅</h2>
 
-<!-- 1. Wallet - 4 Cards -->
+<!-- 1. Wallet Stats -->
 <div class="row g-3 mb-4">
 <div class="col-6 col-lg-3"><div class="card p-3 text-center"><h6>Total Users</h6><h2 id="totalUsers">0</h2></div></div>
 <div class="col-6 col-lg-3"><div class="card p-3 text-center"><h6>Total Dollar</h6><h2 id="totalDollar">$0</h2></div></div>
@@ -32,12 +32,12 @@ body{background:#071826;color:white;}
 <div class="col-6 col-lg-3"><div class="card p-3 text-center"><h6>Total Profit</h6><h2 id="totalProfit">৳0</h2></div></div>
 </div>
 
-<!-- 2. 4 WALLET RATE CONTROL - MAIN -->
+<!-- 2. 4 WALLET RATE CONTROL -->
 <div class="card p-4 mb-4">
-<h4 class="mb-3">⚡ 4 Wallet Rate Control</h4>
+<h4 class="mb-3">⚡ Wallet Rate Control</h4>
 <div id="rateControls"></div>
-<button onclick="updateAllRates()" class="btn btn-success w-100 mt-3 fw-bold">All 4 Wallet Rates Update</button>
-<small class="text-success mt-2 d-block text-center">Update করলে Home + Exchange সব Auto Update হবে</small>
+<button onclick="updateAllRates()" class="btn btn-success w-100 mt-3 fw-bold">All Rates Update</button>
+<small class="text-success mt-2 d-block text-center">Update করলে সব জায়গায় Auto Change হবে</small>
 </div>
 
 <!-- 3. Orders -->
@@ -61,11 +61,11 @@ databaseURL:"https://ts-dollar-exchange-default-rtdb.asia-southeast1.firebasedat
 });
 const auth = firebase.auth();
 const db = firebase.database();
-const wallets = ["Payoneer", "Wise", "Skrill", "USDT"];
+const wallets = ["USD", "Payoneer", "Wise", "Skrill"]; // 4 টা
 
 auth.onAuthStateChanged((user) => {if (!user) {window.location.href = "login.html";}});
 
-// 1. LOAD WALLET STATS
+// 1. LOAD STATS
 db.ref('stats').on('value',(snap)=>{let d=snap.val()||{users:0,dollar:0,bdt:0,profit:0};document.getElementById('totalUsers').innerText=d.users;document.getElementById('totalDollar').innerText="$"+d.dollar;document.getElementById('totalBDT').innerText="৳"+d.bdt;document.getElementById('totalProfit').innerText="৳"+d.profit;});
 
 // 2. LOAD 4 WALLET RATES
@@ -73,10 +73,11 @@ db.ref('rates/wallets').on('value',(snap)=>{
 let data=snap.val()||{};
 let html="";
 wallets.forEach(w=>{
-let buy=data[w]?.buy||120; let sell=data[w]?.sell||122;
+let buy=data[w]?.buy||120;
+let sell=data[w]?.sell||122;
 html+=`
 <div class="mb-3 p-3 border border-secondary rounded">
-<h5 class="text-warning">${w}</h5>
+<h5 class="text-warning">${w} USD</h5>
 <div class="row g-3">
 <div class="col-6"><label>Buy Rate BDT</label><input id="${w}_buy" type="number" value="${buy}" class="form-control bg-dark text-white"></div>
 <div class="col-6"><label>Sell Rate BDT</label><input id="${w}_sell" type="number" value="${sell}" class="form-control bg-dark text-white"></div>
@@ -86,13 +87,13 @@ html+=`
 document.getElementById('rateControls').innerHTML=html;
 });
 
-// 3. UPDATE ALL 4 RATES
+// 3. UPDATE ALL RATES
 function updateAllRates(){
 let newRates={};
 wallets.forEach(w=>{
 newRates[w]={buy:Number(document.getElementById(w+'_buy').value), sell:Number(document.getElementById(w+'_sell').value)};
 });
-db.ref('rates/wallets').set(newRates).then(()=>{alert("✅ 4 Wallet Rate Updated!")});
+db.ref('rates/wallets').set(newRates).then(()=>{alert("✅ All 4 Wallet Rates Updated!")});
 }
 
 // 4. LOAD ORDERS
