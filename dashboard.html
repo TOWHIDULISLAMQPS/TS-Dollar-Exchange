@@ -6,10 +6,9 @@
 <title>Admin Panel - TS Dollar Exchange</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
 <style>
-body{background:#071826;color:white;font-family: 'Segoe UI', sans-serif;}
+body{background:#071826;color:white;}
 .navbar{background:#0d6efd;}
-.card{background:#1a2b3c;color:white;border:none;border-radius:15px;box-shadow: 0 4px 10px rgba(0,0,0,0.3);}
-.table-dark{background:#1a2b3c;}
+.card{background:#1a2b3c;color:white;border:none;border-radius:15px;}
 </style>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
@@ -33,28 +32,21 @@ body{background:#071826;color:white;font-family: 'Segoe UI', sans-serif;}
 <div class="col-6 col-lg-3"><div class="card p-3 text-center"><h6>Total Profit</h6><h2 id="totalProfit">৳0</h2></div></div>
 </div>
 
-<!-- 2. Rate Control - আগের 1 টা Rate -->
-<div class="card p-4 mb-3">
-<h4 class="mb-3">⚡ Main Rate Control</h4>
-<div class="row g-3">
-<div class="col-md-4"><label>Buy Rate BDT</label><input id="buyRate" type="number" class="form-control bg-dark text-white border-secondary"></div>
-<div class="col-md-4"><label>Sell Rate BDT</label><input id="sellRate" type="number" class="form-control bg-dark text-white border-secondary"></div>
-<div class="col-md-4 d-flex align-items-end"><button onclick="updateRate()" class="btn btn-success w-100">Update Rate</button></div>
-</div>
+<!-- 2. 4 WALLET RATE CONTROL - MAIN -->
+<div class="card p-4 mb-4">
+<h4 class="mb-3">⚡ 4 Wallet Rate Control</h4>
+<div id="rateControls"></div>
+<button onclick="updateAllRates()" class="btn btn-success w-100 mt-3 fw-bold">All 4 Wallet Rates Update</button>
+<small class="text-success mt-2 d-block text-center">Update করলে Home + Exchange সব Auto Update হবে</small>
 </div>
 
-<!-- 3. NEW BUTTON for 4 Wallet -->
-<div class="card p-3 mb-4">
-<a href="rates.html" class="btn btn-warning w-100 fw-bold">⚡ 4 Wallet Rate Manage - USD, Payoneer, Wise, Skrill</a>
-</div>
-
-<!-- 4. Orders -->
+<!-- 3. Orders -->
 <div class="card p-4">
 <h4 class="mb-3">📦 New Orders</h4>
 <div class="table-responsive">
 <table class="table table-dark table-hover">
-<thead><tr><th>Email</th><th>Amount $</th><th>Type</th><th>Time</th></tr></thead>
-<tbody id="orderTable"><tr><td colspan="4" class="text-center text-muted">No Orders Yet</td></tr></tbody>
+<thead><tr><th>Email</th><th>Wallet</th><th>Amount $</th><th>Type</th><th>Time</th></tr></thead>
+<tbody id="orderTable"><tr><td colspan="5" class="text-center text-muted">No Orders Yet</td></tr></tbody>
 </table>
 </div>
 </div>
@@ -62,7 +54,6 @@ body{background:#071826;color:white;font-family: 'Segoe UI', sans-serif;}
 </div>
 
 <script>
-// 1. FIREBASE CONFIG
 firebase.initializeApp({
 apiKey:"AIzaSyBC0OA7gEWg1dfVzqVpI1YgbKzNKllz4pg",
 authDomain:"ts-dollar-exchange.firebaseapp.com",
@@ -70,27 +61,45 @@ databaseURL:"https://ts-dollar-exchange-default-rtdb.asia-southeast1.firebasedat
 });
 const auth = firebase.auth();
 const db = firebase.database();
+const wallets = ["Payoneer", "Wise", "Skrill", "USDT"];
 
-// 2. LOGIN CHECK
 auth.onAuthStateChanged((user) => {if (!user) {window.location.href = "login.html";}});
 
-// 3. LOAD WALLET
-db.ref('stats').on('value',(snap)=>{let data = snap.val() || {users:0, dollar:0, bdt:0, profit:0};document.getElementById('totalUsers').innerText = data.users;document.getElementById('totalDollar').innerText = "$" + data.dollar;document.getElementById('totalBDT').innerText = "৳" + data.bdt;document.getElementById('totalProfit').innerText = "৳" + data.profit;});
+// 1. LOAD WALLET STATS
+db.ref('stats').on('value',(snap)=>{let d=snap.val()||{users:0,dollar:0,bdt:0,profit:0};document.getElementById('totalUsers').innerText=d.users;document.getElementById('totalDollar').innerText="$"+d.dollar;document.getElementById('totalBDT').innerText="৳"+d.bdt;document.getElementById('totalProfit').innerText="৳"+d.profit;});
 
-// 4. LOAD + UPDATE MAIN RATE
-db.ref('rates/main').on('value',(snap)=>{let data=snap.val() || {buy:120,sell:122};document.getElementById('buyRate').value=data.buy;document.getElementById('sellRate').value=data.sell;});
+// 2. LOAD 4 WALLET RATES
+db.ref('rates/wallets').on('value',(snap)=>{
+let data=snap.val()||{};
+let html="";
+wallets.forEach(w=>{
+let buy=data[w]?.buy||120; let sell=data[w]?.sell||122;
+html+=`
+<div class="mb-3 p-3 border border-secondary rounded">
+<h5 class="text-warning">${w}</h5>
+<div class="row g-3">
+<div class="col-6"><label>Buy Rate BDT</label><input id="${w}_buy" type="number" value="${buy}" class="form-control bg-dark text-white"></div>
+<div class="col-6"><label>Sell Rate BDT</label><input id="${w}_sell" type="number" value="${sell}" class="form-control bg-dark text-white"></div>
+</div>
+</div>`
+});
+document.getElementById('rateControls').innerHTML=html;
+});
 
-function updateRate(){
-let buy=document.getElementById('buyRate').value;
-let sell=document.getElementById('sellRate').value;
-db.ref('rates/main').set({buy:Number(buy),sell:Number(sell)}).then(()=>{alert("✅ Main Rate Updated!")});
+// 3. UPDATE ALL 4 RATES
+function updateAllRates(){
+let newRates={};
+wallets.forEach(w=>{
+newRates[w]={buy:Number(document.getElementById(w+'_buy').value), sell:Number(document.getElementById(w+'_sell').value)};
+});
+db.ref('rates/wallets').set(newRates).then(()=>{alert("✅ 4 Wallet Rate Updated!")});
 }
 
-// 5. LOAD ORDERS
+// 4. LOAD ORDERS
 db.ref('orders').limitToLast(20).on('child_added',(snap)=>{let o=snap.val();if(document.getElementById('orderTable').innerHTML.includes("No Orders")){document.getElementById('orderTable').innerHTML = "";}
-document.getElementById('orderTable').innerHTML=`<tr><td>${o.email}</td><td>${o.amount}</td><td>${o.type || "N/A"}</td><td>${o.time || "N/A"}</td></tr>` + document.getElementById('orderTable').innerHTML;});
+document.getElementById('orderTable').innerHTML=`<tr><td>${o.email||'N/A'}</td><td>${o.wallet||'N/A'}</td><td>${o.amount}</td><td>${o.type || "N/A"}</td><td>${o.time || "N/A"}</td></tr>` + document.getElementById('orderTable').innerHTML;});
 
-// 6. LOGOUT
+// 5. LOGOUT
 function logout(){auth.signOut().then(()=>{window.location.href="login.html";});}
 </script>
 </body>
