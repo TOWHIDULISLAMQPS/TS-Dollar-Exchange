@@ -133,6 +133,9 @@
 
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 <script>
 firebase.initializeApp({
 apiKey:"AIzaSyBC0OA7gEWg1dfVzqVpI1YgbKzNKllz4pg",
@@ -140,47 +143,42 @@ authDomain:"ts-dollar-exchange.firebaseapp.com",
 databaseURL:"https://ts-dollar-exchange-default-rtdb.asia-southeast1.firebasedatabase.app"
 });
 const db = firebase.database();
+let rates = {};
 
-// 4 Wallet Rate Auto Load + Calculator Auto Update
+// 1. RATE AUTO LOAD
 db.ref('rates/wallets').on('value',(snap)=>{
-let data = snap.val() || {};
-let defaultRates = {USD:{buy:130,sell:132}, Payoneer:{buy:128,sell:131}, Wise:{buy:129,sell:133}, Skrill:{buy:127,sell:130}, USDT:{buy:128,sell:131}};
+rates = snap.val() || {};
+console.log("Rates Loaded:", rates);
 
-// 1. RATES SECTION AUTO UPDATE
-document.getElementById('payoneerBuy').innerText = (data.Payoneer?.buy || defaultRates.Payoneer.buy).toFixed(2);
-document.getElementById('payoneerSell').innerText = (data.Payoneer?.sell || defaultRates.Payoneer.sell).toFixed(2);
-document.getElementById('wiseBuy').innerText = (data.Wise?.buy || defaultRates.Wise.buy).toFixed(2);
-document.getElementById('wiseSell').innerText = (data.Wise?.sell || defaultRates.Wise.sell).toFixed(2);
-document.getElementById('usdtBuy').innerText = (data.USDT?.buy || defaultRates.USDT.buy).toFixed(2);
-document.getElementById('usdtSell').innerText = (data.USDT?.sell || defaultRates.USDT.sell).toFixed(2);
-document.getElementById('skrillBuy').innerText = (data.Skrill?.buy || defaultRates.Skrill.buy).toFixed(2);
-document.getElementById('skrillSell').innerText = (data.Skrill?.sell || defaultRates.Skrill.sell).toFixed(2);
+// Rate Card Update
+document.getElementById('payoneerBuy').innerText = (rates.Payoneer?.buy || 0).toFixed(2);
+document.getElementById('payoneerSell').innerText = (rates.Payoneer?.sell || 0).toFixed(2);
+document.getElementById('wiseBuy').innerText = (rates.Wise?.buy || 0).toFixed(2);
+document.getElementById('wiseSell').innerText = (rates.Wise?.sell || 0).toFixed(2);
+document.getElementById('skrillBuy').innerText = (rates.Skrill?.buy || 0).toFixed(2);
+document.getElementById('skrillSell').innerText = (rates.Skrill?.sell || 0).toFixed(2);
+document.getElementById('usdtBuy').innerText = (rates.USDT?.buy || 0).toFixed(2);
+document.getElementById('usdtSell').innerText = (rates.USDT?.sell || 0).toFixed(2);
 
-// 2. CALCULATOR AUTO UPDATE
-calculate();
+calculate(); // Calculator ও Update হবে
 });
 
-// 3. CALCULATOR FUNCTION
-const rates = {};
-db.ref('rates/wallets').on('value',(snap)=>{ Object.assign(rates, snap.val() || {}); });
-
+// 2. CALCULATOR AUTO
 function calculate(){
 let wallet = document.getElementById('sendWallet').value;
 let amount = parseFloat(document.getElementById('sendAmount').value) || 0;
 let rate = 0;
 
-// কোন Wallet Select করছে
-if(wallet == 'payoneer') rate = rates.Payoneer?.buy || 128;
-if(wallet == 'wise') rate = rates.Wise?.buy || 129;
-if(wallet == 'skrill') rate = rates.Skrill?.buy || 127;
-if(wallet == 'usdt') rate = rates.USDT?.buy || 128;
+if(wallet == 'payoneer') rate = rates.Payoneer?.buy || 0;
+if(wallet == 'wise') rate = rates.Wise?.buy || 0;
+if(wallet == 'skrill') rate = rates.Skrill?.buy || 0;
+if(wallet == 'usdt') rate = rates.USDT?.buy || 0;
 
-let totalBDT = amount * rate;
-document.getElementById('receiveAmount').value = totalBDT.toFixed(2) + ' BDT';
+document.getElementById('receiveAmount').value = (amount * rate).toFixed(2) + ' BDT';
 }
-
 document.getElementById('sendWallet').addEventListener('change', calculate);
 document.getElementById('sendAmount').addEventListener('input', calculate);
 </script>
+  
 </body>
 </html>
