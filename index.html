@@ -2,962 +2,144 @@
 <html lang="en">
 
 <head>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>TS Dollar Exchange</title>
 
 <!-- Bootstrap -->
-
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
-
 <!-- Font Awesome -->
-
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
-
 <!-- Google Font -->
-
-<link rel="preconnect" href="https://fonts.googleapis.com">
-
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-
 <!-- Main CSS -->
-
 <link rel="stylesheet" href="style.css">
+
+<style>
+.exchange-card { background:#fff; padding:30px; border-radius:16px; box-shadow:0 10px 30px rgba(0,0,0,0.1); }
+.rate-card { background:#fff; padding:20px; border-radius:12px; box-shadow:0 5px 15px rgba(0,0,0,0.05); }
+.rate-card .buy { color: #00a859; }
+.rate-card .sell { color: #dc3545; }
+.hero { padding: 100px 0; background: linear-gradient(135deg, #0d6efd, #00a859); color: #fff; }
+.whatsapp-float { position:fixed; bottom:20px; right:20px; background:#25D366; color:#fff; border-radius:50%; width:60px; height:60px; display:flex; align-items:center; justify-content:center; font-size:30px; z-index:1000; }
+</style>
 
 </head>
 
 <body>
 
-<!-- ===========================
-TOP BAR
-=========================== -->
-
-<div class="top-bar">
-
+<!-- TOP BAR -->
+<div class="top-bar bg-dark text-white py-2">
 <div class="container d-flex justify-content-between">
-
-<div>
-
-<i class="fa-solid fa-envelope"></i>
-
-support@tsdollarexchange.com
-
+<div><i class="fa-solid fa-envelope"></i> support@tsdollarexchange.com</div>
+<div><i class="fa-brands fa-whatsapp"></i> WhatsApp Support</div>
+</div>
 </div>
 
-<div>
-
-<i class="fa-brands fa-whatsapp"></i>
-
-WhatsApp Support
-
-</div>
-
-</div>
-
-</div>
-
-<!-- ===========================
-NAVBAR
-=========================== -->
-
+<!-- NAVBAR -->
 <nav class="navbar navbar-expand-lg bg-white shadow-sm sticky-top">
-
 <div class="container">
-
-<a class="navbar-brand fw-bold text-primary fs-3" href="#">
-
-TS Dollar Exchange
-
-</a>
-
-<button
-class="navbar-toggler"
-type="button"
-data-bs-toggle="collapse"
-data-bs-target="#navbar">
-
-<span class="navbar-toggler-icon"></span>
-
-</button>
-
-<div class="collapse navbar-collapse"
-id="navbar">
-
+<a class="navbar-brand fw-bold text-primary fs-3" href="#">TS Dollar Exchange</a>
+<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar"><span class="navbar-toggler-icon"></span></button>
+<div class="collapse navbar-collapse" id="navbar">
 <ul class="navbar-nav ms-auto align-items-lg-center">
-
-<li class="nav-item">
-
-<a class="nav-link active" href="#">Home</a>
-
-</li>
-
-<li class="nav-item">
-
-<a class="nav-link" href="#exchange">Exchange</a>
-
-</li>
-
-<li class="nav-item">
-
-<a class="nav-link" href="#rates">Rates</a>
-
-</li>
-
-<li class="nav-item">
-
-<a class="nav-link" href="#">Track</a>
-
-</li>
-
-<li class="nav-item">
-<a class="nav-link" href="#contact">Contact</a>
-
-</li>
-<li class="nav-item ms-lg-3">
-
-<a href="login.html"
-class="btn btn-primary">
-
-Login
-
-</a>  
-
-</li>
-
+<li class="nav-item"><a class="nav-link active" href="#">Home</a></li>
+<li class="nav-item"><a class="nav-link" href="#exchange">Exchange</a></li>
+<li class="nav-item"><a class="nav-link" href="#rates">Rates</a></li>
+<li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
+<li class="nav-item ms-lg-3"><a href="login.html" class="btn btn-primary">Login</a></li>
 </ul>
-
 </div>
-
 </div>
-
 </nav>
 
-<!-- ===========================
-HERO SECTION
-=========================== -->
+<!-- HERO SECTION + CALCULATOR -->
 <section id="exchange" class="hero">
-
 <div class="container">
-
 <div class="row align-items-center">
-
 <div class="col-lg-6">
-
-<h1>
-
-Fast & Secure
-
-Dollar Exchange
-
-</h1>
-
-<p>
-
-Exchange Payoneer, Wise, Skrill, USDT,
-Perfect Money and more safely with TS Dollar Exchange.
-
-</p>
-
-<div class="hero-btn">
-
-<a href="#exchange" class="btn btn-primary btn-lg">
-    
-Exchange Now
-
-</a>
-
-<a href="#rates" class="btn btn-outline-light btn-lg">
-
-Today's Rate
-
-</a>
-
-</div>
-
+<h1>Fast & Secure Dollar Exchange</h1>
+<p>Exchange Payoneer, Wise, Skrill, USDT, Perfect Money and more safely with TS Dollar Exchange.</p>
 </div>
 
 <div class="col-lg-6">
+<div class="exchange-card text-dark">
+<h3 class="text-center mb-4">Instantant Exchange</h3>
 
-<div class="exchange-card">
-
-<h3>
-
-Instantant Exchange
-
-</h3>
-
-<form>
-
-<label>You Send</label>
-
+<form id="calculatorForm">
+<label class="form-label">You Send</label>
 <select id="sendWallet" class="form-select mb-3">
-
-    <option value="payoneer">Payoneer USD</option>
-
-    <option value="wise">Wise USD</option>
-
-    <option value="usdt">USDT</option>
-
-    <option value="skrill">Skrill</option>
-
+<option value="payoneer">Payoneer USD</option>
+<option value="wise">Wise USD</option>
+<option value="usdt">USDT</option>
+<option value="skrill">Skrill</option>
 </select>
 
-<input
-id="sendAmount"
-type="number"
-class="form-control"
-placeholder="Amount">
+<label class="form-label">Amount USD</label>
+<input id="sendAmount" type="number" class="form-control mb-3" placeholder="Enter Amount" value="1">
 
-You Receive
+<label class="form-label">You Will Receive</label>
+<input id="receiveAmount" type="text" class="form-control mb-4" placeholder="0.00 BDT" readonly>
 
-</label>
+<!-- Link to order.html -->
+<a id="startExchangeBtn" href="order.html" class="btn btn-success w-100 btn-lg">Start Exchange</a>
 
-<select class="form-select mb-3">
-
-<option>bKash</option>
-
-<option>Nagad</option>
-
-<option>Bank Transfer</option>
-
-</select>
-
-<input
-id="receiveAmount"
-type="number"
-class="form-control"
-placeholder="Receive Amount">
-
-<button
-type="button"
-class="btn btn-success w-100 mt-4">
-Start Exchange
-</button>
-  
 </form>
-
 </div>
-
 </div>
-
 </div>
-
 </div>
-
 </section>
 
-<!-- ===========================
-LIVE EXCHANGE RATES
-=========================== -->
-
+<!-- LIVE EXCHANGE RATES -->
 <section id="rates" class="py-5 bg-light">
-
-  <div class="container">
-
-    <div class="text-center mb-5">
-      <h2 class="fw-bold">Today's Exchange Rates</h2>
-      <p class="text-muted">Updated in real time from Admin Panel</p>
-    </div>
-
-    <div class="row g-4">
-
-      <div class="col-lg-3 col-md-6">
-        <div class="rate-card text-center">
-          <h5>Payoneer USD</h5>
-          <h3 class="buy">Buy: <span id="payoneerBuy">0.00</span></h3>
-          <h3 class="sell">Sell: <span id="payoneerSell">0.00</span></h3>
-        </div>
-      </div>
-
-      <div class="col-lg-3 col-md-6">
-        <div class="rate-card text-center">
-          <h5>Wise USD</h5>
-          <h3 class="buy">Buy: <span id="wiseBuy">0.00</span></h3>
-          <h3 class="sell">Sell: <span id="wiseSell">0.00</span></h3>
-        </div>
-      </div>
-
-      <div class="col-lg-3 col-md-6">
-        <div class="rate-card text-center">
-          <h5>USDT</h5>
-          <h3 class="buy">Buy: <span id="usdtBuy">0.00</span></h3>
-          <h3 class="sell">Sell: <span id="usdtSell">0.00</span></h3>
-        </div>
-      </div>
-
-      <div class="col-lg-3 col-md-6">
-        <div class="rate-card text-center">
-          <h5>Skrill USD</h5>
-          <h3 class="buy">Buy: <span id="skrillBuy">0.00</span></h3>
-          <h3 class="sell">Sell: <span id="skrillSell">0.00</span></h3>
-        </div>
-      </div>
-
-    </div>
-
-  </div>
-
-</section>
-  
-  <!-- ===========================
-WHY CHOOSE US
-=========================== -->
-
-<section class="why-us py-5">
-
 <div class="container">
-
 <div class="text-center mb-5">
-
-<h2>Why Choose TS Dollar Exchange?</h2>
-
-<p>Fast, Secure & Trusted Digital Currency Exchange Platform</p>
-
+<h2 class="fw-bold">Today's Exchange Rates</h2>
+<p class="text-muted">Updated in real time from Admin Panel</p>
 </div>
-
 <div class="row g-4">
-
-<div class="col-lg-3 col-md-6">
-
-<div class="feature-card">
-
-<i class="fa-solid fa-shield-halved"></i>
-
-<h4>100% Secure</h4>
-
-<p>Your transactions are fully protected.</p>
-
+<div class="col-lg-3 col-md-6"><div class="rate-card text-center"><h5>Payoneer USD</h5><h3 class="buy">Buy: <span id="payoneerBuy">0.00</span></h3><h3 class="sell">Sell: <span id="payoneerSell">0.00</span></h3></div></div>
+<div class="col-lg-3 col-md-6"><div class="rate-card text-center"><h5>Wise USD</h5><h3 class="buy">Buy: <span id="wiseBuy">0.00</span></h3><h3 class="sell">Sell: <span id="wiseSell">0.00</span></h3></div></div>
+<div class="col-lg-3 col-md-6"><div class="rate-card text-center"><h5>USDT</h5><h3 class="buy">Buy: <span id="usdtBuy">0.00</span></h3><h3 class="sell">Sell: <span id="usdtSell">0.00</span></h3></div></div>
+<div class="col-lg-3 col-md-6"><div class="rate-card text-center"><h5>Skrill USD</h5><h3 class="buy">Buy: <span id="skrillBuy">0.00</span></h3><h3 class="sell">Sell: <span id="skrillSell">0.00</span></h3></div></div>
 </div>
-
 </div>
-
-<div class="col-lg-3 col-md-6">
-
-<div class="feature-card">
-
-<i class="fa-solid fa-bolt"></i>
-
-<h4>Instant Payment</h4>
-
-<p>Fast processing within a few minutes.</p>
-
-</div>
-
-</div>
-
-<div class="col-lg-3 col-md-6">
-
-<div class="feature-card">
-
-<i class="fa-solid fa-headset"></i>
-
-<h4>24/7 Support</h4>
-
-<p>Our support team is always ready.</p>
-
-</div>
-
-</div>
-
-<div class="col-lg-3 col-md-6">
-
-<div class="feature-card">
-
-<i class="fa-solid fa-star"></i>
-
-<h4>Trusted Service</h4>
-
-<p>Thousands of satisfied customers.</p>
-
-</div>
-
-</div>
-
-</div>
-
-</div>
-
 </section>
 
-<!-- ===========================
-SUPPORTED WALLETS
-=========================== -->
-
-<section class="wallets py-5 bg-light">
-
-<div class="container">
-
-<div class="text-center mb-5">
-
-<h2>Supported Wallets</h2>
-
-</div>
-
-<div class="row text-center g-4">
-
-<div class="col-6 col-md-3">
-<div class="wallet-box">
-<i class="fa-solid fa-wallet fa-3x"></i>
-<h5>Payoneer</h5>
-</div>
-</div>
-
-<div class="col-6 col-md-3">
-<div class="wallet-box">
-<i class="fa-solid fa-building-columns fa-3x"></i>
-<h5>Wise</h5>
-</div>
-</div>
-
-<div class="col-6 col-md-3">
-<div class="wallet-box">
-<i class="fa-brands fa-bitcoin fa-3x"></i>
-<h5>USDT</h5>
-</div>
-</div>
-
-<div class="col-6 col-md-3">
-<div class="wallet-box">
-<i class="fa-solid fa-money-bill-wave fa-3x"></i>
-<h5>Skrill</h5>
-</div>
-</div>
-
-</div>
-
-</div>
-
-</section>
-
-<!-- ===========================
-HOW IT WORKS
-=========================== -->
-
-<section class="process py-5">
-
-<div class="container">
-
-<div class="text-center mb-5">
-
-<h2>How It Works</h2>
-
-</div>
-
-<div class="row text-center">
-
-<div class="col-md-4">
-
-<h1>1</h1>
-
-<h4>Submit Order</h4>
-
-<p>Select wallet and enter amount.</p>
-
-</div>
-
-<div class="col-md-4">
-
-<h1>2</h1>
-
-<h4>Send Payment</h4>
-
-<p>Complete your payment securely.</p>
-
-</div>
-
-<div class="col-md-4">
-
-<h1>3</h1>
-
-<h4>Receive Money</h4>
-
-<p>Receive your money instantly.</p>
-
-</div>
-
-</div>
-
-</div>
-
-</section>
-<!-- ===========================
-LATEST EXCHANGES
-=========================== -->
-
-<section class="latest-exchange py-5 bg-light">
-
-<div class="container">
-
-<div class="text-center mb-5">
-
-<h2>Latest Exchange</h2>
-
-<p>Recent Successful Transactions</p>
-
-</div>
-
-<div class="table-responsive">
-
-<table class="table table-striped table-hover align-middle">
-
-<thead class="table-primary">
-
-<tr>
-
-<th>Time</th>
-
-<th>Wallet</th>
-
-<th>Amount</th>
-
-<th>Receive</th>
-
-<th>Status</th>
-
-</tr>
-
-</thead>
-
-<tbody>
-
-<tr>
-
-<td>2 Min Ago</td>
-
-<td>Payoneer</td>
-
-<td>100 USD</td>
-
-<td>12,200 BDT</td>
-
-<td><span class="badge bg-success">Completed</span></td>
-
-</tr>
-
-<tr>
-
-<td>5 Min Ago</td>
-
-<td>Wise</td>
-
-<td>250 USD</td>
-
-<td>30,500 BDT</td>
-
-<td><span class="badge bg-success">Completed</span></td>
-
-</tr>
-
-<tr>
-
-<td>8 Min Ago</td>
-
-<td>USDT</td>
-
-<td>150 USD</td>
-
-<td>18,300 BDT</td>
-
-<td><span class="badge bg-success">Completed</span></td>
-
-</tr>
-
-<tr>
-
-<td>15 Min Ago</td>
-
-<td>Skrill</td>
-
-<td>80 USD</td>
-
-<td>9,760 BDT</td>
-
-<td><span class="badge bg-success">Completed</span></td>
-
-</tr>
-
-</tbody>
-
-</table>
-
-</div>
-
-</div>
-
-</section>
-
-<!-- ===========================
-CUSTOMER REVIEWS
-=========================== -->
-
-<section class="reviews py-5">
-
-<div class="container">
-
-<div class="text-center mb-5">
-
-<h2>What Our Customers Say</h2>
-
-</div>
-
-<div class="row g-4">
-
-<div class="col-md-4">
-
-<div class="review-card">
-
-⭐⭐⭐⭐⭐
-
-<h5 class="mt-3">Rahim</h5>
-
-<p>
-
-Very fast service.
-
-Highly recommended.
-
-</p>
-
-</div>
-
-</div>
-
-<div class="col-md-4">
-
-<div class="review-card">
-
-⭐⭐⭐⭐⭐
-
-<h5 class="mt-3">Karim</h5>
-
-<p>
-
-Received payment instantly.
-
-Trusted service.
-
-</p>
-
-</div>
-
-</div>
-
-<div class="col-md-4">
-
-<div class="review-card">
-
-⭐⭐⭐⭐⭐
-
-<h5 class="mt-3">Jahid</h5>
-
-<p>
-
-Best exchange website.
-
-Excellent support.
-
-</p>
-
-</div>
-
-</div>
-
-</div>
-
-</div>
-
-</section>
-
-<!-- ===========================
-FAQ
-=========================== -->
-
-<section class="faq py-5 bg-light">
-
-<div class="container">
-
-<div class="text-center mb-5">
-
-<h2>Frequently Asked Questions</h2>
-
-</div>
-
-<div class="accordion" id="faq">
-
-<div class="accordion-item">
-
-<h2 class="accordion-header">
-
-<button class="accordion-button"
-data-bs-toggle="collapse"
-data-bs-target="#one">
-
-How long does exchange take?
-
-</button>
-
-</h2>
-
-<div id="one"
-class="accordion-collapse collapse show"
-data-bs-parent="#faq">
-
-<div class="accordion-body">
-
-Usually 5-15 minutes.
-
-</div>
-
-</div>
-
-</div>
-
-<div class="accordion-item">
-
-<h2 class="accordion-header">
-
-<button
-class="accordion-button collapsed"
-data-bs-toggle="collapse"
-data-bs-target="#two">
-
-Is my transaction secure?
-
-</button>
-
-</h2>
-
-<div id="two"
-class="accordion-collapse collapse"
-data-bs-parent="#faq">
-
-<div class="accordion-body">
-
-Yes. All transactions are encrypted and secure.
-
-</div>
-
-</div>
-
-</div>
-
-</div>
-
-</div>
-
-</section>
-  <!-- ===========================
-CONTACT
-=========================== -->
-
-<section id="contact" class="py-5">
-
-<div class="container">
-
-<div class="text-center mb-5">
-
-<h2>Contact Us</h2>
-
-<p>We're available 24/7 to help you.</p>
-
-</div>
-
-<div class="row">
-
-<div class="col-lg-6">
-
+<!-- WHY CHOOSE US -->
+<section class="why-us py-5"><div class="container"><div class="text-center mb-5"><h2>Why Choose TS Dollar Exchange?</h2></div><div class="row g-4 text-center"><div class="col-lg-3"><div class="p-3"><i class="fa-solid fa-shield-halved fa-2x text-primary"></i><h4 class="mt-2">100% Secure</h4></div></div><div class="col-lg-3"><div class="p-3"><i class="fa-solid fa-bolt fa-2x text-primary"></i><h4 class="mt-2">Instant Payment</h4></div></div><div class="col-lg-3"><div class="p-3"><i class="fa-solid fa-headset fa-2x text-primary"></i><h4 class="mt-2">24/7 Support</h4></div></div><div class="col-lg-3"><div class="p-3"><i class="fa-solid fa-star fa-2x text-primary"></i><h4 class="mt-2">Trusted Service</h4></div></div></div></div></section>
+
+<!-- CONTACT -->
+<section id="contact" class="py-5 bg-light">
+<div class="container"><div class="text-center mb-5"><h2>Contact Us</h2></div>
+<div class="row"><div class="col-lg-6">
 <h4>Office Information</h4>
-
 <p><i class="fa-solid fa-location-dot"></i> Dhaka, Bangladesh</p>
-
 <p><i class="fa-solid fa-envelope"></i> support@tsdollarexchange.com</p>
-
-<p><i class="fa-brands fa-whatsapp"></i> +8801726858565 or 01979493996</p>
-
-<p><i class="fa-solid fa-clock"></i> Open 24 Hours</p>
-
+<p><i class="fa-brands fa-whatsapp"></i> +8801726858565</p>
 </div>
+<div class="col-lg-6"><form><input type="text" class="form-control mb-3" placeholder="Your Name"><input type="email" class="form-control mb-3" placeholder="Email Address"><textarea class="form-control mb-3" rows="5" placeholder="Your Message"></textarea><button class="btn btn-primary w-100">Send Message</button></form></div>
+</div></div></section>
 
-<div class="col-lg-6">
-
-<form>
-
-<input
-type="text"
-class="form-control mb-3"
-placeholder="Your Name">
-
-<input
-type="email"
-class="form-control mb-3"
-placeholder="Email Address">
-
-<textarea
-class="form-control mb-3"
-rows="5"
-placeholder="Your Message"></textarea>
-
-<button
-class="btn btn-primary w-100">
-
-Send Message
-
-</button>
-
-</form>
-
-</div>
-
-</div>
-
-</div>
-
-</section>
-
-<!-- ===========================
-FOOTER
-=========================== -->
-
-<footer class="bg-dark text-white py-5">
-
-<div class="container">
-
-<div class="row">
-
-<div class="col-lg-4">
-
-<h3>TS Dollar Exchange</h3>
-
-<p>
-
-Trusted Digital Currency Exchange Platform.
-
-</p>
-
-</div>
-
-<div class="col-lg-4">
-
-<h5>Quick Links</h5>
-
-<ul class="list-unstyled">
-
-<li><a href="#" class="text-white text-decoration-none">Home</a></li>
-
-<li><a href="#rates" class="text-white text-decoration-none">Rates</a></li>
-
-<li><a href="#contact" class="text-white text-decoration-none">Contact</a></li>
-
-<li><a href="admin.html" class="text-white text-decoration-none">Admin Login</a></li>
-
-</ul>
-
-</div>
-
-<div class="col-lg-4">
-
-<h5>Follow Us</h5>
-
-<a href="#" class="text-white me-3">
-
-<i class="fab fa-facebook fa-2x"></i>
-
-</a>
-
-<a href="#" class="text-white me-3">
-
-<i class="fab fa-telegram fa-2x"></i>
-
-</a>
-
-<a href="#" class="text-white">
-
-<i class="fab fa-whatsapp fa-2x"></i>
-
-</a>
-
-</div>
-
-</div>
-
-<hr>
-
-<div class="text-center">
-
-© 2026 TS Dollar Exchange. All Rights Reserved.
-
-</div>
-
-</div>
-
-</footer>
+<!-- FOOTER -->
+<footer class="bg-dark text-white py-4"><div class="container text-center">© 2026 TS Dollar Exchange. All Rights Reserved.</div></footer>
 
 <!-- WhatsApp Floating Button -->
-
-<a href="https://wa.me/8801726858565"
-class="whatsapp-float"
-target="_blank">
-
-<i class="fab fa-whatsapp"></i>
-
-</a>
-
-<!-- ===========================
-STATISTICS
-=========================== -->
-
-<section class="py-5">
-
-<div class="container">
-
-<div class="row text-center">
-
-<div class="col-md-3">
-
-<h2>25K+</h2>
-
-<p>Happy Customers</p>
-
-</div>
-
-<div class="col-md-3">
-
-<h2>50K+</h2>
-
-<p>Successful Exchanges</p>
-
-</div>
-
-<div class="col-md-3">
-
-<h2>8+</h2>
-
-<p>Supported Wallets</p>
-
-</div>
-
-<div class="col-md-3">
-
-<h2>24/7</h2>
-
-<p>Customer Support</p>
-
-</div>
-
-</div>
-
-</div>
-
-</section>
+<a href="https://wa.me/8801726858565" class="whatsapp-float" target="_blank"><i class="fab fa-whatsapp"></i></a>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
-
 <script type="module" src="script.js"></script>
 
-</body>
+<!-- এই JS টা Link এর জন্য জরুরি -->
+<script>
+document.getElementById("startExchangeBtn").addEventListener("click", function(e){
+    const wallet = document.getElementById("sendWallet").value;
+    const amount = document.getElementById("sendAmount").value;
+    if(amount <= 0){ alert("Please enter amount"); e.preventDefault(); return; }
+    this.href = `order.html?wallet=${wallet}&amount=${amount}`;
+});
+</script>
 
+</body>
 </html>
