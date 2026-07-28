@@ -1,59 +1,74 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Admin Panel - TS Dollar Exchange</title>
+<title>Admin Panel - TS Dollar</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
-<style>
-body { background: #f0f2f5; font-family: 'Poppins', sans-serif; }
-.login-card { max-width: 400px; margin: 100px auto; }
-.dashboard-card { background:#fff; padding:30px; border-radius:12px; box-shadow:0 5px 20px rgba(0,0,0,0.1); }
-</style>
+<style>body{background:#071826;color:white;}</style>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 </head>
 <body>
+<div class="container mt-4">
+<h2 class="mb-4">TS Dollar - Admin Panel <button onclick="logout()" class="btn btn-danger float-end">Logout</button></h2>
 
-<!-- LOGIN PAGE -->
-<div id="loginPage" class="login-card">
-<div class="card shadow">
-<div class="card-body p-4">
-<h3 class="text-center mb-4 text-primary">Admin Login</h3>
-<form id="loginForm">
-<input type="email" id="email" class="form-control mb-3" placeholder="Admin Email" value="towhidulislamtuhin872@gmail.com" required>
-<input type="password" id="password" class="form-control mb-3" placeholder="Password" required>
-<p id="loginError" class="text-danger text-center small"></p>
-<button id="loginBtn" type="submit" class="btn btn-primary w-100">Login</button>
-</form>
-</div>
+<!-- Rate Control -->
+<div class="card bg-dark p-3 mb-4">
+<h4>Rate Control</h4>
+<div class="row g-2">
+<div class="col-md-4"><input id="buyRate" type="number" placeholder="Buy Rate BDT" class="form-control"></div>
+<div class="col-md-4"><input id="sellRate" type="number" placeholder="Sell Rate BDT" class="form-control"></div>
+<div class="col-md-4"><button onclick="updateRate()" class="btn btn-success w-100">Update Rate</button></div>
 </div>
 </div>
 
-<!-- DASHBOARD PAGE -->
-<div id="dashboardPage" class="container py-5" style="display:none;">
-<div class="d-flex justify-content-between align-items-center mb-4">
-<h2>Exchange Rate Dashboard</h2>
-<button id="logoutBtn" class="btn btn-danger">Logout</button>
-</div>
-
-<div class="dashboard-card">
-<h4 class="mb-4">Update Live Rates</h4>
-<form id="rateForm">
-<div class="row g-3">
-<div class="col-md-6"><label>Payoneer Buy</label><input type="number" id="payoneerBuy" class="form-control" step="0.01"></div>
-<div class="col-md-6"><label>Payoneer Sell</label><input type="number" id="payoneerSell" class="form-control" step="0.01"></div>
-<div class="col-md-6"><label>Wise Buy</label><input type="number" id="wiseBuy" class="form-control" step="0.01"></div>
-<div class="col-md-6"><label>Wise Sell</label><input type="number" id="wiseSell" class="form-control" step="0.01"></div>
-<div class="col-md-6"><label>USDT Buy</label><input type="number" id="usdtBuy" class="form-control" step="0.01"></div>
-<div class="col-md-6"><label>USDT Sell</label><input type="number" id="usdtSell" class="form-control" step="0.01"></div>
-<div class="col-md-6"><label>Skrill Buy</label><input type="number" id="skrillBuy" class="form-control" step="0.01"></div>
-<div class="col-md-6"><label>Skrill Sell</label><input type="number" id="skrillSell" class="form-control" step="0.01"></div>
-</div>
-<button id="updateBtn" type="submit" class="btn btn-success w-100 mt-4">Update Rates</button>
-</form>
+<!-- Orders -->
+<div class="card bg-dark p-3">
+<h4>New Orders</h4>
+<table class="table table-dark table-striped">
+<thead><tr><th>Email</th><th>Amount $</th><th>Type</th><th>Time</th></tr></thead>
+<tbody id="orderTable"></tbody>
+</table>
 </div>
 </div>
 
-<script type="module" src="firebase.js"></script>
-<script type="module" src="admin.js"></script>
+<script>
+firebase.initializeApp({apiKey:"AIzaSyBC0OA7gEWg1dfVzqVpI1YgbKzNKllz4pg",authDomain:"ts-dollar-exchange.firebaseapp.com",databaseURL:"https://ts-dollar-exchange-default-rtdb.asia-southeast1.firebasedatabase.app"});
+const auth = firebase.auth();
+const db = firebase.database();
+
+// 1. Login Check - Login না থাকলে ফেরত পাঠাবে
+auth.onAuthStateChanged((user) => {
+if (!user) {
+window.location.href = "login.html";
+}
+});
+
+// 2. Rate Load
+db.ref('rates').on('value',(snap)=>{
+let data=snap.val() || {buy:120,sell:122};
+document.getElementById('buyRate').value=data.buy;
+document.getElementById('sellRate').value=data.sell;
+});
+
+// 3. Rate Update
+function updateRate(){
+let buy=document.getElementById('buyRate').value;
+let sell=document.getElementById('sellRate').value;
+db.ref('rates').set({buy:buy,sell:sell});
+alert("✅ Rate Updated! Home + Exchange এ Auto Update হবে");
+}
+
+// 4. Order Load
+db.ref('orders').on('child_added',(snap)=>{
+let o=snap.val();
+document.getElementById('orderTable').innerHTML=`<tr><td>${o.email}</td><td>${o.amount}</td><td>${o.type}</td><td>${o.time}</td></tr>` + document.getElementById('orderTable').innerHTML;
+});
+
+// 5. Logout
+function logout(){
+auth.signOut().then(()=>{window.location.href="login.html";});
+}
+</script>
 </body>
 </html>
