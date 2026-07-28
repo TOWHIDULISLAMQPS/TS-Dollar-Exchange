@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Dashboard</title>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+</head>
+<body style="text-align:center;padding-top:100px;background:#071826;color:white;">
+<h1>Welcome to TS Dollar Exchange</h1>
+<h2>Dashboard</h2>
+<p>Login Successful ✅</p>
+<button onclick="logout()" style="padding:10px 20px;background:red;color:white;border:none;border-radius:8px;">Logout</button>
+
+<script>
+firebase.initializeApp({apiKey:"AIzaSyBC0OA7gEWg1dfVzqVpI1YgbKzNKllz4pg",authDomain:"ts-dollar-exchange.firebaseapp.com"});
+const auth = firebase.auth();
+
+auth.onAuthStateChanged((user) => {
+if (!user) {
+window.location.href = "login.html"; // Login না থাকলে ফেরত পাঠাবে
+}
+});
+
+function logout(){
+auth.signOut().then(()=>{window.location.href="login.html";});
+}
+</script>
+</body>
+</html>
