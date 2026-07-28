@@ -1,124 +1,59 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TS Dollar - Admin Panel</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
-  <style>
-    body { background: #0a0a0a; color: #fff; }
-    .admin-card { background: #111; border: 1px solid #333; border-radius: 12px; padding: 25px; margin-bottom: 20px; }
-    .form-control { background: #1a1a1a; border: 1px solid #333; color: #fff; }
-    .form-control:focus { background: #1a1a1a; border-color: #00ff88; color: #fff; box-shadow: 0 0 0 0.25rem rgba(0,255,136,.25); }
-    .btn-save { background: linear-gradient(90deg, #00ff88, #00ccff); border: none; color: #000; font-weight: 700; }
-    .btn-save:hover { opacity: 0.9; }
-    table { color: #fff; }
-    .badge { font-size: 0.9rem; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Panel - TS Dollar Exchange</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+<style>
+body { background: #f0f2f5; font-family: 'Poppins', sans-serif; }
+.login-card { max-width: 400px; margin: 100px auto; }
+.dashboard-card { background:#fff; padding:30px; border-radius:12px; box-shadow:0 5px 20px rgba(0,0,0,0.1); }
+</style>
 </head>
 <body>
 
-<nav class="navbar navbar-dark bg-dark">
-  <div class="container-fluid">
-    <span class="navbar-brand mb-0 h1"><i class="bi bi-shield-lock"></i> TS Dollar Admin</span>
-  </div>
-</nav>
+<!-- LOGIN PAGE -->
+<div id="loginPage" class="login-card">
+<div class="card shadow">
+<div class="card-body p-4">
+<h3 class="text-center mb-4 text-primary">Admin Login</h3>
+<form id="loginForm">
+<input type="email" id="email" class="form-control mb-3" placeholder="Admin Email" value="towhidulislamtuhin872@gmail.com" required>
+<input type="password" id="password" class="form-control mb-3" placeholder="Password" required>
+<p id="loginError" class="text-danger text-center small"></p>
+<button id="loginBtn" type="submit" class="btn btn-primary w-100">Login</button>
+</form>
+</div>
+</div>
+</div>
 
-<div class="container mt-4">
+<!-- DASHBOARD PAGE -->
+<div id="dashboardPage" class="container py-5" style="display:none;">
+<div class="d-flex justify-content-between align-items-center mb-4">
+<h2>Exchange Rate Dashboard</h2>
+<button id="logoutBtn" class="btn btn-danger">Logout</button>
+</div>
 
-  <!-- 1. RATE UPDATE SECTION -->
-  <div class="admin-card">
-    <h4 class="mb-3"><i class="bi bi-graph-up-arrow text-success"></i> Update Exchange Rates</h4>
-    <div class="row g-3">
-      
-      <div class="col-md-6">
-        <h6>Payoneer</h6>
-        <div class="input-group mb-2">
-          <span class="input-group-text">Buy</span>
-          <input type="number" id="payoneerBuy" class="form-control" placeholder="125">
-          <span class="input-group-text">BDT</span>
-        </div>
-        <div class="input-group mb-2">
-          <span class="input-group-text">Sell</span>
-          <input type="number" id="payoneerSell" class="form-control" placeholder="128">
-          <span class="input-group-text">BDT</span>
-        </div>
-      </div>
-
-      <div class="col-md-6">
-        <h6>Wise</h6>
-        <div class="input-group mb-2">
-          <span class="input-group-text">Buy</span>
-          <input type="number" id="wiseBuy" class="form-control" placeholder="124">
-          <span class="input-group-text">BDT</span>
-        </div>
-        <div class="input-group mb-2">
-          <span class="input-group-text">Sell</span>
-          <input type="number" id="wiseSell" class="form-control" placeholder="127">
-          <span class="input-group-text">BDT</span>
-        </div>
-      </div>
-
-      <div class="col-md-6">
-        <h6>USDT</h6>
-        <div class="input-group mb-2">
-          <span class="input-group-text">Buy</span>
-          <input type="number" id="usdtBuy" class="form-control" placeholder="122">
-          <span class="input-group-text">BDT</span>
-        </div>
-        <div class="input-group mb-2">
-          <span class="input-group-text">Sell</span>
-          <input type="number" id="usdtSell" class="form-control" placeholder="125">
-          <span class="input-group-text">BDT</span>
-        </div>
-      </div>
-
-      <div class="col-md-6">
-        <h6>Skrill</h6>
-        <div class="input-group mb-2">
-          <span class="input-group-text">Buy</span>
-          <input type="number" id="skrillBuy" class="form-control" placeholder="123">
-          <span class="input-group-text">BDT</span>
-        </div>
-        <div class="input-group mb-2">
-          <span class="input-group-text">Sell</span>
-          <input type="number" id="skrillSell" class="form-control" placeholder="126">
-          <span class="input-group-text">BDT</span>
-        </div>
-      </div>
-
-    </div>
-    <button id="saveRates" class="btn btn-save btn-lg w-100 mt-3"><i class="bi bi-check-circle"></i> Save All Rates</button>
-  </div>
-
-  <!-- 2. ORDER LIST SECTION -->
-  <div class="admin-card">
-    <h4 class="mb-3"><i class="bi bi-list-check text-info"></i> Recent Orders</h4>
-    <div class="table-responsive">
-      <table class="table table-dark table-hover">
-        <thead>
-          <tr>
-            <th>Order ID</th>
-            <th>Name</th>
-            <th>Wallet</th>
-            <th>USD Amount</th>
-            <th>BDT Amount</th>
-            <th>Status</th>
-          </tr>
-        </thead>
-        <tbody id="ordersTable">
-          <tr><td colspan="6" class="text-center">Loading orders...</td></tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-
+<div class="dashboard-card">
+<h4 class="mb-4">Update Live Rates</h4>
+<form id="rateForm">
+<div class="row g-3">
+<div class="col-md-6"><label>Payoneer Buy</label><input type="number" id="payoneerBuy" class="form-control" step="0.01"></div>
+<div class="col-md-6"><label>Payoneer Sell</label><input type="number" id="payoneerSell" class="form-control" step="0.01"></div>
+<div class="col-md-6"><label>Wise Buy</label><input type="number" id="wiseBuy" class="form-control" step="0.01"></div>
+<div class="col-md-6"><label>Wise Sell</label><input type="number" id="wiseSell" class="form-control" step="0.01"></div>
+<div class="col-md-6"><label>USDT Buy</label><input type="number" id="usdtBuy" class="form-control" step="0.01"></div>
+<div class="col-md-6"><label>USDT Sell</label><input type="number" id="usdtSell" class="form-control" step="0.01"></div>
+<div class="col-md-6"><label>Skrill Buy</label><input type="number" id="skrillBuy" class="form-control" step="0.01"></div>
+<div class="col-md-6"><label>Skrill Sell</label><input type="number" id="skrillSell" class="form-control" step="0.01"></div>
+</div>
+<button id="updateBtn" type="submit" class="btn btn-success w-100 mt-4">Update Rates</button>
+</form>
+</div>
 </div>
 
 <script type="module" src="firebase.js"></script>
 <script type="module" src="admin.js"></script>
-
 </body>
 </html>
