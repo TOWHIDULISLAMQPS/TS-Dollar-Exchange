@@ -10,7 +10,6 @@ body{background:#071826;color:white;font-family: 'Segoe UI', sans-serif;}
 .navbar{background:#0d6efd;}
 .card{background:#1a2b3c;color:white;border:none;border-radius:15px;box-shadow: 0 4px 10px rgba(0,0,0,0.3);}
 .table-dark{background:#1a2b3c;}
-.btn-success{background:#28a745;border:none;}
 </style>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
@@ -34,26 +33,22 @@ body{background:#071826;color:white;font-family: 'Segoe UI', sans-serif;}
 <div class="col-6 col-lg-3"><div class="card p-3 text-center"><h6>Total Profit</h6><h2 id="totalProfit">৳0</h2></div></div>
 </div>
 
-<!-- 2. Rate Control -->
-<div class="card p-4 mb-4">
-<h4 class="mb-3">⚡ Rate Control</h4>
+<!-- 2. Rate Control - আগের 1 টা Rate -->
+<div class="card p-4 mb-3">
+<h4 class="mb-3">⚡ Main Rate Control</h4>
 <div class="row g-3">
-<div class="col-md-4">
-<label>Buy Rate BDT</label>
-<input id="buyRate" type="number" class="form-control bg-dark text-white border-secondary">
+<div class="col-md-4"><label>Buy Rate BDT</label><input id="buyRate" type="number" class="form-control bg-dark text-white border-secondary"></div>
+<div class="col-md-4"><label>Sell Rate BDT</label><input id="sellRate" type="number" class="form-control bg-dark text-white border-secondary"></div>
+<div class="col-md-4 d-flex align-items-end"><button onclick="updateRate()" class="btn btn-success w-100">Update Rate</button></div>
 </div>
-<div class="col-md-4">
-<label>Sell Rate BDT</label>
-<input id="sellRate" type="number" class="form-control bg-dark text-white border-secondary">
-</div>
-<div class="col-md-4 d-flex align-items-end">
-<button onclick="updateRate()" class="btn btn-success w-100">Update Rate</button>
-</div>
-</div>
-<small class="text-success mt-2 d-block">Update করলেই Home + Exchange Page এ Auto Update হবে</small>
 </div>
 
-<!-- 3. Orders -->
+<!-- 3. NEW BUTTON for 4 Wallet -->
+<div class="card p-3 mb-4">
+<a href="rates.html" class="btn btn-warning w-100 fw-bold">⚡ 4 Wallet Rate Manage - USD, Payoneer, Wise, Skrill</a>
+</div>
+
+<!-- 4. Orders -->
 <div class="card p-4">
 <h4 class="mb-3">📦 New Orders</h4>
 <div class="table-responsive">
@@ -77,53 +72,26 @@ const auth = firebase.auth();
 const db = firebase.database();
 
 // 2. LOGIN CHECK
-auth.onAuthStateChanged((user) => {
-if (!user) {
-window.location.href = "login.html"; // Login page er nam change thakle ekhane dao
-}
-});
+auth.onAuthStateChanged((user) => {if (!user) {window.location.href = "login.html";}});
 
 // 3. LOAD WALLET
-db.ref('stats').on('value',(snap)=>{
-let data = snap.val() || {users:0, dollar:0, bdt:0, profit:0};
-document.getElementById('totalUsers').innerText = data.users;
-document.getElementById('totalDollar').innerText = "$" + data.dollar;
-document.getElementById('totalBDT').innerText = "৳" + data.bdt;
-document.getElementById('totalProfit').innerText = "৳" + data.profit;
-});
+db.ref('stats').on('value',(snap)=>{let data = snap.val() || {users:0, dollar:0, bdt:0, profit:0};document.getElementById('totalUsers').innerText = data.users;document.getElementById('totalDollar').innerText = "$" + data.dollar;document.getElementById('totalBDT').innerText = "৳" + data.bdt;document.getElementById('totalProfit').innerText = "৳" + data.profit;});
 
-// 4. LOAD + UPDATE RATE
-db.ref('rates').on('value',(snap)=>{
-let data=snap.val() || {buy:120,sell:122};
-document.getElementById('buyRate').value=data.buy;
-document.getElementById('sellRate').value=data.sell;
-});
+// 4. LOAD + UPDATE MAIN RATE
+db.ref('rates/main').on('value',(snap)=>{let data=snap.val() || {buy:120,sell:122};document.getElementById('buyRate').value=data.buy;document.getElementById('sellRate').value=data.sell;});
 
 function updateRate(){
 let buy=document.getElementById('buyRate').value;
 let sell=document.getElementById('sellRate').value;
-if(buy=="" || sell==""){alert("Rate khali rakha jabe na"); return;}
-db.ref('rates').set({buy:Number(buy),sell:Number(sell)})
-.then(()=>{alert("✅ Rate Updated Successfully!")})
-.catch((err)=>{alert("Error: " + err.message)});
+db.ref('rates/main').set({buy:Number(buy),sell:Number(sell)}).then(()=>{alert("✅ Main Rate Updated!")});
 }
 
 // 5. LOAD ORDERS
-db.ref('orders').limitToLast(20).on('child_added',(snap)=>{
-let o=snap.val();
-if(document.getElementById('orderTable').innerHTML.includes("No Orders")){ 
-document.getElementById('orderTable').innerHTML = ""; 
-}
-let type = o.type || "N/A";
-let time = o.time || "N/A";
-let row = `<tr><td>${o.email}</td><td>${o.amount}</td><td>${type}</td><td>${time}</td></tr>`;
-document.getElementById('orderTable').innerHTML = row + document.getElementById('orderTable').innerHTML;
-});
+db.ref('orders').limitToLast(20).on('child_added',(snap)=>{let o=snap.val();if(document.getElementById('orderTable').innerHTML.includes("No Orders")){document.getElementById('orderTable').innerHTML = "";}
+document.getElementById('orderTable').innerHTML=`<tr><td>${o.email}</td><td>${o.amount}</td><td>${o.type || "N/A"}</td><td>${o.time || "N/A"}</td></tr>` + document.getElementById('orderTable').innerHTML;});
 
 // 6. LOGOUT
-function logout(){
-auth.signOut().then(()=>{window.location.href="login.html";});
-}
+function logout(){auth.signOut().then(()=>{window.location.href="login.html";});}
 </script>
 </body>
 </html>
