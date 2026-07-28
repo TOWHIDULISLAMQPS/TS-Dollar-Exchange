@@ -150,14 +150,15 @@ onValue(ordersRef, (snapshot) => {
 
     if (snapshot.exists()) {
 
-        snapshot.forEach((child) => {
-            
-ordersData.push({
-    id: order.orderId,
-    firebaseKey: child.key,
-    ...order
-});
-    renderOrders();
+snapshot.forEach((child) => {
+
+    const order = child.val();
+
+    ordersData.push({
+        id: order.orderId,
+        firebaseKey: child.key,
+        ...order
+    });
 
 });
 
