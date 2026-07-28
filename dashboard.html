@@ -6,10 +6,11 @@
 <title>Admin Panel - TS Dollar Exchange</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
 <style>
-body{background:#071826;color:white;}
+body{background:#071826;color:white;font-family: 'Segoe UI', sans-serif;}
 .navbar{background:#0d6efd;}
-.card{background:#1a2b3c;color:white;border:none;border-radius:15px;}
+.card{background:#1a2b3c;color:white;border:none;border-radius:15px;box-shadow: 0 4px 10px rgba(0,0,0,0.3);}
 .table-dark{background:#1a2b3c;}
+.btn-success{background:#28a745;border:none;}
 </style>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
@@ -23,34 +24,42 @@ body{background:#071826;color:white;}
 </nav>
 
 <div class="container mt-4">
-<h2 class="text-center mb-4">Welcome to Admin Panel ✅</h2>
+<h2 class="text-center mb-4">Admin Dashboard ✅</h2>
 
 <!-- 1. Wallet - 4 Cards -->
 <div class="row g-3 mb-4">
-<div class="col-6 col-md-3"><div class="card p-3 text-center"><h6>Total Users</h6><h2 id="totalUsers">0</h2></div></div>
-<div class="col-6 col-md-3"><div class="card p-3 text-center"><h6>Total Dollar</h6><h2 id="totalDollar">$0</h2></div></div>
-<div class="col-6 col-md-3"><div class="card p-3 text-center"><h6>Total BDT</h6><h2 id="totalBDT">৳0</h2></div></div>
-<div class="col-6 col-md-3"><div class="card p-3 text-center"><h6>Total Profit</h6><h2 id="totalProfit">৳0</h2></div></div>
+<div class="col-6 col-lg-3"><div class="card p-3 text-center"><h6>Total Users</h6><h2 id="totalUsers">0</h2></div></div>
+<div class="col-6 col-lg-3"><div class="card p-3 text-center"><h6>Total Dollar</h6><h2 id="totalDollar">$0</h2></div></div>
+<div class="col-6 col-lg-3"><div class="card p-3 text-center"><h6>Total BDT</h6><h2 id="totalBDT">৳0</h2></div></div>
+<div class="col-6 col-lg-3"><div class="card p-3 text-center"><h6>Total Profit</h6><h2 id="totalProfit">৳0</h2></div></div>
 </div>
 
 <!-- 2. Rate Control -->
-<div class="card p-3 mb-4">
-<h4 class="mb-3">Rate Control</h4>
-<div class="row g-2">
-<div class="col-md-4"><input id="buyRate" type="number" placeholder="Buy Rate BDT" class="form-control"></div>
-<div class="col-md-4"><input id="sellRate" type="number" placeholder="Sell Rate BDT" class="form-control"></div>
-<div class="col-md-4"><button onclick="updateRate()" class="btn btn-success w-100">Update Rate</button></div>
+<div class="card p-4 mb-4">
+<h4 class="mb-3">⚡ Rate Control</h4>
+<div class="row g-3">
+<div class="col-md-4">
+<label>Buy Rate BDT</label>
+<input id="buyRate" type="number" class="form-control bg-dark text-white border-secondary">
 </div>
-<small class="text-success">Update করলেই Home + Exchange Page এ Auto Update হবে</small>
+<div class="col-md-4">
+<label>Sell Rate BDT</label>
+<input id="sellRate" type="number" class="form-control bg-dark text-white border-secondary">
+</div>
+<div class="col-md-4 d-flex align-items-end">
+<button onclick="updateRate()" class="btn btn-success w-100">Update Rate</button>
+</div>
+</div>
+<small class="text-success mt-2 d-block">Update করলেই Home + Exchange Page এ Auto Update হবে</small>
 </div>
 
 <!-- 3. Orders -->
-<div class="card p-3">
-<h4 class="mb-3">New Orders</h4>
+<div class="card p-4">
+<h4 class="mb-3">📦 New Orders</h4>
 <div class="table-responsive">
-<table class="table table-dark table-striped">
+<table class="table table-dark table-hover">
 <thead><tr><th>Email</th><th>Amount $</th><th>Type</th><th>Time</th></tr></thead>
-<tbody id="orderTable"><tr><td colspan="4" class="text-center">No Orders Yet</td></tr></tbody>
+<tbody id="orderTable"><tr><td colspan="4" class="text-center text-muted">No Orders Yet</td></tr></tbody>
 </table>
 </div>
 </div>
@@ -58,6 +67,7 @@ body{background:#071826;color:white;}
 </div>
 
 <script>
+// 1. FIREBASE CONFIG
 firebase.initializeApp({
 apiKey:"AIzaSyBC0OA7gEWg1dfVzqVpI1YgbKzNKllz4pg",
 authDomain:"ts-dollar-exchange.firebaseapp.com",
@@ -66,4 +76,54 @@ databaseURL:"https://ts-dollar-exchange-default-rtdb.asia-southeast1.firebasedat
 const auth = firebase.auth();
 const db = firebase.database();
 
-// 
+// 2. LOGIN CHECK
+auth.onAuthStateChanged((user) => {
+if (!user) {
+window.location.href = "login.html"; // Login page er nam change thakle ekhane dao
+}
+});
+
+// 3. LOAD WALLET
+db.ref('stats').on('value',(snap)=>{
+let data = snap.val() || {users:0, dollar:0, bdt:0, profit:0};
+document.getElementById('totalUsers').innerText = data.users;
+document.getElementById('totalDollar').innerText = "$" + data.dollar;
+document.getElementById('totalBDT').innerText = "৳" + data.bdt;
+document.getElementById('totalProfit').innerText = "৳" + data.profit;
+});
+
+// 4. LOAD + UPDATE RATE
+db.ref('rates').on('value',(snap)=>{
+let data=snap.val() || {buy:120,sell:122};
+document.getElementById('buyRate').value=data.buy;
+document.getElementById('sellRate').value=data.sell;
+});
+
+function updateRate(){
+let buy=document.getElementById('buyRate').value;
+let sell=document.getElementById('sellRate').value;
+if(buy=="" || sell==""){alert("Rate khali rakha jabe na"); return;}
+db.ref('rates').set({buy:Number(buy),sell:Number(sell)})
+.then(()=>{alert("✅ Rate Updated Successfully!")})
+.catch((err)=>{alert("Error: " + err.message)});
+}
+
+// 5. LOAD ORDERS
+db.ref('orders').limitToLast(20).on('child_added',(snap)=>{
+let o=snap.val();
+if(document.getElementById('orderTable').innerHTML.includes("No Orders")){ 
+document.getElementById('orderTable').innerHTML = ""; 
+}
+let type = o.type || "N/A";
+let time = o.time || "N/A";
+let row = `<tr><td>${o.email}</td><td>${o.amount}</td><td>${type}</td><td>${time}</td></tr>`;
+document.getElementById('orderTable').innerHTML = row + document.getElementById('orderTable').innerHTML;
+});
+
+// 6. LOGOUT
+function logout(){
+auth.signOut().then(()=>{window.location.href="login.html";});
+}
+</script>
+</body>
+</html>
