@@ -131,15 +131,33 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
 <script type="module" src="script.js"></script>
 
-<!-- এই JS টা Link এর জন্য জরুরি -->
+</script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 <script>
-document.getElementById("startExchangeBtn").addEventListener("click", function(e){
-    const wallet = document.getElementById("sendWallet").value;
-    const amount = document.getElementById("sendAmount").value;
-    if(amount <= 0){ alert("Please enter amount"); e.preventDefault(); return; }
-    this.href = `order.html?wallet=${wallet}&amount=${amount}`;
+firebase.initializeApp({
+apiKey:"AIzaSyBC0OA7gEWg1dfVzqVpI1YgbKzNKllz4pg",
+authDomain:"ts-dollar-exchange.firebaseapp.com",
+databaseURL:"https://ts-dollar-exchange-default-rtdb.asia-southeast1.firebasedatabase.app"
+});
+const db = firebase.database();
+
+// 4 Wallet Rate Auto Load
+db.ref('rates/wallets').on('value',(snap)=>{
+let data = snap.val() || {};
+// Example: তোমার HTML এ যেখানে Show করবা সেখানে ID দিতে হবে
+if(document.getElementById('usdBuy')) document.getElementById('usdBuy').innerText = data.USD?.buy || 120;
+if(document.getElementById('usdSell')) document.getElementById('usdSell').innerText = data.USD?.sell || 122;
+
+if(document.getElementById('pioneerBuy')) document.getElementById('pioneerBuy').innerText = data.Payoneer?.buy || 128;
+if(document.getElementById('pioneerSell')) document.getElementById('pioneerSell').innerText = data.Payoneer?.sell || 131;
+
+if(document.getElementById('wiseBuy')) document.getElementById('wiseBuy').innerText = data.Wise?.buy || 129;
+if(document.getElementById('wiseSell')) document.getElementById('wiseSell').innerText = data.Wise?.sell || 133;
+
+if(document.getElementById('skrillBuy')) document.getElementById('skrillBuy').innerText = data.Skrill?.buy || 127;
+if(document.getElementById('skrillSell')) document.getElementById('skrillSell').innerText = data.Skrill?.sell || 130;
 });
 </script>
-
 </body>
 </html>
