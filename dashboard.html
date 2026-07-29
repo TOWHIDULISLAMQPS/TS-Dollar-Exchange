@@ -24,7 +24,6 @@ body{background:#071826;color:white;}
 <div class="container mt-4">
 <h2 class="text-center mb-4">Admin Dashboard ✅</h2>
 
-<!-- 1. Wallet Stats -->
 <div class="row g-3 mb-4">
 <div class="col-6 col-lg-3"><div class="card p-3 text-center"><h6>Total Users</h6><h2 id="totalUsers">0</h2></div></div>
 <div class="col-6 col-lg-3"><div class="card p-3 text-center"><h6>Total Dollar</h6><h2 id="totalDollar">$0</h2></div></div>
@@ -32,7 +31,6 @@ body{background:#071826;color:white;}
 <div class="col-6 col-lg-3"><div class="card p-3 text-center"><h6>Total Profit</h6><h2 id="totalProfit">৳0</h2></div></div>
 </div>
 
-<!-- 2. 4 WALLET RATE CONTROL -->
 <div class="card p-4 mb-4">
 <h4 class="mb-3">⚡ Wallet Rate Control</h4>
 <div id="rateControls"></div>
@@ -40,13 +38,12 @@ body{background:#071826;color:white;}
 <small class="text-success mt-2 d-block text-center">Update করলে সব জায়গায় Auto Change হবে</small>
 </div>
 
-<!-- 3. Orders -->
 <div class="card p-4">
 <h4 class="mb-3">📦 New Orders</h4>
 <div class="table-responsive">
 <table class="table table-dark table-hover">
 <thead><tr><th>Email</th><th>Wallet</th><th>Amount $</th><th>Type</th><th>Time</th></tr></thead>
-<tbody id="orderTable"><tr><td colspan="5" class="text-center text-muted">No Orders Yet</td></tr></tbody>
+<tbody id="orderTable"><tr><td colspan="5" class="text-center text-muted">Loading...</td></tr></tbody>
 </table>
 </div>
 </div>
@@ -61,7 +58,7 @@ databaseURL:"https://ts-dollar-exchange-default-rtdb.asia-southeast1.firebasedat
 });
 const auth = firebase.auth();
 const db = firebase.database();
-const wallets = ["USDT", "Payoneer", "Wise", "Skrill"]; // <-- শুধু এখানে USD থেকে USDT করলাম
+const wallets = ["USDT", "Payoneer", "Wise", "Skrill"]; // <-- শুধু এখানে USD থেকে USDT
 
 auth.onAuthStateChanged((user) => {if (!user) {window.location.href = "login.html";}});
 
@@ -74,10 +71,11 @@ let data=snap.val()||{};
 let html="";
 wallets.forEach(w=>{
 let buy=data[w]?.buy||120;
-let sell=data[w]?.sell||122;
+let sell=data[snap.val()?.[w]?'']?.sell||122; // fix
+sell=data[w]?.sell||122;
 html+=`
-<div class="mb-3 p-3 border-secondary rounded">
-<h5 class="text-warning">${w} ${w === 'USDT' ? '' : 'USD'}</h5>
+<div class="mb-3 p-3 border border-secondary rounded">
+<h5 class="text-warning">${w} ${w == 'USDT' ? '' : 'USD'}</h5>
 <div class="row g-3">
 <div class="col-6"><label>Buy Rate BDT</label><input id="${w}_buy" type="number" value="${buy}" class="form-control bg-dark text-white"></div>
 <div class="col-6"><label>Sell Rate BDT</label><input id="${w}_sell" type="number" value="${sell}" class="form-control bg-dark text-white"></div>
@@ -97,7 +95,7 @@ db.ref('rates/wallets').set(newRates).then(()=>{alert("✅ All 4 Wallet Rates Up
 }
 
 // 4. LOAD ORDERS
-db.ref('orders').limitToLast(20).on('child_added',(snap)=>{let o=snap.val();if(document.getElementById('orderTable').innerHTML.includes("No Orders")){document.getElementById('orderTable').innerHTML = "";}
+db.ref('orders').limitToLast(20).on('child_added',(snap)=>{let o=snap.val();if(document.getElementById('orderTable').innerHTML.includes("No Orders") || document.getElementById('orderTable').innerHTML.includes("Loading")){document.getElementById('orderTable').innerHTML = "";}
 document.getElementById('orderTable').innerHTML=`<tr><td>${o.email||'N/A'}</td><td>${o.wallet||'N/A'}</td><td>${o.amount}</td><td>${o.type || "N/A"}</td><td>${o.time || "N/A"}</td></tr>` + document.getElementById('orderTable').innerHTML;});
 
 // 5. LOGOUT
