@@ -261,58 +261,36 @@ function goToOrder(){
   }));
   window.location.href = 'order.html';
 }
-// TEST MODE - SUDHU DEKHTE PABA, FIREBASE E JABE NA
-const testNames = ["Arafat Islam", "Mst. Jannat", "Kazi Rahman", "Sabrina Akter", "Naimul Haque", "Fatema Begum", "Tanvir Ahmed", "Roksana Parvin", "Hasibul Hasan", "Nasima Khatun", "Shakil Khan", "Tania Sultana", "Mahmudul Karim", "Sharmin Akhi", "Imran Hossain", "Rafiqul Islam", "Lima Akter", "Sojib Mia", "Nusrat Jahan", "Al Amin"];
+  
+<script>
+// ========== TEST MODE START ==========
+// LIVE KORAR SOMOY NICHER 2 TA LINE // DIYE COMMENT KORE DIBA
+const TEST_MODE = true; 
+
+if(TEST_MODE){
+const testNames = ["Arafat Islam", "Mst. Jannat", "Kazi Rahman", "Sabrina Akter", "Naimul Haque", "Fatema Begum", "Tanvir Ahmed", "Roksana Parvin", "Hasibul Hasan", "Nasima Khatun", "Shakil Khan", "Tania Sultana", "Mahmudul Karim", "Sharmin Akhi", "Imran Hossain"];
 let usedNames = [];
-
-function getRandomName() {
-  let available = testNames.filter(n => !usedNames.includes(n));
-  if(available.length === 0) usedNames = [];
-  let name = available[Math.floor(Math.random() * available.length)];
-  usedNames.push(name);
-  return name;
-}
-
-function timeAgoText(minutes) {
-  if(minutes < 60) return minutes + " minutes ago";
-  if(minutes < 1440) return Math.floor(minutes/60) + " hour ago";
-  return Math.floor(minutes/1440) + " days ago";
-}
-
-function renderTestOrders() {
-  const recentOrderList = document.getElementById('recentOrderList');
-  const demoData = [
-    {name: getRandomName(), send: 164, status: 'pending', time: 3},
-    {name: getRandomName(), send: 152, status: 'processing', time: 25},
-    {name: getRandomName(), send: 325, status: 'completed', time: 60},
-    {name: getRandomName(), send: 489, status: 'completed', time: 180},
-    {name: getRandomName(), send: 133, status: 'completed', time: 300}
+function getName(){ let a = testNames.filter(n => !usedNames.includes(n)); if(a.length==0) usedNames=[]; let n=a[Math.floor(Math.random()*a.length)]; usedNames.push(n); return n; }
+function ago(m){ if(m<60) return m+" minutes ago"; return Math.floor(m/60)+" hour ago"; }
+function renderTest(){
+  let html=''; let data=[
+    {n:getName(),s:164,st:'pending',t:3},
+    {n:getName(),s:152,st:'processing',t:25},
+    {n:getName(),s:325,st:'completed',t:60},
+    {n:getName(),s:489,st:'completed',t:180},
+    {n:getName(),s:133,st:'completed',t:300}
   ];
-
-  let html = '';
-  demoData.forEach(order => {
-    let badge, itemClass;
-    if(order.status == 'pending'){ badge = `<span class="badge badge-danger">Pending</span>`; itemClass = 'order-item pending'; }
-    else if(order.status == 'processing'){ badge = `<span class="badge badge-warning">Processing</span>`; itemClass = 'order-item processing'; }
-    else{ badge = `<span class="badge badge-success">Completed</span>`; itemClass = 'order-item'; }
-
-    html += `<div class="${itemClass}">
-      <div class="d-flex justify-content-between align-items-center">
-        <div>
-          <b>${order.name}</b><br>
-          <small class="text-muted">${order.send} Payoneer → ${(order.send*125).toFixed(0)} Bkash</small><br>
-          <small><i class="bi bi-clock"></i> ${timeAgoText(order.time)}</small>
-        </div>
-        ${badge}
-      </div>
-    </div>`;
+  data.forEach(o=>{
+    let b=o.st=='pending'?'<span class="badge badge-danger">Pending</span>':o.st=='processing'?'<span class="badge badge-warning">Processing</span>':'<span class="badge badge-success">Completed</span>';
+    let c=o.st=='pending'?'order-item pending':o.st=='processing'?'order-item processing':'order-item';
+    html+=`<div class="${c}"><div class="d-flex justify-content-between"><div><b>${o.n}</b><br><small>${o.s} Payoneer → ${(o.s*125).toFixed(0)} Bkash</small><br><small><i class="bi bi-clock"></i> ${ago(o.t)}</small></div>${b}</div></div>`;
   });
-  recentOrderList.innerHTML = html;
+  document.getElementById('recentOrderList').innerHTML=html;
 }
+renderTest(); setInterval(renderTest,60000);
+}
+// ========== TEST MODE END ==========
 
-// 1 minit por refresh
-renderTestOrders();
-setInterval(renderTestOrders, 60000);
 </script>
 </body>
 </html>
