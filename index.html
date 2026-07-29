@@ -200,12 +200,58 @@ db.ref('rates/wallets').on('value',(snap)=>{
   calculate();
 });
 
-// FIREBASE: LOAD ORDERS LIVE
-db.ref('orders').orderByChild('timestamp').limitToLast(5).on('value', snap=>{
+// TEST MODE - SUDHU DEKHTE PABA, FIREBASE E JABE NA
+const testNames = ["Arafat Islam", "Mst. Jannat", "Kazi Rahman", "Sabrina Akter", "Naimul Haque", "Fatema Begum", "Tanvir Ahmed", "Roksana Parvin", "Hasibul Hasan", "Nasima Khatun", "Shakil Khan", "Tania Sultana", "Mahmudul Karim", "Sharmin Akhi", "Imran Hossain", "Rafiqul Islam", "Lima Akter", "Sojib Mia", "Nusrat Jahan", "Al Amin"];
+let usedNames = [];
+
+function getRandomName() {
+  let available = testNames.filter(n => !usedNames.includes(n));
+  if(available.length === 0) usedNames = [];
+  let name = available[Math.floor(Math.random() * available.length)];
+  usedNames.push(name);
+  return name;
+}
+
+function timeAgoText(minutes) {
+  if(minutes < 60) return minutes + " minutes ago";
+  if(minutes < 1440) return Math.floor(minutes/60) + " hour ago";
+  return Math.floor(minutes/1440) + " days ago";
+}
+
+function renderTestOrders() {
+  const recentOrderList = document.getElementById('recentOrderList');
+  const demoData = [
+    {name: getRandomName(), send: 164, status: 'pending', time: 3},
+    {name: getRandomName(), send: 152, status: 'processing', time: 25},
+    {name: getRandomName(), send: 325, status: 'completed', time: 60},
+    {name: getRandomName(), send: 489, status: 'completed', time: 180},
+    {name: getRandomName(), send: 133, status: 'completed', time: 300}
+  ];
+
   let html = '';
-  if(!snap.exists()){ recentOrderList.innerHTML='<p class="text-center text-muted">No orders yet</p>'; return; }
-  let orders = [];
-  snap.forEach(child=>{ orders.unshift({id:child.key,...child.val()}); });
+  demoData.forEach(order => {
+    let badge, itemClass;
+    if(order.status == 'pending'){ badge = `<span class="badge badge-danger">Pending</span>`; itemClass = 'order-item pending'; }
+    else if(order.status == 'processing'){ badge = `<span class="badge badge-warning">Processing</span>`; itemClass = 'order-item processing'; }
+    else{ badge = `<span class="badge badge-success">Completed</span>`; itemClass = 'order-item'; }
+
+    html += `<div class="${itemClass}">
+      <div class="d-flex justify-content-between align-items-center">
+        <div>
+          <b>${order.name}</b><br>
+          <small class="text-muted">${order.send} Payoneer → ${(order.send*125).toFixed(0)} Bkash</small><br>
+          <small><i class="bi bi-clock"></i> ${timeAgoText(order.time)}</small>
+        </div>
+        ${badge}
+      </div>
+    </div>`;
+  });
+  recentOrderList.innerHTML = html;
+}
+
+// 1 minit por refresh
+renderTestOrders();
+setInterval(renderTestOrders, 60000);
 
   orders.forEach((order, index) => {
     let badge, itemClass;
