@@ -43,7 +43,7 @@ body{background:#071826;color:white;}
 <div class="table-responsive">
 <table class="table table-dark table-hover">
 <thead><tr><th>Email</th><th>Wallet</th><th>Amount $</th><th>Type</th><th>Time</th></tr></thead>
-<tbody id="orderTable"><tr><td colspan="5" class="text-center text-muted">Loading...</td></tr></tbody>
+<tbody id="orderTable"><tr><td colspan="5" class="text-center text-muted">No Orders Yet</td></tr></tbody>
 </table>
 </div>
 </div>
@@ -58,24 +58,21 @@ databaseURL:"https://ts-dollar-exchange-default-rtdb.asia-southeast1.firebasedat
 });
 const auth = firebase.auth();
 const db = firebase.database();
-const wallets = ["USDT", "Payoneer", "Wise", "Skrill"]; // <-- শুধু এখানে USD থেকে USDT
+const wallets = ["USDT", "Payoneer", "Wise", "Skrill"]; // <-- এখানে শুধু USD কে USDT করছি
 
 auth.onAuthStateChanged((user) => {if (!user) {window.location.href = "login.html";}});
 
-// 1. LOAD STATS
 db.ref('stats').on('value',(snap)=>{let d=snap.val()||{users:0,dollar:0,bdt:0,profit:0};document.getElementById('totalUsers').innerText=d.users;document.getElementById('totalDollar').innerText="$"+d.dollar;document.getElementById('totalBDT').innerText="৳"+d.bdt;document.getElementById('totalProfit').innerText="৳"+d.profit;});
 
-// 2. LOAD 4 WALLET RATES
 db.ref('rates/wallets').on('value',(snap)=>{
 let data=snap.val()||{};
 let html="";
 wallets.forEach(w=>{
 let buy=data[w]?.buy||120;
-let sell=data[snap.val()?.[w]?'']?.sell||122; // fix
-sell=data[w]?.sell||122;
+let sell=data[w]?.sell||122;
 html+=`
-<div class="mb-3 p-3 border border-secondary rounded">
-<h5 class="text-warning">${w} ${w == 'USDT' ? '' : 'USD'}</h5>
+<div class="mb-3 p-3 border-secondary rounded">
+<h5 class="text-warning">${w} ${w==='USDT'?'':'USD'}</h5>
 <div class="row g-3">
 <div class="col-6"><label>Buy Rate BDT</label><input id="${w}_buy" type="number" value="${buy}" class="form-control bg-dark text-white"></div>
 <div class="col-6"><label>Sell Rate BDT</label><input id="${w}_sell" type="number" value="${sell}" class="form-control bg-dark text-white"></div>
@@ -85,7 +82,6 @@ html+=`
 document.getElementById('rateControls').innerHTML=html;
 });
 
-// 3. UPDATE ALL RATES
 function updateAllRates(){
 let newRates={};
 wallets.forEach(w=>{
@@ -94,11 +90,9 @@ newRates[w]={buy:Number(document.getElementById(w+'_buy').value), sell:Number(do
 db.ref('rates/wallets').set(newRates).then(()=>{alert("✅ All 4 Wallet Rates Updated!")});
 }
 
-// 4. LOAD ORDERS
-db.ref('orders').limitToLast(20).on('child_added',(snap)=>{let o=snap.val();if(document.getElementById('orderTable').innerHTML.includes("No Orders") || document.getElementById('orderTable').innerHTML.includes("Loading")){document.getElementById('orderTable').innerHTML = "";}
+db.ref('orders').limitToLast(20).on('child_added',(snap)=>{let o=snap.val();if(document.getElementById('orderTable').innerHTML.includes("No Orders Yet")){document.getElementById('orderTable').innerHTML = "";}
 document.getElementById('orderTable').innerHTML=`<tr><td>${o.email||'N/A'}</td><td>${o.wallet||'N/A'}</td><td>${o.amount}</td><td>${o.type || "N/A"}</td><td>${o.time || "N/A"}</td></tr>` + document.getElementById('orderTable').innerHTML;});
 
-// 5. LOGOUT
 function logout(){auth.signOut().then(()=>{window.location.href="login.html";});}
 </script>
 </body>
