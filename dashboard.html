@@ -10,9 +10,6 @@ body{background:#071826;color:white;}
 .navbar{background:#0d6efd;}
 .card{background:#1a2b3c;color:white;border:none;border-radius:15px;}
 </style>
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 </head>
 <body>
 
@@ -26,7 +23,7 @@ body{background:#071826;color:white;}
 
 <div class="row g-3 mb-4">
 <div class="col-6 col-lg-3"><div class="card p-3 text-center"><h6>Total Users</h6><h2 id="totalUsers">0</h2></div></div>
-<div class="col-6 col-lg-3"><div class="card p-3 text-center"><h6>Total Dollar</h6><h2 id="totalDollar">$0</h2></div></div>
+<div class="col-6 col-lg-3"><div class="card p-3 text-center"><h6>Total USDT</h6><h2 id="totalDollar">0</h2></div></div> <!-- USD > USDT -->
 <div class="col-6 col-lg-3"><div class="card p-3 text-center"><h6>Total BDT</h6><h2 id="totalBDT">৳0</h2></div></div>
 <div class="col-6 col-lg-3"><div class="card p-3 text-center"><h6>Total Profit</h6><h2 id="totalProfit">৳0</h2></div></div>
 </div>
@@ -42,13 +39,18 @@ body{background:#071826;color:white;}
 <h4 class="mb-3">📦 New Orders</h4>
 <div class="table-responsive">
 <table class="table table-dark table-hover">
-<thead><tr><th>Email</th><th>Wallet</th><th>Amount $</th><th>Type</th><th>Time</th></tr></thead>
+<thead><tr><th>Email</th><th>Wallet</th><th>Amount</th><th>Type</th><th>Time</th></tr></thead> <!-- $ উঠাই দিলাম -->
 <tbody id="orderTable"><tr><td colspan="5" class="text-center text-muted">No Orders Yet</td></tr></tbody>
 </table>
 </div>
 </div>
 
 </div>
+
+<!-- NEW CDN - Github e eta cholbe -->
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
 
 <script>
 firebase.initializeApp({
@@ -58,11 +60,17 @@ databaseURL:"https://ts-dollar-exchange-default-rtdb.asia-southeast1.firebasedat
 });
 const auth = firebase.auth();
 const db = firebase.database();
-const wallets = ["USDT", "Payoneer", "Wise", "Skrill"]; // <-- এখানে শুধু USD কে USDT করছি
+const wallets = ["USDT", "Payoneer", "Wise", "Skrill"]; // USD > USDT
 
 auth.onAuthStateChanged((user) => {if (!user) {window.location.href = "login.html";}});
 
-db.ref('stats').on('value',(snap)=>{let d=snap.val()||{users:0,dollar:0,bdt:0,profit:0};document.getElementById('totalUsers').innerText=d.users;document.getElementById('totalDollar').innerText="$"+d.dollar;document.getElementById('totalBDT').innerText="৳"+d.bdt;document.getElementById('totalProfit').innerText="৳"+d.profit;});
+db.ref('stats').on('value',(snap)=>{
+let d=snap.val()||{users:0,dollar:0,bdt:0,profit:0};
+document.getElementById('totalUsers').innerText=d.users;
+document.getElementById('totalDollar').innerText=d.dollar; // $ sign uthai dilam
+document.getElementById('totalBDT').innerText="৳"+d.bdt;
+document.getElementById('totalProfit').innerText="৳"+d.profit;
+});
 
 db.ref('rates/wallets').on('value',(snap)=>{
 let data=snap.val()||{};
@@ -72,7 +80,7 @@ let buy=data[w]?.buy||120;
 let sell=data[w]?.sell||122;
 html+=`
 <div class="mb-3 p-3 border-secondary rounded">
-<h5 class="text-warning">${w} ${w==='USDT'?'':'USD'}</h5>
+<h5 class="text-warning">${w}</h5> <!-- USD lekhata uthailam -->
 <div class="row g-3">
 <div class="col-6"><label>Buy Rate BDT</label><input id="${w}_buy" type="number" value="${buy}" class="form-control bg-dark text-white"></div>
 <div class="col-6"><label>Sell Rate BDT</label><input id="${w}_sell" type="number" value="${sell}" class="form-control bg-dark text-white"></div>
@@ -90,8 +98,13 @@ newRates[w]={buy:Number(document.getElementById(w+'_buy').value), sell:Number(do
 db.ref('rates/wallets').set(newRates).then(()=>{alert("✅ All 4 Wallet Rates Updated!")});
 }
 
-db.ref('orders').limitToLast(20).on('child_added',(snap)=>{let o=snap.val();if(document.getElementById('orderTable').innerHTML.includes("No Orders Yet")){document.getElementById('orderTable').innerHTML = "";}
-document.getElementById('orderTable').innerHTML=`<tr><td>${o.email||'N/A'}</td><td>${o.wallet||'N/A'}</td><td>${o.amount}</td><td>${o.type || "N/A"}</td><td>${o.time || "N/A"}</td></tr>` + document.getElementById('orderTable').innerHTML;});
+db.ref('orders').limitToLast(20).on('child_added',(snap)=>{
+let o=snap.val();
+if(document.getElementById('orderTable').innerHTML.includes("No Orders Yet")){
+document.getElementById('orderTable').innerHTML = "";
+}
+document.getElementById('orderTable').innerHTML=`<tr><td>${o.email||'N/A'}</td><td>${o.wallet||'N/A'}</td><td>${o.amount}</td><td>${o.type || "N/A"}</td><td>${o.time || "N/A"}</td></tr>` + document.getElementById('orderTable').innerHTML;
+});
 
 function logout(){auth.signOut().then(()=>{window.location.href="login.html";});}
 </script>
