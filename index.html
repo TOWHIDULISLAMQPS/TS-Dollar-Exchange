@@ -200,14 +200,36 @@ db.ref('rates/wallets').on('value',(snap)=>{
   calculate();
 });
 
-// FIREBASE: LOAD ORDERS LIVE
-db.ref('orders').orderByChild('timestamp').limitToLast(5).on('value', snap=>{
-  let html = '';
-  if(!snap.exists()){ recentOrderList.innerHTML='<p class="text-center text-muted">No orders yet</p>'; return; }
-  let orders = [];
-  snap.forEach(child=>{ orders.unshift({id:child.key,...child.val()}); });
+// TEST MODE - SUDHU DEKHTE PABA, FIREBASE E JABE NA
+const testNames = ["Arafat Islam", "Mst. Jannat", "Kazi Rahman", "Sabrina Akter", "Naimul Haque", "Fatema Begum", "Tanvir Ahmed", "Roksana Parvin", "Hasibul Hasan", "Nasima Khatun", "Shakil Khan", "Tania Sultana", "Mahmudul Karim", "Sharmin Akhi", "Imran Hossain", "Rafiqul Islam", "Lima Akter", "Sojib Mia", "Nusrat Jahan", "Al Amin"];
+let usedNames = [];
 
-  orders.forEach((order, index) => {
+function getRandomName() {
+  let available = testNames.filter(n => !usedNames.includes(n));
+  if(available.length === 0) usedNames = [];
+  let name = available[Math.floor(Math.random() * available.length)];
+  usedNames.push(name);
+  return name;
+}
+
+function timeAgoText(minutes) {
+  if(minutes < 60) return minutes + " minutes ago";
+  if(minutes < 1440) return Math.floor(minutes/60) + " hour ago";
+  return Math.floor(minutes/1440) + " days ago";
+}
+
+function renderTestOrders() {
+  const recentOrderList = document.getElementById('recentOrderList');
+  const demoData = [
+    {name: getRandomName(), send: 164, status: 'pending', time: 3},
+    {name: getRandomName(), send: 152, status: 'processing', time: 25},
+    {name: getRandomName(), send: 325, status: 'completed', time: 60},
+    {name: getRandomName(), send: 489, status: 'completed', time: 180},
+    {name: getRandomName(), send: 133, status: 'completed', time: 300}
+  ];
+
+  let html = '';
+  demoData.forEach(order => {
     let badge, itemClass;
     if(order.status == 'pending'){ badge = `<span class="badge badge-danger">Pending</span>`; itemClass = 'order-item pending'; }
     else if(order.status == 'processing'){ badge = `<span class="badge badge-warning">Processing</span>`; itemClass = 'order-item processing'; }
@@ -217,64 +239,20 @@ db.ref('orders').orderByChild('timestamp').limitToLast(5).on('value', snap=>{
       <div class="d-flex justify-content-between align-items-center">
         <div>
           <b>${order.name}</b><br>
-          <small class="text-muted">${order.sendAmount} ${wallets[order.sendWallet].name} → ${order.getAmount} ${wallets[order.getWallet].name}</small><br>
-          <small><i class="bi bi-clock"></i> ${new Date(order.timestamp).toLocaleTimeString('bn-BD')}</small>
+          <small class="text-muted">${order.send} Payoneer → ${(order.send*125).toFixed(0)} Bkash</small><br>
+          <small><i class="bi bi-clock"></i> ${timeAgoText(order.time)}</small>
         </div>
         ${badge}
       </div>
     </div>`;
   });
   recentOrderList.innerHTML = html;
-});
-
-function renderWallets(){
-  let sendHtml = '', getHtml = '';
-  for(let key in wallets){
-    sendHtml += `<div class="col-3 col-lg-1-5"><div class="wallet-card ${selectedSend==key?'selected':''}" onclick="selectSend('${key}')"><div class="wallet-icon" style="background:${wallets[key].color}; color:#fff">${wallets[key].icon}</div><small>${wallets[key].name}</small></div></div>`;
-    getHtml += `<div class="col-3 col-lg-1-5"><div class="wallet-card ${selectedGet==key?'selected':''}" onclick="selectGet('${key}')"><div class="wallet-icon" style="background:${wallets[key].color}; color:#fff">${wallets[key].icon}</div><small>${wallets[key].name}</small></div></div>`;
-  }
-  sendWallets.innerHTML = sendHtml;
-  getWallets.innerHTML = getHtml;
 }
 
-function renderRates(){
-  let html = '';
-  const usdWallets = ['usdt','payoneer','wise','skrill'];
-  usdWallets.forEach(key => {
-    if(rates[key]){
-      html += `<div class="rate-item d-flex justify-content-between align-items-center">
-        <div class="d-flex align-items-center gap-2"><div class="wallet-icon" style="background:${wallets[key].color}; color:#fff; width:35px; height:35px; font-size:16px">${wallets[key].icon}</div><span class="fw-bold">${wallets[key].name}</span></div>
-        <div><span class="text-success fw-bold">Buy: ${rates[key].buy} ৳</span><span class="mx-2">|</span><span class="text-danger fw-bold">Sell: ${rates[key].sell} ৳</span></div>
-      </div>`;
-    }
-  });
-  rateList.innerHTML = html || '<p class="text-center text-danger">Admin থেকে Rate Set করেন</p>';
-}
-
-function selectSend(key){ selectedSend = key; sendCurrency.innerText = wallets[key].type; renderWallets(); calculate(); }
-function selectGet(key){ selectedGet = key; getCurrency.innerText = wallets[key].type; renderWallets(); calculate(); }
-function swapWallets(){ let temp = selectedSend; selectedSend = selectedGet; selectedGet = temp; renderWallets(); calculate(); }
-
-function calculate(){
-  let amount = parseFloat(sendAmount.value) || 0;
-  if(!rates[selectedSend] ||!rates[selectedGet]) return;
-  let result = 0;
-  if(wallets[selectedSend].type == 'USD' && wallets[selectedGet].type == 'BDT'){ result = amount * rates[selectedSend].sell; }
-  if(wallets[selectedSend].type == 'BDT' && wallets[selectedGet].type == 'USD'){ result = amount / rates[selectedGet].buy; }
-  if(wallets[selectedSend].type == 'USD' && wallets[selectedGet].type == 'USD'){ result = amount * (rates[selectedSend].sell / rates[selectedGet].buy); }
-  if(wallets[selectedSend].type == 'BDT' && wallets[selectedGet].type == 'BDT'){ result = amount * (rates[selectedSend].sell / rates[selectedGet].buy); }
-  getAmount.value = result.toFixed(2);
-}
-sendAmount.addEventListener('input', calculate);
-
-function goToOrder(){
-  if(sendAmount.value <= 0){ alert('Amount দিন'); return; }
-  localStorage.setItem('exchangeData', JSON.stringify({
-    send: { wallet: selectedSend, amount: sendAmount.value },
-    get: { wallet: selectedGet, amount: getAmount.value }
-  }));
-  window.location.href = 'order.html';
-}
+// 1 minit por refresh
+renderTestOrders();
+setInterval(renderTestOrders, 60000);
+  
 </script>
 </body>
 </html>
