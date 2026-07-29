@@ -3,110 +3,126 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Admin Panel - TS Dollar Exchange</title>
+<title>Admin Dashboard</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
 <style>
-body{background:#071826;color:white;}
-.navbar{background:#0d6efd;}
-.card{background:#1a2b3c;color:white;border:none;border-radius:15px;}
+body { background: #1a1d2e; color: #fff; font-family: 'Poppins', sans-serif; }
+.card-dark { background: #24273a; border-radius: 12px; padding: 20px; margin-bottom: 20px; }
+.stat-card { background: #2e3247; padding: 15px; border-radius: 8px; text-align: center; }
+.form-control { background: #2e3247; border: 1px solid #3a3f5c; color: #fff; }
+.form-control:focus { background: #2e3247; color: #fff; border-color: #0d6efd; }
+.btn-success { background: #00a859; border: none; }
+h6 { color: #ffb400; }
 </style>
 </head>
 <body>
 
-<nav class="navbar navbar-dark px-3">
-<span class="navbar-brand fw-bold">TS Dollar Exchange - Admin</span>
-<button onclick="logout()" class="btn btn-danger btn-sm">Logout</button>
-</nav>
+<div class="container py-4">
+  <h3 class="text-center mb-4">Admin Dashboard ✅</h3>
 
-<div class="container mt-4">
-<h2 class="text-center mb-4">Admin Dashboard ✅</h2>
+  <!-- Stats -->
+  <div class="row g-3 mb-4">
+    <div class="col-md-3"><div class="stat-card"><small>Total Users</small><h4 id="totalUsers">0</h4></div></div>
+    <div class="col-md-3"><div class="stat-card"><small>Total USDT</small><h4 id="totalUsdt">0</h4></div></div>
+    <div class="col-md-3"><div class="stat-card"><small>Total BDT</small><h4 id="totalBdt">৳0</h4></div></div>
+    <div class="col-md-3"><div class="stat-card"><small>Total Profit</small><h4 id="totalProfit">৳0</h4></div></div>
+  </div>
 
-<div class="row g-3 mb-4">
-<div class="col-6 col-lg-3"><div class="card p-3 text-center"><h6>Total Users</h6><h2 id="totalUsers">0</h2></div></div>
-<div class="col-6 col-lg-3"><div class="card p-3 text-center"><h6>Total USDT</h6><h2 id="totalDollar">0</h2></div></div> <!-- USD > USDT -->
-<div class="col-6 col-lg-3"><div class="card p-3 text-center"><h6>Total BDT</h6><h2 id="totalBDT">৳0</h2></div></div>
-<div class="col-6 col-lg-3"><div class="card p-3 text-center"><h6>Total Profit</h6><h2 id="totalProfit">৳0</h2></div></div>
+  <!-- Wallet Rate Control -->
+  <div class="card-dark">
+    <h5>⚡ Wallet Rate Control</h5>
+    <div class="row g-3">
+
+      <!-- USD Wallets -->
+      <div class="col-md-6">
+        <h6>USDT</h6>
+        <div class="row"><div class="col-6">Buy Rate BDT <input id="usdt_buy" class="form-control"></div><div class="col-6">Sell Rate BDT <input id="usdt_sell" class="form-control"></div></div>
+      </div>
+      <div class="col-md-6">
+        <h6>Payoneer</h6>
+        <div class="row"><div class="col-6">Buy Rate BDT <input id="payoneer_buy" class="form-control"></div><div class="col-6">Sell Rate BDT <input id="payoneer_sell" class="form-control"></div></div>
+      </div>
+      <div class="col-md-6">
+        <h6>Wise</h6>
+        <div class="row"><div class="col-6">Buy Rate BDT <input id="wise_buy" class="form-control"></div><div class="col-6">Sell Rate BDT <input id="wise_sell" class="form-control"></div></div>
+      </div>
+      <div class="col-md-6">
+        <h6>Skrill</h6>
+        <div class="row"><div class="col-6">Buy Rate BDT <input id="skrill_buy" class="form-control"></div><div class="col-6">Sell Rate BDT <input id="skrill_sell" class="form-control"></div></div>
+      </div>
+
+      <!-- BDT Wallets - NEW -->
+      <div class="col-md-6">
+        <h6>Bkash</h6>
+        <div class="row"><div class="col-6">Buy Rate BDT <input id="bkash_buy" class="form-control"></div><div class="col-6">Sell Rate BDT <input id="bkash_sell" class="form-control"></div></div>
+      </div>
+      <div class="col-md-6">
+        <h6>Nagad</h6>
+        <div class="row"><div class="col-6">Buy Rate BDT <input id="nagad_buy" class="form-control"></div><div class="col-6">Sell Rate BDT <input id="nagad_sell" class="form-control"></div></div>
+      </div>
+      <div class="col-md-6">
+        <h6>Rocket</h6>
+        <div class="row"><div class="col-6">Buy Rate BDT <input id="rocket_buy" class="form-control"></div><div class="col-6">Sell Rate BDT <input id="rocket_sell" class="form-control"></div></div>
+      </div>
+      <div class="col-md-6">
+        <h6>Upay</h6>
+        <div class="row"><div class="col-6">Buy Rate BDT <input id="upay_buy" class="form-control"></div><div class="col-6">Sell Rate BDT <input id="upay_sell" class="form-control"></div></div>
+      </div>
+
+    </div>
+    <button id="updateBtn" class="btn btn-success w-100 mt-3">All Rates Update</button>
+    <div id="msg" class="text-center mt-2"></div>
+  </div>
+
+  <!-- New Orders -->
+  <div class="card-dark">
+    <h5>📦 New Orders</h5>
+    <table class="table table-dark table-sm">
+      <thead><tr><th>Email</th><th>Wallet</th><th>Amount</th><th>Type</th><th>Time</th></tr></thead>
+      <tbody id="ordersTable"></tbody>
+    </table>
+  </div>
+
 </div>
 
-<div class="card p-4 mb-4">
-<h4 class="mb-3">⚡ Wallet Rate Control</h4>
-<div id="rateControls"></div>
-<button onclick="updateAllRates()" class="btn btn-success w-100 mt-3 fw-bold">All Rates Update</button>
-<small class="text-success mt-2 d-block text-center">Update করলে সব জায়গায় Auto Change হবে</small>
-</div>
-
-<div class="card p-4">
-<h4 class="mb-3">📦 New Orders</h4>
-<div class="table-responsive">
-<table class="table table-dark table-hover">
-<thead><tr><th>Email</th><th>Wallet</th><th>Amount</th><th>Type</th><th>Time</th></tr></thead> <!-- $ উঠাই দিলাম -->
-<tbody id="orderTable"><tr><td colspan="5" class="text-center text-muted">No Orders Yet</td></tr></tbody>
-</table>
-</div>
-</div>
-
-</div>
-
-<!-- NEW CDN - Github e eta cholbe -->
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
-
 <script>
-firebase.initializeApp({
-apiKey:"AIzaSyBC0OA7gEWg1dfVzqVpI1YgbKzNKllz4pg",
-authDomain:"ts-dollar-exchange.firebaseapp.com",
-databaseURL:"https://ts-dollar-exchange-default-rtdb.asia-southeast1.firebasedatabase.app"
-});
-const auth = firebase.auth();
+const firebaseConfig = {
+  apiKey:"AIzaSyBC0OA7gEWg1dfVzqVpI1YgbKzNKllz4pg",
+  authDomain:"ts-dollar-exchange.firebaseapp.com",
+  databaseURL:"https://ts-dollar-exchange-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId:"ts-dollar-exchange"
+};
+firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
-const wallets = ["USDT", "Payoneer", "Wise", "Skrill"]; // USD > USDT
 
-auth.onAuthStateChanged((user) => {if (!user) {window.location.href = "login.html";}});
-
-db.ref('stats').on('value',(snap)=>{
-let d=snap.val()||{users:0,dollar:0,bdt:0,profit:0};
-document.getElementById('totalUsers').innerText=d.users;
-document.getElementById('totalDollar').innerText=d.dollar; // $ sign uthai dilam
-document.getElementById('totalBDT').innerText="৳"+d.bdt;
-document.getElementById('totalProfit').innerText="৳"+d.profit;
-});
-
+// Load Rates
 db.ref('rates/wallets').on('value',(snap)=>{
-let data=snap.val()||{};
-let html="";
-wallets.forEach(w=>{
-let buy=data[w]?.buy||120;
-let sell=data[w]?.sell||122;
-html+=`
-<div class="mb-3 p-3 border-secondary rounded">
-<h5 class="text-warning">${w}</h5> <!-- USD lekhata uthailam -->
-<div class="row g-3">
-<div class="col-6"><label>Buy Rate BDT</label><input id="${w}_buy" type="number" value="${buy}" class="form-control bg-dark text-white"></div>
-<div class="col-6"><label>Sell Rate BDT</label><input id="${w}_sell" type="number" value="${sell}" class="form-control bg-dark text-white"></div>
-</div>
-</div>`
-});
-document.getElementById('rateControls').innerHTML=html;
+  let data = snap.val() || {};
+  for(let key in data){
+    if(document.getElementById(key+'_buy')) document.getElementById(key+'_buy').value = data[key].buy;
+    if(document.getElementById(key+'_sell')) document.getElementById(key+'_sell').value = data[key].sell;
+  }
 });
 
-function updateAllRates(){
-let newRates={};
-wallets.forEach(w=>{
-newRates[w]={buy:Number(document.getElementById(w+'_buy').value), sell:Number(document.getElementById(w+'_sell').value)};
+// Update Rates
+document.getElementById('updateBtn').addEventListener('click', ()=>{
+  const rates = {
+    usdt: { buy: usdt_buy.value, sell: usdt_sell.value },
+    payoneer: { buy: payoneer_buy.value, sell: payoneer_sell.value },
+    wise: { buy: wise_buy.value, sell: wise_sell.value },
+    skrill: { buy: skrill_buy.value, sell: skrill_sell.value },
+    bkash: { buy: bkash_buy.value, sell: bkash_sell.value },
+    nagad: { buy: nagad_buy.value, sell: nagad_sell.value },
+    rocket: { buy: rocket_buy.value, sell: rocket_sell.value },
+    upay: { buy: upay_buy.value, sell: upay_sell.value }
+  };
+  db.ref('rates/wallets').set(rates).then(()=>{
+    msg.innerHTML = '<div class="alert alert-success">Update হয়েছে!</div>';
+    setTimeout(()=> msg.innerHTML='', 2000);
+  });
 });
-db.ref('rates/wallets').set(newRates).then(()=>{alert("✅ All 4 Wallet Rates Updated!")});
-}
-
-db.ref('orders').limitToLast(20).on('child_added',(snap)=>{
-let o=snap.val();
-if(document.getElementById('orderTable').innerHTML.includes("No Orders Yet")){
-document.getElementById('orderTable').innerHTML = "";
-}
-document.getElementById('orderTable').innerHTML=`<tr><td>${o.email||'N/A'}</td><td>${o.wallet||'N/A'}</td><td>${o.amount}</td><td>${o.type || "N/A"}</td><td>${o.time || "N/A"}</td></tr>` + document.getElementById('orderTable').innerHTML;
-});
-
-function logout(){auth.signOut().then(()=>{window.location.href="login.html";});}
 </script>
 </body>
 </html>
