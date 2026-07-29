@@ -16,6 +16,7 @@
 body { background: #f8f9fa; font-family: 'Poppins', sans-serif; }
 .exchange-card { background:#fff; padding:40px; border-radius:16px; box-shadow:0 10px 30px rgba(0,0,0,0.1); margin-top:50px; }
 .navbar-brand { font-weight: 700; color: #0d6efd!important; }
+.summary-box { background: #f0fdf4; border: 2px solid #10b981; border-radius: 12px; padding: 15px; margin-bottom: 20px; }
 </style>
 
 </head>
@@ -24,7 +25,7 @@ body { background: #f8f9fa; font-family: 'Poppins', sans-serif; }
 <!-- NAVBAR -->
 <nav class="navbar navbar-expand-lg bg-white shadow-sm">
 <div class="container">
-<a class="navbar-brand fs-3" href="index.html">TS Dollar Exchange</a>
+<a class="navbar-brand fs-3" href="index.html"><i class="fa fa-shield-halved text-warning"></i> TS Dollar Exchange</a>
 <a href="index.html" class="btn btn-outline-primary">Back to Home</a>
 </div>
 </nav>
@@ -35,6 +36,13 @@ body { background: #f8f9fa; font-family: 'Poppins', sans-serif; }
 <div class="col-lg-6">
 <div class="exchange-card">
 <h3 class="text-center mb-4">Complete Your Order</h3>
+
+<!-- ORDER SUMMARY -->
+<div id="orderSummary" class="summary-box" style="display:none;">
+  <h6 class="fw-bold mb-2"><i class="fa fa-info-circle text-success"></i> Order Summary</h6>
+  <p class="mb-1">Send: <b id="summarySend"></b></p>
+  <p class="mb-0">Receive: <b id="summaryGet"></b></p>
+</div>
 
 <form id="orderForm">
 <div class="mb-3">
@@ -49,25 +57,27 @@ body { background: #f8f9fa; font-family: 'Poppins', sans-serif; }
 
 <div class="mb-3">
 <label class="form-label">You Send</label>
-<select id="walletType" class="form-select"></select>
+<input id="sendWallet" class="form-control" readonly>
 </div>
 
 <div class="mb-3">
-<label class="form-label">Amount USD</label>
-<input id="usdAmount" type="number" class="form-control" readonly>
+<label class="form-label">Amount</label>
+<input id="sendAmount" type="number" class="form-control" readonly>
 </div>
 
 <div class="mb-3">
 <label class="form-label">You Will Receive</label>
-<input id="resultBDT" type="text" class="form-control" readonly>
+<input id="getWallet" class="form-control" readonly>
+<input id="getAmount" type="text" class="form-control mt-2" readonly>
 </div>
 
 <div class="mb-4">
 <label class="form-label">Your Wallet Address / Email</label>
-<input type="text" id="walletAddress" class="form-control" placeholder="Payoneer/Wise Email" required>
+<input type="text" id="walletAddress" class="form-control" placeholder="Payoneer/Wise/Bkash Number" required>
 </div>
 
-<button type="submit" class="btn btn-success w-100 btn-lg">Confirm & Submit Order</button>
+<button type="submit" class="btn btn-success w-100 btn-lg fw-bold">Confirm & Submit Order</button>
+<p id="submitMsg" class="text-center mt-3"></p>
 </form>
 
 </div>
@@ -75,7 +85,8 @@ body { background: #f8f9fa; font-family: 'Poppins', sans-serif; }
 </div>
 </div>
 
-<script type="module" src="firebase.js"></script>
-<script type="module" src="order.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+<script src="order.js"></script>
 </body>
 </html>
