@@ -19,8 +19,8 @@ body{background:#071826;display:flex;justify-content:center;align-items:center;h
 <p id="status" class="text-center mt-3"></p>
 </div>
 
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
 <script>
 const firebaseConfig = {
 apiKey:"AIzaSyBC0OA7gEWg1dfVzqVpI1YgbKzNKllz4pg",
@@ -31,21 +31,16 @@ projectId:"ts-dollar-exchange"
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 
-const status = document.getElementById('status');
-
 document.getElementById('loginBtn').onclick = ()=>{
 let email = document.getElementById('email').value;
 let pass = document.getElementById('password').value;
-status.className = "text-warning text-center mt-3";
-status.innerText = "Loading...";
+document.getElementById('status').innerText = "Loading...";
 
 auth.signInWithEmailAndPassword(email, pass).then(()=>{
-status.className = "text-success text-center mt-3";
-status.innerText = "Login Success! Redirecting...";
-setTimeout(()=>{window.location.href = "dashboard.html"}, 1000);
+window.location.href = "dashboard.html";
 }).catch((error)=>{
-status.className = "text-danger text-center mt-3";
-status.innerText = "Error: " + error.message; // এখানে Error দেখাবে
+document.getElementById('status').className = "text-danger text-center mt-3";
+document.getElementById('status').innerText = error.message;
 });
 }
 </script>
