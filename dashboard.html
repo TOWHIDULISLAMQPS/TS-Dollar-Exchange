@@ -2,70 +2,50 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Admin Dashboard</title>
+<title>Admin Panel - TS Dollar Exchange</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 <style>
-body { background: #1a1d2e; color: #fff; font-family: 'Poppins', sans-serif; }
-.card-dark { background: #24273a; border-radius: 12px; padding: 20px; margin-bottom: 20px; }
-.stat-card { background: #2e3247; padding: 15px; border-radius: 8px; text-align: center; }
-.form-control { background: #2e3247; border: 1px solid #3a3f5c; color: #fff; }
-.form-control:focus { background: #2e3247; color: #fff; border-color: #0d6efd; }
-.btn-success { background: #00a859; border: none; }
-h6 { color: #ffb400; }
-.login-box{width:420px;margin:100px auto;background:#24273a;padding:40px;border-radius:20px;box-shadow:0 0 30px rgba(0,168,89,.3);display:block;}
+body{background:#0f172a;color:#fff;font-family:'Poppins',sans-serif;}
+.login-box{width:420px;margin:100px auto;background:#1e293b;padding:40px;border-radius:20px;}
+.card{background:#1e293b;border:1px solid #334155;border-radius:15px;padding:20px;margin-bottom:20px;}
+.form-control{background:#0f172a !important;border:1px solid #334155;color:#fff !important;}
 #dashboardContent{display:none;}
+.table-dark{--bs-table-bg:#0f172a;}
+.badge-pending{background:#f59e0b;} .badge-completed{background:#10b981;}
 </style>
 </head>
 <body>
 
-<!-- LOGIN PAGE -->
+<!-- LOGIN -->
 <div id="loginPage" class="login-box">
-  <h3 class="text-center mb-4 fw-bold"><i class="bi bi-shield-lock text-success"></i> Admin Login</h3>
-  <input id="email" type="email" placeholder="Admin Email" value="towhidulislamtuhin872@gmail.com" class="form-control mb-3">
+  <h3 class="text-center mb-4">🔒 Admin Login</h3>
+  <input id="email" type="email" value="towhidulislamtuhin872@gmail.com" class="form-control mb-3">
   <input id="password" type="password" placeholder="Password" class="form-control mb-3">
-  <button onclick="login()" class="btn btn-success w-100 fw-bold py-2">Login</button>
+  <button onclick="login()" class="btn btn-success w-100 fw-bold">Login</button>
   <p id="loginMsg" class="text-center mt-3"></p>
 </div>
 
-<!-- DASHBOARD CONTENT -->
+<!-- DASHBOARD -->
 <div id="dashboardContent" class="container py-4">
-  <div class="d-flex justify-content-between align-items-center mb-4">
-    <h3>Admin Dashboard ✅</h3>
-    <button class="btn btn-danger btn-sm" onclick="logout()"><i class="bi bi-box-arrow-right"></i> Logout</button>
+  <div class="d-flex justify-content-between mb-4">
+    <h3>TS Admin Dashboard</h3>
+    <button class="btn btn-danger btn-sm" onclick="logout()">Logout</button>
   </div>
 
-  <!-- Stats -->
-  <div class="row g-3 mb-4">
-    <div class="col-md-3"><div class="stat-card"><small>Total Users</small><h4 id="totalUsers">0</h4></div></div>
-    <div class="col-md-3"><div class="stat-card"><small>Total USDT</small><h4 id="totalUsdt">0</h4></div></div>
-    <div class="col-md-3"><div class="stat-card"><small>Total BDT</small><h4 id="totalBdt">৳0</h4></div></div>
-    <div class="col-md-3"><div class="stat-card"><small>Total Profit</small><h4 id="totalProfit">৳0</h4></div></div>
+  <!-- RATE CONTROL -->
+  <div class="card">
+    <h5>⚡ Exchange Rate Control</h5>
+    <p class="text-muted">এখানে Rate Change করলে Main Page এ Auto Update হবে</p>
+    <div id="rateForm"></div>
+    <button class="btn btn-success w-100 mt-3" onclick="updateRates()">Save All Rates</button>
+    <p id="rateStatus" class="mt-2"></p>
   </div>
 
-  <!-- Wallet Rate Control -->
-  <div class="card-dark">
-    <h5>⚡ Wallet Rate Control</h5>
-    <div class="row g-3">
-      <div class="col-md-6"><h6>USDT</h6><div class="row"><div class="col-6">Buy <input id="usdt_buy" class="form-control"></div><div class="col-6">Sell <input id="usdt_sell" class="form-control"></div></div></div>
-      <div class="col-md-6"><h6>Payoneer</h6><div class="row"><div class="col-6">Buy <input id="payoneer_buy" class="form-control"></div><div class="col-6">Sell <input id="payoneer_sell" class="form-control"></div></div></div>
-      <div class="col-md-6"><h6>Wise</h6><div class="row"><div class="col-6">Buy <input id="wise_buy" class="form-control"></div><div class="col-6">Sell <input id="wise_sell" class="form-control"></div></div></div>
-      <div class="col-md-6"><h6>Skrill</h6><div class="row"><div class="col-6">Buy <input id="skrill_buy" class="form-control"></div><div class="col-6">Sell <input id="skrill_sell" class="form-control"></div></div></div>
-      <div class="col-md-6"><h6>Bkash</h6><div class="row"><div class="col-6">Buy <input id="bkash_buy" class="form-control"></div><div class="col-6">Sell <input id="bkash_sell" class="form-control"></div></div></div>
-      <div class="col-md-6"><h6>Nagad</h6><div class="row"><div class="col-6">Buy <input id="nagad_buy" class="form-control"></div><div class="col-6">Sell <input id="nagad_sell" class="form-control"></div></div></div>
-      <div class="col-md-6"><h6>Rocket</h6><div class="row"><div class="col-6">Buy <input id="rocket_buy" class="form-control"></div><div class="col-6">Sell <input id="rocket_sell" class="form-control"></div></div></div>
-      <div class="col-md-6"><h6>Upay</h6><div class="row"><div class="col-6">Buy <input id="upay_buy" class="form-control"></div><div class="col-6">Sell <input id="upay_sell" class="form-control"></div></div></div>
-    </div>
-    <button id="updateBtn" class="btn btn-success w-100 mt-3">All Rates Update</button>
-    <div id="msg" class="text-center mt-2"></div>
-  </div>
-
-  <!-- New Orders -->
-  <div class="card-dark">
+  <!-- ORDERS -->
+  <div class="card">
     <h5>📦 New Orders</h5>
     <table class="table table-dark table-sm">
-      <thead><tr><th>Email</th><th>Wallet</th><th>Amount</th><th>Type</th><th>Time</th></tr></thead>
+      <thead><tr><th>Time</th><th>Customer</th><th>Send</th><th>Get</th><th>Amount</th><th>Action</th></tr></thead>
       <tbody id="ordersTable"></tbody>
     </table>
   </div>
@@ -85,86 +65,83 @@ firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.database();
 
-// Auth State Check
+const wallets = {
+  usdt:"USDT", payoneer:"Payoneer", wise:"Wise", skrill:"Skrill",
+  bkash:"Bkash", nagad:"Nagad", rocket:"Rocket", upay:"Upay"
+};
+
+// Auth Check
 auth.onAuthStateChanged(user => {
-  if(user){
-    showDashboard();
-  } else {
-    document.getElementById('loginPage').style.display = 'block';
-    document.getElementById('dashboardContent').style.display = 'none';
-  }
+  if(user){ showDashboard(); } 
+  else { document.getElementById('loginPage').style.display='block'; }
 })
 
-function login() {
-  const email = document.getElementById('email').value;
-  const password = document.getElementById('password').value;
-  const msg = document.getElementById('loginMsg');
-
-  msg.innerHTML = "Logging in...";
-  msg.className = "text-warning text-center mt-3";
-
-  auth.signInWithEmailAndPassword(email, password)
- .then(() => {
-    msg.innerHTML = "Login Success!";
-    msg.className = "text-success text-center mt-3";
-  })
- .catch((error) => {
-    msg.innerHTML = "Error: " + error.message;
-    msg.className = "text-danger text-center mt-3";
-  });
+function login(){
+  auth.signInWithEmailAndPassword(email.value, password.value)
+  .then(()=>{ loginMsg.innerHTML="Success!"; })
+  .catch(e=>{ loginMsg.innerHTML="Error: "+e.message; loginMsg.className="text-danger"; })
 }
-
+function logout(){ auth.signOut(); }
 function showDashboard(){
-  document.getElementById('loginPage').style.display = 'none';
-  document.getElementById('dashboardContent').style.display = 'block';
-  loadData();
+  document.getElementById('loginPage').style.display='none';
+  document.getElementById('dashboardContent').style.display='block';
+  loadRates(); loadOrders();
 }
 
-function logout(){
-  auth.signOut();
-}
-
-function loadData(){
-  // Load Rates
-  db.ref('rates/wallets').on('value',(snap)=>{
-    let data = snap.val() || {};
-    for(let key in data){
-      if(document.getElementById(key+'_buy')) document.getElementById(key+'_buy').value = data[key].buy;
-      if(document.getElementById(key+'_sell')) document.getElementById(key+'_sell').value = data[key].sell;
+// LOAD RATES TO FORM
+function loadRates(){
+  db.ref('rates/wallets').on('value', snap=>{
+    const rates = snap.val() || {};
+    let html='';
+    for(let key in wallets){
+      html += `<div class="row mb-2">
+        <div class="col-3"><b>${wallets[key]}</b></div>
+        <div class="col-4">Buy: <input id="buy_${key}" value="${rates[key]?.buy || ''}" class="form-control form-control-sm"></div>
+        <div class="col-4">Sell: <input id="sell_${key}" value="${rates[key]?.sell || ''}" class="form-control form-control-sm"></div>
+      </div>`;
     }
-  });
-
-  // Load Orders
-  db.ref('orders').limitToLast(10).on('value', snap=>{
-    let html = '';
-    snap.forEach(child=>{
-      let order = child.val();
-      html = `<tr><td>${order.email || '-'}</td><td>${order.wallet || '-'}</td><td>${order.amount || '-'}</td><td>${order.type || '-'}</td><td>${new Date(order.time).toLocaleString('bn-BD') || '-'}</td></tr>` + html;
-    });
-    document.getElementById('ordersTable').innerHTML = html;
+    document.getElementById('rateForm').innerHTML=html;
   });
 }
 
-// Update Rates
-document.getElementById('updateBtn').addEventListener('click', ()=>{
-  const rates = {
-    usdt: { buy: usdt_buy.value, sell: usdt_sell.value },
-    payoneer: { buy: payoneer_buy.value, sell: payoneer_sell.value },
-    wise: { buy: wise_buy.value, sell: wise_sell.value },
-    skrill: { buy: skrill_buy.value, sell: skrill_sell.value },
-    bkash: { buy: bkash_buy.value, sell: bkash_sell.value },
-    nagad: { buy: nagad_buy.value, sell: nagad_sell.value },
-    rocket: { buy: rocket_buy.value, sell: rocket_sell.value },
-    upay: { buy: upay_buy.value, sell: upay_sell.value }
-  };
-  db.ref('rates/wallets').set(rates).then(()=>{
-    msg.innerHTML = '<div class="alert alert-success">Update হয়েছে!</div>';
-    setTimeout(()=> msg.innerHTML='', 2000);
+// SAVE RATES
+function updateRates(){
+  rateStatus.innerHTML="Saving..."; rateStatus.className="text-warning";
+  let updates={};
+  for(let key in wallets){
+    updates[`rates/wallets/${key}/buy`] = parseFloat(document.getElementById(`buy_${key}`).value);
+    updates[`rates/wallets/${key}/sell`] = parseFloat(document.getElementById(`sell_${key}`).value);
+  }
+  db.ref().update(updates).then(()=>{
+    rateStatus.innerHTML="✅ Rates Updated! Main page এ auto show হবে"; 
+    rateStatus.className="text-success";
   });
-});
+}
 
-// Enter Key
-document.addEventListener('keypress', function(e){ if(e.key === 'Enter'){ login(); } })
+// LOAD ORDERS + RELEASE BUTTON
+function loadOrders(){
+  db.ref('orders').orderByChild('timestamp').limitToLast(20).on('value', snap=>{
+    let html='';
+    snap.forEach(child=>{
+      let o = child.val(); let id = child.key;
+      html = `<tr>
+        <td>${new Date(o.timestamp).toLocaleString('bn-BD')}</td>
+        <td>${o.name}<br><small>${o.email}</small></td>
+        <td>${o.sendAmount} ${o.sendWallet}</td>
+        <td>${o.getAmount} ${o.getWallet}</td>
+        <td>৳${o.bdtAmount}</td>
+        <td>${o.status=='pending'?`<button class="btn btn-sm btn-success" onclick="releaseOrder('${id}')">Release</button>`:`<span class="badge badge-completed">Released</span>`}</td>
+      </tr>` + html;
+    });
+    ordersTable.innerHTML=html;
+  });
+}
+
+function releaseOrder(id){
+  if(confirm("Order Release করবেন?")){
+    db.ref('orders/'+id).update({status:'completed', releasedAt:Date.now()});
+  }
+}
 </script>
 </body>
 </html>
