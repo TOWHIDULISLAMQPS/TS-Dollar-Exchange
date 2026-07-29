@@ -37,7 +37,7 @@ document.getElementById('error').innerText = "Loading...";
 auth.signInWithEmailAndPassword(email, pass).then(()=>{
 window.location.href = "dashboard.html";
 }).catch((error)=>{
-document.getElementById('error').innerText = error.message;
+document.getElementById('error').innerText = error.message; // Error দেখাবে
 });
 })
 </script>
