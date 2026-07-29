@@ -3,49 +3,53 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TS Dollar Exchange - Fast & Secure</title>
+<title>TS Dollar Exchange - Premium Exchange</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 <style>
-body { font-family: 'Poppins', sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; }
-.navbar { background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); }
-.main-card { border-radius: 24px; border: none; box-shadow: 0 20px 60px rgba(0,0,0,0.3); background: #fff; }
-.wallet-card { cursor: pointer; border: 2px solid #e9ecef; transition: 0.3s; border-radius: 12px; padding: 12px; text-align: center; background: #fff; }
-.wallet-card:hover { border-color: #667eea; transform: translateY(-2px); }
-.wallet-card.selected { border-color: #00a859; background: linear-gradient(135deg, #e8f5e9, #d1fae5); }
-.swap-btn { width: 50px; height: 50px; border-radius: 50%; border: none; background: linear-gradient(135deg, #667eea, #764ba2); color: #fff; font-size: 20px; box-shadow: 0 5px 15px rgba(102,126,234,0.4); }
-.input-box { background: #f8f9fa; border-radius: 12px; padding: 15px; border: 1px solid #dee2e6; }
-.rate-table,.recent-orders { background: #f8f9fa; border-radius: 16px; padding: 20px; }
-.rate-item,.order-item { background: #fff; border-radius: 10px; padding: 12px; margin-bottom: 8px; border-left: 4px solid #00a859; animation: fadeIn 0.5s; }
-.order-item.pending { border-left-color: #ffc107; animation: pulse 1.5s infinite; }
-@keyframes fadeIn { from {opacity: 0; transform: translateY(10px);} to {opacity: 1; transform: translateY(0);} }
-@keyframes pulse { 0% {opacity: 1;} 50% {opacity: 0.7;} 100% {opacity: 1;} }
-.contact-box { background: linear-gradient(135deg, #25D366, #128C7E); color: #fff; border-radius: 16px; padding: 20px; text-align: center; }
-.whatsapp-btn { background: #fff; color: #25D366; font-weight: 700; border-radius: 50px; padding: 12px 25px; text-decoration: none; display: inline-block; transition: 0.3s; }
-.whatsapp-btn:hover { transform: scale(1.05); color: #128C7E; }
-.time-ago { font-size: 12px; color: #6c757d; }
-.badge-warning { background: #ffc107; color: #000; }
-.badge-success { background: #00a859; }
+:root { --primary: #6366f1; --success: #10b981; --warning: #f59e0b; }
+body { font-family: 'Inter', sans-serif; background: linear-gradient(135deg, #1e3a8a 0%, #3730a3 50%, #581c87 100%); min-height: 100vh; }
+.navbar { background: rgba(255,255,255,0.08); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(255,255,255,0.1); }
+.navbar-brand { letter-spacing: -0.5px; }
+.main-card { border-radius: 28px; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 25px 70px rgba(0,0,0,0.4); background: rgba(255,255,255,0.98); backdrop-filter: blur(10px); }
+.wallet-card { cursor: pointer; border: 2px solid #e5e7eb; transition: all 0.3s; border-radius: 14px; padding: 14px; text-align: center; background: #fff; font-weight: 600; }
+.wallet-card:hover { border-color: var(--primary); transform: translateY(-3px); box-shadow: 0 8px 20px rgba(99,102,241,0.15); }
+.wallet-card.selected { border-color: var(--success); background: linear-gradient(135deg, #ecfdf5, #d1fae5); box-shadow: 0 0 0 3px rgba(16,185,129,0.2); }
+.swap-btn { width: 52px; height: 52px; border-radius: 50%; border: none; background: linear-gradient(135deg, var(--primary), #8b5cf6); color: #fff; font-size: 20px; box-shadow: 0 8px 20px rgba(99,102,241,0.4); transition: 0.3s; }
+.swap-btn:hover { transform: rotate(180deg); }
+.input-box { background: #f9fafb; border-radius: 14px; padding: 16px; border: 1px solid #e5e7eb; }
+.rate-table,.recent-orders { background: rgba(255,255,255,0.98); border-radius: 20px; padding: 24px; border: 1px solid rgba(0,0,0,0.05); }
+.rate-item,.order-item { background: #fff; border-radius: 12px; padding: 14px; margin-bottom: 10px; border-left: 4px solid var(--success); animation: fadeIn 0.6s; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+.order-item.pending { border-left-color: var(--warning); animation: pulse 2s infinite; }
+@keyframes fadeIn { from {opacity: 0; transform: translateY(12px);} to {opacity: 1; transform: translateY(0);} }
+@keyframes pulse { 0%,100% {opacity: 1;} 50% {opacity: 0.7;} }
+.contact-box { background: linear-gradient(135deg, #10b981, #059669); color: #fff; border-radius: 20px; padding: 24px; text-align: center; box-shadow: 0 10px 30px rgba(16,185,129,0.3); }
+.whatsapp-btn { background: #fff; color: #10b981; font-weight: 700; border-radius: 50px; padding: 14px 28px; text-decoration: none; display: inline-block; transition: 0.3s; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+.whatsapp-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.15); color: #059669; }
+.time-ago { font-size: 12px; color: #6b7280; font-weight: 500; }
+.badge-warning { background: #fef3c7; color: #92400e; font-weight: 600; }
+.badge-success { background: #d1fae5; color: #065f46; font-weight: 600; }
+h3,h5 { font-weight: 800; letter-spacing: -0.5px; }
 </style>
 </head>
 <body>
 
 <nav class="navbar navbar-dark sticky-top">
   <div class="container">
-    <a class="navbar-brand fw-bold fs-3" href="#"><i class="bi bi-cash-coin"></i> TS Dollar Exchange</a>
+    <a class="navbar-brand fw-bold fs-3" href="#"><i class="bi bi-shield-check"></i> TS Dollar Exchange</a>
   </div>
 </nav>
 
 <div class="container my-5">
   <div class="main-card p-4 p-md-5">
-    <h3 class="text-center fw-bold mb-4">⚡ Instant Exchange</h3>
+    <h3 class="text-center mb-4">⚡ Premium Instant Exchange</h3>
 
     <!-- YOU SEND -->
     <div class="mb-4">
       <label class="fw-semibold mb-2">You Send</label>
       <div class="input-box d-flex align-items-center mb-3">
-        <input type="number" id="sendAmount" class="form-control border-0 bg-transparent fs-4" placeholder="0.00">
+        <input type="number" id="sendAmount" class="form-control border-0 bg-transparent fs-4 fw-bold" placeholder="0.00">
         <span id="sendCurrency" class="fw-bold fs-5 ms-2">USD</span>
       </div>
       <div class="row g-2" id="sendWallets"></div>
@@ -60,32 +64,32 @@ body { font-family: 'Poppins', sans-serif; background: linear-gradient(135deg, #
     <div class="mb-4">
       <label class="fw-semibold mb-2">You Get</label>
       <div class="input-box d-flex align-items-center mb-3">
-        <input type="text" id="getAmount" class="form-control border-0 bg-transparent fs-4" placeholder="0.00" readonly>
+        <input type="text" id="getAmount" class="form-control border-0 bg-transparent fs-4 fw-bold" placeholder="0.00" readonly>
         <span id="getCurrency" class="fw-bold fs-5 ms-2">BDT</span>
       </div>
       <div class="row g-2" id="getWallets"></div>
     </div>
 
-    <button class="btn btn-success btn-lg w-100 fw-bold" style="background: linear-gradient(135deg, #00a859, #007b4f);" onclick="goToOrder()">Exchange Now <i class="bi bi-arrow-right"></i></button>
+    <button class="btn btn-lg w-100 fw-bold text-white" style="background: linear-gradient(135deg, var(--success), #059669); border-radius: 14px;" onclick="goToOrder()">Exchange Now <i class="bi bi-arrow-right"></i></button>
   </div>
 
   <!-- LIVE RATE TABLE -->
   <div class="rate-table mt-4">
-    <h5 class="fw-bold mb-3 text-center"><i class="bi bi-graph-up-arrow"></i> Live Exchange Rates</h5>
+    <h5 class="mb-3 text-center"><i class="bi bi-graph-up-arrow text-primary"></i> Live Exchange Rates</h5>
     <div id="rateList"></div>
     <small class="text-muted">* Rates updated every minute. For bulk orders contact us.</small>
   </div>
 
   <!-- RECENT ORDERS -->
   <div class="recent-orders mt-4">
-    <h5 class="fw-bold mb-3 text-center"><i class="bi bi-activity"></i> Live Transactions</h5>
+    <h5 class="mb-3 text-center"><i class="bi bi-activity text-success"></i> Live Transactions</h5>
     <div id="recentOrderList"></div>
   </div>
 
   <!-- CONTACT + WHATSAPP -->
   <div class="contact-box mt-4">
-    <h5 class="fw-bold"><i class="bi bi-headset"></i> 24/7 Support</h5>
-    <p class="mb-3">Any Problem? Contact us on WhatsApp</p>
+    <h5 class="fw-bold"><i class="bi bi-headset"></i> 24/7 Premium Support</h5>
+    <p class="mb-3">Need Help? Chat with us on WhatsApp</p>
     <a href="https://wa.me/8801726858565" target="_blank" class="whatsapp-btn">
       <i class="bi bi-whatsapp"></i> 01726-858565
     </a>
@@ -120,6 +124,7 @@ let rates = {};
 let selectedSend = 'payoneer';
 let selectedGet = 'bkash';
 let orderList = [];
+let usedNames = new Set(); // যে Name গুলা use হইছে
 
 db.ref('rates/wallets').on('value',(snap)=>{
   rates = snap.val() || {};
@@ -201,11 +206,29 @@ function timeAgo(timestamp) {
   return `${days} day ago`;
 }
 
-const names = ["Karim S.", "Tanvir M.", "Fatema B.", "Fatema B.", "Rahim K.", "Sadia A.", "Sakib A.", "Sadia A.", "Sadia A.", "Fatema B."];
-const cities = ["Chittagong", "Dhaka", "Barisal", "Chittagong", "Khulna", "Chittagong", "Chittagong", "Rajshahi", "Dhaka", "Khulna"];
+// UNLIMITED PREMIUM NAMES POOL - 100+ Names
+const firstNames = ["Abrar","Saif","Tahmid","Zahid","Rafiq","Imran","Shuvo","Nabil","Farhan","Sami","Arian","Emon","Tasin","Moin","Jisan","Rakib","Arif","Hasib","Sifat","Arafat","Mashfi","Anik","Fahim","Shanto","Rafi","Irfan","Nayeem","Tanvir","Shakib","Mahmud"];
+const lastNames = ["Rahman","Ahmed","Khan","Islam","Chowdhury","Hossain","Ali","Mia","Uddin","Sarkar","Das","Paul","Roy","Sen","Talukder","Bepari","Sheikh","Mandal","Gazi","Mondol"];
+const cities = ["Dhaka","Chittagong","Sylhet","Khulna","Rajshahi","Barisal","Rangpur","Comilla","Mymensingh","Gazipur","Narayanganj","Jessore"];
 
-// FIXED TIME SERIAL: 0, 5, 15, 30, 60, 120, 180, 240, 300, 360 minutes
-const timeGaps = [0, 5, 15, 30, 60, 120, 180, 240, 300, 360];
+// Unique Name Generate
+function getUniqueName(){
+  if(usedNames.size > 200){ usedNames.clear(); } // 200 ta porle reset
+
+  let name, fullName;
+  do {
+    const first = firstNames[Math.floor(Math.random() * firstNames.length)];
+    const last = lastNames[Math.floor(Math.random() * lastNames.length)];
+    name = `${first} ${last.charAt(0)}.`;
+    fullName = `${first} ${last}`;
+  } while(usedNames.has(fullName));
+
+  usedNames.add(fullName);
+  const city = cities[Math.floor(Math.random() * cities.length)];
+  return { name, city };
+}
+
+const timeGaps = [0, 8, 20, 45, 90, 150, 210, 270, 330, 390];
 
 function createOrderObject(minutesAgo, status){
   const walletKeys = Object.keys(wallets);
@@ -213,11 +236,13 @@ function createOrderObject(minutesAgo, status){
   let get;
   do { get = walletKeys[Math.floor(Math.random() * walletKeys.length)]; } while(get == send);
 
+  const user = getUniqueName(); // Unique name
+
   return {
     id: Date.now() + Math.random(),
-    name: names[Math.floor(Math.random() * names.length)],
-    city: cities[Math.floor(Math.random() * cities.length)],
-    amount: (Math.random() * 400 + 50).toFixed(2),
+    name: user.name,
+    city: user.city,
+    amount: (Math.random() * 350 + 100).toFixed(2),
     send: send,
     get: get,
     timestamp: new Date(Date.now() - minutesAgo * 60 * 1000),
@@ -230,7 +255,7 @@ function renderOrders(){
   orderList.slice(0, 10).forEach((order, index) => {
     const isPending = index === 0;
     const badge = isPending
-    ? `<span class="badge badge-warning">Processing...</span>`
+  ? `<span class="badge badge-warning">Processing...</span>`
       : `<span class="badge badge-success">Completed</span>`;
     const itemClass = isPending? 'order-item pending' : 'order-item';
     const timeText = isPending? `<span class="time-ago text-warning"><i class="bi bi-hourglass-split"></i> Processing</span>` : `<span class="time-ago"><i class="bi bi-clock"></i> ${timeAgo(order.timestamp)}</span>`;
@@ -238,8 +263,8 @@ function renderOrders(){
     html += `<div class="${itemClass}">
       <div class="d-flex justify-content-between align-items-center">
         <div>
-          <b>${order.name}</b> from ${order.city}<br>
-          <small>${order.amount} ${wallets[order.send].name} → ${wallets[order.get].name}</small><br>
+          <b>${order.name}</b> • ${order.city}<br>
+          <small class="text-muted">${order.amount} ${wallets[order.send].name} → ${wallets[order.get].name}</small><br>
           ${timeText}
         </div>
         ${badge}
@@ -249,14 +274,14 @@ function renderOrders(){
   recentOrderList.innerHTML = html;
 }
 
-// Start: 1ta Pending + 9ta Completed with proper serial time
+// Start
 for(let i=0; i<10; i++){
   let status = i === 0? 'pending' : 'completed';
   orderList.push(createOrderObject(timeGaps[i], status));
 }
 renderOrders();
 
-// প্রতি 3 মিনিট পর: Pending Completed হবে + নতুন Pending আসবে
+// প্রতি 3 মিনিট পর
 setInterval(() => {
   orderList[0].status = 'completed';
   orderList[0].timestamp = new Date();
@@ -266,7 +291,6 @@ setInterval(() => {
 
   if(orderList.length > 10) orderList.pop();
 
-  // নিচের সবগুলার time +3 min করে দাও যেন serial ঠিক থাকে
   for(let i=1; i<orderList.length; i++){
     orderList[i].timestamp = new Date(orderList[i].timestamp.getTime() + 3 * 60 * 1000);
   }
@@ -274,7 +298,6 @@ setInterval(() => {
   renderOrders();
 }, 180000);
 
-// প্রতি 30 সেকেন্ড পর Time Update হবে
 setInterval(renderOrders, 30000);
 
 </script>
