@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Admin Dashboard</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 <style>
 body { background: #1a1d2e; color: #fff; font-family: 'Poppins', sans-serif; }
 .card-dark { background: #24273a; border-radius: 12px; padding: 20px; margin-bottom: 20px; }
@@ -13,12 +14,29 @@ body { background: #1a1d2e; color: #fff; font-family: 'Poppins', sans-serif; }
 .form-control:focus { background: #2e3247; color: #fff; border-color: #0d6efd; }
 .btn-success { background: #00a859; border: none; }
 h6 { color: #ffb400; }
+
+/* LOGIN */
+.login-box{width:420px;margin:100px auto;background:#24273a;padding:40px;border-radius:20px;box-shadow:0 0 30px rgba(0,168,89,.3);display:block;}
+#dashboardContent{display:none;}
 </style>
 </head>
 <body>
 
-<div class="container py-4">
-  <h3 class="text-center mb-4">Admin Dashboard ✅</h3>
+<!-- LOGIN PAGE -->
+<div id="loginPage" class="login-box">
+  <h3 class="text-center mb-4 fw-bold"><i class="bi bi-shield-lock text-success"></i> Admin Login</h3>
+  <input id="password" type="password" placeholder="Enter Admin Password" class="form-control mb-3">
+  <button onclick="login()" class="btn btn-success w-100 fw-bold py-2">Login</button>
+  <p id="loginMsg" class="text-center mt-3"></p>
+  <small class="text-muted d-block text-center">Default Password: TSAdmin2026</small>
+</div>
+
+<!-- DASHBOARD CONTENT -->
+<div id="dashboardContent" class="container py-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h3>Admin Dashboard ✅</h3>
+    <button class="btn btn-danger btn-sm" onclick="logout()"><i class="bi bi-box-arrow-right"></i> Logout</button>
+  </div>
 
   <!-- Stats -->
   <div class="row g-3 mb-4">
@@ -51,7 +69,7 @@ h6 { color: #ffb400; }
         <div class="row"><div class="col-6">Buy Rate BDT <input id="skrill_buy" class="form-control"></div><div class="col-6">Sell Rate BDT <input id="skrill_sell" class="form-control"></div></div>
       </div>
 
-      <!-- BDT Wallets - NEW -->
+      <!-- BDT Wallets -->
       <div class="col-md-6">
         <h6>Bkash</h6>
         <div class="row"><div class="col-6">Buy Rate BDT <input id="bkash_buy" class="form-control"></div><div class="col-6">Sell Rate BDT <input id="bkash_sell" class="form-control"></div></div>
@@ -97,14 +115,58 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
-// Load Rates
-db.ref('rates/wallets').on('value',(snap)=>{
-  let data = snap.val() || {};
-  for(let key in data){
-    if(document.getElementById(key+'_buy')) document.getElementById(key+'_buy').value = data[key].buy;
-    if(document.getElementById(key+'_sell')) document.getElementById(key+'_sell').value = data[key].sell;
+const ADMIN_PASSWORD = "TSAdmin2026"; // এখানে Password Change করেন
+
+// Page Load এ Check
+window.onload = function(){
+  if(localStorage.getItem('isAdminLoggedIn') === 'true'){
+    showDashboard();
   }
-});
+}
+
+function login() {
+  const password = document.getElementById('password').value;
+  const msg = document.getElementById('loginMsg');
+  if(password === ADMIN_PASSWORD){
+    localStorage.setItem('isAdminLoggedIn', 'true');
+    showDashboard();
+  } else {
+    msg.innerHTML = "Wrong Password!";
+    msg.className = "text-danger text-center mt-3";
+  }
+}
+
+function showDashboard(){
+  document.getElementById('loginPage').style.display = 'none';
+  document.getElementById('dashboardContent').style.display = 'block';
+  loadData(); // Dashboard Data Load
+}
+
+function logout(){
+  localStorage.removeItem('isAdminLoggedIn');
+  location.reload();
+}
+
+function loadData(){
+  // Load Rates
+  db.ref('rates/wallets').on('value',(snap)=>{
+    let data = snap.val() || {};
+    for(let key in data){
+      if(document.getElementById(key+'_buy')) document.getElementById(key+'_buy').value = data[key].buy;
+      if(document.getElementById(key+'_sell')) document.getElementById(key+'_sell').value = data[key].sell;
+    }
+  });
+
+  // Load Orders - আপনার আগের মতো
+  db.ref('orders').limitToLast(10).on('value', snap=>{
+    let html = '';
+    snap.forEach(child=>{
+      let order = child.val();
+      html = `<tr><td>${order.email || '-'}</td><td>${order.wallet || '-'}</td><td>${order.amount || '-'}</td><td>${order.type || '-'}</td><td>${new Date(order.time).toLocaleString('bn-BD') || '-'}</td></tr>` + html;
+    });
+    document.getElementById('ordersTable').innerHTML = html;
+  });
+}
 
 // Update Rates
 document.getElementById('updateBtn').addEventListener('click', ()=>{
@@ -123,6 +185,9 @@ document.getElementById('updateBtn').addEventListener('click', ()=>{
     setTimeout(()=> msg.innerHTML='', 2000);
   });
 });
+
+// Enter Key
+document.addEventListener('keypress', function(e){ if(e.key === 'Enter'){ login(); } })
 </script>
 </body>
 </html>
