@@ -17,15 +17,12 @@ body { font-family: 'Poppins', sans-serif; background: linear-gradient(135deg, #
 .swap-btn { width: 50px; height: 50px; border-radius: 50%; border: none; background: linear-gradient(135deg, #667eea, #764ba2); color: #fff; font-size: 20px; box-shadow: 0 5px 15px rgba(102,126,234,0.4); }
 .input-box { background: #f8f9fa; border-radius: 12px; padding: 15px; border: 1px solid #dee2e6; }
 .rate-table, .recent-orders { background: #f8f9fa; border-radius: 16px; padding: 20px; }
-.rate-item, .order-item { background: #fff; border-radius: 10px; padding: 12px; margin-bottom: 8px; border-left: 4px solid #667eea; animation: fadeIn 0.5s; }
+.rate-item, .order-item { background: #fff; border-radius: 10px; padding: 12px; margin-bottom: 8px; border-left: 4px solid #00a859; animation: fadeIn 0.5s; }
 @keyframes fadeIn { from {opacity: 0; transform: translateY(10px);} to {opacity: 1; transform: translateY(0);} }
-@keyframes pulse { 0% {opacity: 1;} 50% {opacity: 0.6;} 100% {opacity: 1;} }
-.pending { animation: pulse 1.5s infinite; border-left-color: #ffc107 !important; }
 .contact-box { background: linear-gradient(135deg, #25D366, #128C7E); color: #fff; border-radius: 16px; padding: 20px; text-align: center; }
 .whatsapp-btn { background: #fff; color: #25D366; font-weight: 700; border-radius: 50px; padding: 12px 25px; text-decoration: none; display: inline-block; transition: 0.3s; }
 .whatsapp-btn:hover { transform: scale(1.05); color: #128C7E; }
-.badge-warning { background: #ffc107; color: #000; }
-.badge-success { background: #00a859; }
+.time-ago { font-size: 12px; color: #6c757d; }
 </style>
 </head>
 <body>
@@ -77,7 +74,7 @@ body { font-family: 'Poppins', sans-serif; background: linear-gradient(135deg, #
 
   <!-- RECENT ORDERS -->
   <div class="recent-orders mt-4">
-    <h5 class="fw-bold mb-3 text-center"><i class="bi bi-lightning-charge-fill text-warning"></i> Recent Orders <span class="badge bg-primary">Live</span></h5>
+    <h5 class="fw-bold mb-3 text-center"><i class="bi bi-clock-history"></i> Recent Transactions</h5>
     <div id="recentOrderList"></div>
   </div>
 
@@ -118,7 +115,7 @@ const wallets = {
 let rates = {};
 let selectedSend = 'payoneer';
 let selectedGet = 'bkash';
-let orderList = []; // 10 ta order rakhar jonno
+let orderList = [];
 
 db.ref('rates/wallets').on('value',(snap)=>{
   rates = snap.val() || {};
@@ -188,11 +185,22 @@ function goToOrder(){
   window.location.href = 'order.html';
 }
 
-// ===== FAKE RANDOM ORDER SYSTEM WITH PENDING =====
-const names = ["Rahim", "Karim", "Sadia", "Nayeem", "Fatema", "Jamal", "Tanvir", "Mim", "Shohan", "Rupa", "Sakib", "Nusrat"];
-const cities = ["Dhaka", "Chittagong", "Sylhet", "Khulna", "Rajshahi", "Barisal", "Rangpur", "Comilla"];
+// ===== TIME AGO FUNCTION =====
+function timeAgo(timestamp) {
+  const seconds = Math.floor((new Date() - timestamp) / 1000);
+  if (seconds < 60) return "just now";
+  const minutes = Math.floor(seconds / 60);
+  if (minutes < 60) return `${minutes} min ago`;
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `${hours} hour ago`;
+  const days = Math.floor(hours / 24);
+  return `${days} day ago`;
+}
 
-function createOrderObject(){
+const names = ["Rahim K.", "Karim S.", "Sadia A.", "Nayeem R.", "Fatema B.", "Jamal H.", "Tanvir M.", "Mim K.", "Shohan D.", "Rupa L."];
+const cities = ["Dhaka", "Chittagong", "Sylhet", "Khulna", "Rajshahi", "Barisal"];
+
+function createOrderObject(minutesAgo){
   const walletKeys = Object.keys(wallets);
   const send = walletKeys[Math.floor(Math.random() * walletKeys.length)];
   let get;
@@ -202,57 +210,45 @@ function createOrderObject(){
     id: Date.now() + Math.random(),
     name: names[Math.floor(Math.random() * names.length)],
     city: cities[Math.floor(Math.random() * cities.length)],
-    amount: (Math.random() * 500 + 10).toFixed(2),
+    amount: (Math.random() * 500 + 20).toFixed(2),
     send: send,
     get: get,
-    status: 'pending', // শুরুতে pending
-    time: 0 // 3 sec por complete hobe
+    timestamp: new Date(Date.now() - minutesAgo * 60 * 1000) // কত মিনিট আগে
   };
 }
 
 function renderOrders(){
   let html = '';
   orderList.slice(0, 10).forEach(order => {
-    const badge = order.status == 'pending' 
-      ? `<span class="badge badge-warning">Pending</span>` 
-      : `<span class="badge badge-success">Completed</span>`;
-    const itemClass = order.status == 'pending' ? 'order-item pending' : 'order-item';
-    
-    html += `<div class="${itemClass}" id="order-${order.id}">
-      <div class="d-flex justify-content-between align-items-center">
-        <div>
-          <b>${order.name}</b> from ${order.city}<br>
-          <small>${order.amount} ${wallets[order.send].name} → ${wallets[order.get].name}</small>
-        </div>
-        ${badge}
+    html += `<div class="order-item d-flex justify-content-between align-items-center">
+      <div>
+        <b>${order.name}</b> from ${order.city}<br>
+        <small>${order.amount} ${wallets[order.send].name} → ${wallets[order.get].name}</small><br>
+        <span class="time-ago"><i class="bi bi-clock"></i> ${timeAgo(order.timestamp)}</span>
       </div>
+      <span class="badge bg-success">Completed</span>
     </div>`;
   });
   recentOrderList.innerHTML = html;
 }
 
-// প্রতি 4-6 সেকেন্ড পর নতুন Order Add
-setInterval(() => {
-  const newOrder = createOrderObject();
-  orderList.unshift(newOrder); // উপরে Add
-  if(orderList.length > 10) orderList.pop(); // 10 tar beshi hole last ta bad
-  renderOrders();
-}, 4000 + Math.random() * 2000);
-
-// প্রতি 1 সেকেন্ড পর Pending → Completed চেক
-setInterval(() => {
-  orderList.forEach(order => {
-    order.time++;
-    if(order.status == 'pending' && order.time >= 3){ // 3 sec por complete
-      order.status = 'completed';
-    }
-  });
-  renderOrders();
-}, 1000);
-
-// Page load e 5 ta order diye start
-for(let i=0; i<5; i++) orderList.push(createOrderObject());
+// Page load e 10 ta order diye start - alada alada time e
+for(let i=0; i<10; i++){
+  let randomMinutes = Math.floor(Math.random() * 120) + 5; // 5 min to 2 hour ago
+  orderList.push(createOrderObject(randomMinutes));
+}
 renderOrders();
+
+// প্রতি 3 মিনিট পর 1 টা নতুন Order Add হবে + সবগুলার Time Update হবে
+setInterval(() => {
+  const newOrder = createOrderObject(0); // just now
+  orderList.unshift(newOrder);
+  if(orderList.length > 10) orderList.pop(); // 10 tar beshi hole bad
+  renderOrders();
+}, 180000); // 180000ms = 3 minute
+
+// প্রতি 30 সেকেন্ড পর "2 min ago" update হবে
+setInterval(renderOrders, 30000);
 
 </script>
 </body>
