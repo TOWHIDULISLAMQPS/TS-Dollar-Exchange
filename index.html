@@ -16,13 +16,17 @@ body { font-family: 'Poppins', sans-serif; background: linear-gradient(135deg, #
 .wallet-card.selected { border-color: #00a859; background: linear-gradient(135deg, #e8f5e9, #d1fae5); }
 .swap-btn { width: 50px; height: 50px; border-radius: 50%; border: none; background: linear-gradient(135deg, #667eea, #764ba2); color: #fff; font-size: 20px; box-shadow: 0 5px 15px rgba(102,126,234,0.4); }
 .input-box { background: #f8f9fa; border-radius: 12px; padding: 15px; border: 1px solid #dee2e6; }
-.rate-table, .recent-orders { background: #f8f9fa; border-radius: 16px; padding: 20px; }
-.rate-item, .order-item { background: #fff; border-radius: 10px; padding: 12px; margin-bottom: 8px; border-left: 4px solid #00a859; animation: fadeIn 0.5s; }
+.rate-table,.recent-orders { background: #f8f9fa; border-radius: 16px; padding: 20px; }
+.rate-item,.order-item { background: #fff; border-radius: 10px; padding: 12px; margin-bottom: 8px; border-left: 4px solid #00a859; animation: fadeIn 0.5s; }
+.order-item.pending { border-left-color: #ffc107; animation: pulse 1.5s infinite; }
 @keyframes fadeIn { from {opacity: 0; transform: translateY(10px);} to {opacity: 1; transform: translateY(0);} }
+@keyframes pulse { 0% {opacity: 1;} 50% {opacity: 0.7;} 100% {opacity: 1;} }
 .contact-box { background: linear-gradient(135deg, #25D366, #128C7E); color: #fff; border-radius: 16px; padding: 20px; text-align: center; }
 .whatsapp-btn { background: #fff; color: #25D366; font-weight: 700; border-radius: 50px; padding: 12px 25px; text-decoration: none; display: inline-block; transition: 0.3s; }
 .whatsapp-btn:hover { transform: scale(1.05); color: #128C7E; }
 .time-ago { font-size: 12px; color: #6c757d; }
+.badge-warning { background: #ffc107; color: #000; }
+.badge-success { background: #00a859; }
 </style>
 </head>
 <body>
@@ -74,7 +78,7 @@ body { font-family: 'Poppins', sans-serif; background: linear-gradient(135deg, #
 
   <!-- RECENT ORDERS -->
   <div class="recent-orders mt-4">
-    <h5 class="fw-bold mb-3 text-center"><i class="bi bi-clock-history"></i> Recent Transactions</h5>
+    <h5 class="fw-bold mb-3 text-center"><i class="bi bi-activity"></i> Live Transactions</h5>
     <div id="recentOrderList"></div>
   </div>
 
@@ -197,57 +201,76 @@ function timeAgo(timestamp) {
   return `${days} day ago`;
 }
 
-const names = ["Rahim K.", "Karim S.", "Sadia A.", "Nayeem R.", "Fatema B.", "Jamal H.", "Tanvir M.", "Mim K.", "Shohan D.", "Rupa L."];
+const names = ["Rahim K.", "Karim S.", "Sadia A.", "Nayeem R.", "Fatema B.", "Jamal H.", "Tanvir M.", "Mim K.", "Shohan D.", "Rupa L.", "Sakib A.", "Nusrat J."];
 const cities = ["Dhaka", "Chittagong", "Sylhet", "Khulna", "Rajshahi", "Barisal"];
 
-function createOrderObject(minutesAgo){
+function createOrderObject(minutesAgo, status){
   const walletKeys = Object.keys(wallets);
   const send = walletKeys[Math.floor(Math.random() * walletKeys.length)];
   let get;
   do { get = walletKeys[Math.floor(Math.random() * walletKeys.length)]; } while(get == send);
-  
+
   return {
     id: Date.now() + Math.random(),
     name: names[Math.floor(Math.random() * names.length)],
     city: cities[Math.floor(Math.random() * cities.length)],
-    amount: (Math.random() * 500 + 20).toFixed(2),
+    amount: (Math.random() * 400 + 50).toFixed(2),
     send: send,
     get: get,
-    timestamp: new Date(Date.now() - minutesAgo * 60 * 1000) // কত মিনিট আগে
+    timestamp: new Date(Date.now() - minutesAgo * 60 * 1000),
+    status: status // pending or completed
   };
 }
 
 function renderOrders(){
   let html = '';
-  orderList.slice(0, 10).forEach(order => {
-    html += `<div class="order-item d-flex justify-content-between align-items-center">
-      <div>
-        <b>${order.name}</b> from ${order.city}<br>
-        <small>${order.amount} ${wallets[order.send].name} → ${wallets[order.get].name}</small><br>
-        <span class="time-ago"><i class="bi bi-clock"></i> ${timeAgo(order.timestamp)}</span>
+  orderList.slice(0, 10).forEach((order, index) => {
+    const isPending = index === 0; // শুধু প্রথমটা Pending
+    const badge = isPending
+     ? `<span class="badge badge-warning">Processing...</span>`
+      : `<span class="badge badge-success">Completed</span>`;
+    const itemClass = isPending? 'order-item pending' : 'order-item';
+    const timeText = isPending? `<span class="time-ago text-warning"><i class="bi bi-hourglass-split"></i> Processing</span>` : `<span class="time-ago"><i class="bi bi-clock"></i> ${timeAgo(order.timestamp)}</span>`;
+
+    html += `<div class="${itemClass}">
+      <div class="d-flex justify-content-between align-items-center">
+        <div>
+          <b>${order.name}</b> from ${order.city}<br>
+          <small>${order.amount} ${wallets[order.send].name} → ${wallets[order.get].name}</small><br>
+          ${timeText}
+        </div>
+        ${badge}
       </div>
-      <span class="badge bg-success">Completed</span>
     </div>`;
   });
   recentOrderList.innerHTML = html;
 }
 
-// Page load e 10 ta order diye start - alada alada time e
-for(let i=0; i<10; i++){
-  let randomMinutes = Math.floor(Math.random() * 120) + 5; // 5 min to 2 hour ago
-  orderList.push(createOrderObject(randomMinutes));
+// Start: 1ta Pending + 9ta Completed
+orderList.push(createOrderObject(0, 'pending')); // উপরেরটা
+for(let i=1; i<10; i++){
+  let randomMinutes = Math.floor(Math.random() * 120) + 3; // 3 min to 2 hour ago
+  orderList.push(createOrderObject(randomMinutes, 'completed'));
 }
 renderOrders();
 
-// প্রতি 3 মিনিট পর 1 টা নতুন Order Add হবে + সবগুলার Time Update হবে
+// প্রতি 3 মিনিট পর: Pending Completed হবে + নতুন Pending আসবে
 setInterval(() => {
-  const newOrder = createOrderObject(0); // just now
-  orderList.unshift(newOrder);
-  if(orderList.length > 10) orderList.pop(); // 10 tar beshi hole bad
+  // 1. উপরের Pending টাকে Completed করে দাও
+  orderList[0].status = 'completed';
+  orderList[0].timestamp = new Date(); // এখনকার time দাও
+
+  // 2. নতুন 1টা Pending উপরে Add করো
+  const newPending = createOrderObject(0, 'pending');
+  orderList.unshift(newPending);
+
+  // 3. 10টার বেশি হলে শেষেরটা বাদ
+  if(orderList.length > 10) orderList.pop();
+
   renderOrders();
 }, 180000); // 180000ms = 3 minute
 
-// প্রতি 30 সেকেন্ড পর "2 min ago" update হবে
+// প্রতি 30 সেকেন্ড পর Time Update হবে
 setInterval(renderOrders, 30000);
 
 </script>
