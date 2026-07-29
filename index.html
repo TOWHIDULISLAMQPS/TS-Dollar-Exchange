@@ -262,36 +262,35 @@ function goToOrder(){
   window.location.href = 'order.html';
 }
 
-// DEMO MODE - FIREBASE E SAVE HOBE NA, SUDHU DEKHTE PABA
-const demoNames = ["Arafat Islam", "Mst. Jannat", "Kazi Rahman", "Sabrina Akter", "Naimul Haque", "Fatema Begum", "Tanvir Ahmed", "Roksana Parvin", "Hasibul Hasan", "Nasima Khatun", "Shakil Khan", "Tania Sultana", "Mahmudul Karim", "Sharmin Akhi", "Imran Hossain"];
-let shownNames = [];
+// TEST MODE - SUDHU DEKHTE PABA, FIREBASE E JABE NA
+const testNames = ["Arafat Islam", "Mst. Jannat", "Kazi Rahman", "Sabrina Akter", "Naimul Haque", "Fatema Begum", "Tanvir Ahmed", "Roksana Parvin", "Hasibul Hasan", "Nasima Khatun", "Shakil Khan", "Tania Sultana", "Mahmudul Karim", "Sharmin Akhi", "Imran Hossain", "Rafiqul Islam", "Lima Akter", "Sojib Mia", "Nusrat Jahan", "Al Amin"];
+let usedNames = [];
 
-function getUniqueName() {
-  let available = demoNames.filter(n => !shownNames.includes(n));
-  if(available.length === 0) shownNames = []; // sob sesh hole abar reset
+function getRandomName() {
+  let available = testNames.filter(n => !usedNames.includes(n));
+  if(available.length === 0) usedNames = [];
   let name = available[Math.floor(Math.random() * available.length)];
-  shownNames.push(name);
+  usedNames.push(name);
   return name;
 }
 
-function timeAgo(minutes) {
-  if(minutes < 60) return minutes + " min ago";
+function timeAgoText(minutes) {
+  if(minutes < 60) return minutes + " minutes ago";
   if(minutes < 1440) return Math.floor(minutes/60) + " hour ago";
-  return Math.floor(minutes/1440) + " day ago";
+  return Math.floor(minutes/1440) + " days ago";
 }
 
-function renderDemoOrders() {
+function renderTestOrders() {
   const recentOrderList = document.getElementById('recentOrderList');
-  let html = '';
-  
   const demoData = [
-    {name: getUniqueName(), send: 200, status: 'processing', time: 5},
-    {name: getUniqueName(), send: 150, status: 'pending', time: 20},
-    {name: getUniqueName(), send: 350, status: 'completed', time: 60},
-    {name: getUniqueName(), send: 80, status: 'completed', time: 120},
-    {name: getUniqueName(), send: 500, status: 'completed', time: 180}
+    {name: getRandomName(), send: 164, status: 'pending', time: 3},
+    {name: getRandomName(), send: 152, status: 'processing', time: 25},
+    {name: getRandomName(), send: 325, status: 'completed', time: 60},
+    {name: getRandomName(), send: 489, status: 'completed', time: 180},
+    {name: getRandomName(), send: 133, status: 'completed', time: 300}
   ];
 
+  let html = '';
   demoData.forEach(order => {
     let badge, itemClass;
     if(order.status == 'pending'){ badge = `<span class="badge badge-danger">Pending</span>`; itemClass = 'order-item pending'; }
@@ -302,8 +301,8 @@ function renderDemoOrders() {
       <div class="d-flex justify-content-between align-items-center">
         <div>
           <b>${order.name}</b><br>
-          <small class="text-muted">${order.send} USD → ${(order.send*125).toFixed(0)} BDT</small><br>
-          <small><i class="bi bi-clock"></i> ${timeAgo(order.time)}</small>
+          <small class="text-muted">${order.send} Payoneer → ${(order.send*125).toFixed(0)} Bkash</small><br>
+          <small><i class="bi bi-clock"></i> ${timeAgoText(order.time)}</small>
         </div>
         ${badge}
       </div>
@@ -312,8 +311,9 @@ function renderDemoOrders() {
   recentOrderList.innerHTML = html;
 }
 
-renderDemoOrders(); // 1 bar load hobe
-setInterval(renderDemoOrders, 60000); // 1 minit por por update
+// 1 minit por refresh
+renderTestOrders();
+setInterval(renderTestOrders, 60000);
 
 </script>
 </body>
