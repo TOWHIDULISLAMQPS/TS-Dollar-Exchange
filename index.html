@@ -16,11 +16,13 @@ body { font-family: 'Poppins', sans-serif; background: linear-gradient(135deg, #
 .wallet-card.selected { border-color: #00a859; background: linear-gradient(135deg, #e8f5e9, #d1fae5); }
 .swap-btn { width: 50px; height: 50px; border-radius: 50%; border: none; background: linear-gradient(135deg, #667eea, #764ba2); color: #fff; font-size: 20px; box-shadow: 0 5px 15px rgba(102,126,234,0.4); }
 .input-box { background: #f8f9fa; border-radius: 12px; padding: 15px; border: 1px solid #dee2e6; }
-.rate-table { background: #f8f9fa; border-radius: 16px; padding: 20px; }
-.rate-item { background: #fff; border-radius: 10px; padding: 10px; margin-bottom: 8px; border-left: 4px solid #667eea; }
+.rate-table, .recent-orders { background: #f8f9fa; border-radius: 16px; padding: 20px; }
+.rate-item, .order-item { background: #fff; border-radius: 10px; padding: 10px; margin-bottom: 8px; border-left: 4px solid #667eea; animation: fadeIn 0.5s; }
+@keyframes fadeIn { from {opacity: 0; transform: translateY(10px);} to {opacity: 1; transform: translateY(0);} }
 .contact-box { background: linear-gradient(135deg, #25D366, #128C7E); color: #fff; border-radius: 16px; padding: 20px; text-align: center; }
 .whatsapp-btn { background: #fff; color: #25D366; font-weight: 700; border-radius: 50px; padding: 12px 25px; text-decoration: none; display: inline-block; transition: 0.3s; }
 .whatsapp-btn:hover { transform: scale(1.05); color: #128C7E; }
+.badge-success { background: #00a859; }
 </style>
 </head>
 <body>
@@ -70,6 +72,12 @@ body { font-family: 'Poppins', sans-serif; background: linear-gradient(135deg, #
     <small class="text-muted">* Rates updated every minute. For bulk orders contact us.</small>
   </div>
 
+  <!-- RECENT ORDERS -->
+  <div class="recent-orders mt-4">
+    <h5 class="fw-bold mb-3 text-center"><i class="bi bi-lightning-charge-fill text-warning"></i> Recent Successful Orders <span class="badge badge-success">Live</span></h5>
+    <div id="recentOrderList"></div>
+  </div>
+
   <!-- CONTACT + WHATSAPP -->
   <div class="contact-box mt-4">
     <h5 class="fw-bold"><i class="bi bi-headset"></i> 24/7 Support</h5>
@@ -107,6 +115,7 @@ const wallets = {
 let rates = {};
 let selectedSend = 'payoneer';
 let selectedGet = 'bkash';
+let orderQueue = [];
 
 db.ref('rates/wallets').on('value',(snap)=>{
   rates = snap.val() || {};
@@ -175,6 +184,40 @@ function goToOrder(){
   }));
   window.location.href = 'order.html';
 }
+
+// ===== FAKE RANDOM ORDER SYSTEM =====
+const names = ["Rahim", "Karim", "Sadia", "Nayeem", "Fatema", "Jamal", "Tanvir", "Mim", "Shohan", "Rupa"];
+const cities = ["Dhaka", "Chittagong", "Sylhet", "Khulna", "Rajshahi", "Barisal"];
+
+function generateRandomOrder(){
+  const walletKeys = Object.keys(wallets);
+  const send = walletKeys[Math.floor(Math.random() * walletKeys.length)];
+  let get;
+  do { get = walletKeys[Math.floor(Math.random() * walletKeys.length)]; } while(get == send);
+  
+  const amount = (Math.random() * 500 + 10).toFixed(2);
+  const name = names[Math.floor(Math.random() * names.length)];
+  const city = cities[Math.floor(Math.random() * cities.length)];
+  const time = "just now";
+
+  const orderHtml = `<div class="order-item d-flex justify-content-between align-items-center">
+    <div>
+      <b>${name}</b> from ${city}<br>
+      <small>${amount} ${wallets[send].name} → ${wallets[get].name}</small>
+    </div>
+    <span class="badge bg-success">Completed</span>
+  </div>`;
+  
+  orderQueue.unshift(orderHtml);
+  if(orderQueue.length > 5) orderQueue.pop(); // শুধু 5 টা দেখাবে
+  
+  recentOrderList.innerHTML = orderQueue.join('');
+}
+
+// প্রতি 5-8 সেকেন্ড পর নতুন Order আসবে
+setInterval(generateRandomOrder, 5000 + Math.random() * 3000);
+generateRandomOrder(); // প্রথমে 1 টা দিয়ে শুরু
+
 </script>
 </body>
 </html>
