@@ -8,7 +8,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 <style>
-:root { --primary: #6366f1; --success: #10b981; --warning: #f59e0b; }
+:root { --primary: #6366f1; --success: #10b981; --warning: #f59e0b; --danger: #ef4444; }
 body { font-family: 'Inter', sans-serif; background: linear-gradient(135deg, #1e3a8a 0%, #3730a3 50%, #581c87 100%); min-height: 100vh; }
 .navbar { background: rgba(255,255,255,0.08); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(255,255,255,0.1); }
 .navbar-brand { letter-spacing: -0.5px; }
@@ -21,7 +21,8 @@ body { font-family: 'Inter', sans-serif; background: linear-gradient(135deg, #1e
 .input-box { background: #f9fafb; border-radius: 14px; padding: 16px; border: 1px solid #e5e7eb; }
 .rate-table,.recent-orders { background: rgba(255,255,255,0.98); border-radius: 20px; padding: 24px; border: 1px solid rgba(0,0,0,0.05); }
 .rate-item,.order-item { background: #fff; border-radius: 12px; padding: 14px; margin-bottom: 10px; border-left: 4px solid var(--success); animation: fadeIn 0.6s; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
-.order-item.pending { border-left-color: var(--warning); animation: pulse 2s infinite; }
+.order-item.processing { border-left-color: var(--warning); animation: pulse 2s infinite; }
+.order-item.pending { border-left-color: var(--danger); animation: pulse 2s infinite; }
 @keyframes fadeIn { from {opacity: 0; transform: translateY(12px);} to {opacity: 1; transform: translateY(0);} }
 @keyframes pulse { 0%,100% {opacity: 1;} 50% {opacity: 0.7;} }
 .contact-box { background: linear-gradient(135deg, #10b981, #059669); color: #fff; border-radius: 20px; padding: 24px; text-align: center; box-shadow: 0 10px 30px rgba(16,185,129,0.3); }
@@ -29,6 +30,7 @@ body { font-family: 'Inter', sans-serif; background: linear-gradient(135deg, #1e
 .whatsapp-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.15); color: #059669; }
 .time-ago { font-size: 12px; color: #6b7280; font-weight: 500; }
 .badge-warning { background: #fef3c7; color: #92400e; font-weight: 600; }
+.badge-danger { background: #fee2e2; color: #991b1b; font-weight: 600; }
 .badge-success { background: #d1fae5; color: #065f46; font-weight: 600; }
 h3,h5 { font-weight: 800; letter-spacing: -0.5px; }
 </style>
@@ -124,7 +126,7 @@ let rates = {};
 let selectedSend = 'payoneer';
 let selectedGet = 'bkash';
 let orderList = [];
-let usedNames = new Set(); // যে Name গুলা use হইছে
+let usedNames = new Set();
 
 db.ref('rates/wallets').on('value',(snap)=>{
   rates = snap.val() || {};
@@ -206,14 +208,13 @@ function timeAgo(timestamp) {
   return `${days} day ago`;
 }
 
-// UNLIMITED PREMIUM NAMES POOL - 100+ Names
-const firstNames = ["Abrar","Saif","Tahmid","Zahid","Rafiq","Imran","Shuvo","Nabil","Farhan","Sami","Arian","Emon","Tasin","Moin","Jisan","Rakib","Arif","Hasib","Sifat","Arafat","Mashfi","Anik","Fahim","Shanto","Rafi","Irfan","Nayeem","Tanvir","Shakib","Mahmud"];
+// UNLIMITED PREMIUM NAMES POOL
+const firstNames = ["Abrar","Saif","Tahmid","Zahid","Rafiq","Imran","Shuvo","Nabil","Farhan","Sami","Arian","Emon","Tasin","Moin","Jisan","Rakib","Arif","Hasib","Sifat","Arafat","Mashfi","Anik","Fahim","Shanto","Rafi","Irfan","Nayeem","Tanvir","Shakib","Mahmud","Sabbir","Rasel","Sumon","Akash","Sagor"];
 const lastNames = ["Rahman","Ahmed","Khan","Islam","Chowdhury","Hossain","Ali","Mia","Uddin","Sarkar","Das","Paul","Roy","Sen","Talukder","Bepari","Sheikh","Mandal","Gazi","Mondol"];
 const cities = ["Dhaka","Chittagong","Sylhet","Khulna","Rajshahi","Barisal","Rangpur","Comilla","Mymensingh","Gazipur","Narayanganj","Jessore"];
 
-// Unique Name Generate
 function getUniqueName(){
-  if(usedNames.size > 200){ usedNames.clear(); } // 200 ta porle reset
+  if(usedNames.size > 300){ usedNames.clear(); }
 
   let name, fullName;
   do {
@@ -228,7 +229,7 @@ function getUniqueName(){
   return { name, city };
 }
 
-const timeGaps = [0, 8, 20, 45, 90, 150, 210, 270, 330, 390];
+const timeGaps = [0, 3, 12, 35, 80]; // 5 tar jonno time serial
 
 function createOrderObject(minutesAgo, status){
   const walletKeys = Object.keys(wallets);
@@ -236,29 +237,38 @@ function createOrderObject(minutesAgo, status){
   let get;
   do { get = walletKeys[Math.floor(Math.random() * walletKeys.length)]; } while(get == send);
 
-  const user = getUniqueName(); // Unique name
+  const user = getUniqueName();
 
   return {
     id: Date.now() + Math.random(),
     name: user.name,
     city: user.city,
-    amount: (Math.random() * 350 + 100).toFixed(2),
+    amount: (Math.random() * 300 + 150).toFixed(2),
     send: send,
     get: get,
     timestamp: new Date(Date.now() - minutesAgo * 60 * 1000),
-    status: status
+    status: status // processing, pending, completed
   };
 }
 
 function renderOrders(){
   let html = '';
-  orderList.slice(0, 10).forEach((order, index) => {
-    const isPending = index === 0;
-    const badge = isPending
-  ? `<span class="badge badge-warning">Processing...</span>`
-      : `<span class="badge badge-success">Completed</span>`;
-    const itemClass = isPending? 'order-item pending' : 'order-item';
-    const timeText = isPending? `<span class="time-ago text-warning"><i class="bi bi-hourglass-split"></i> Processing</span>` : `<span class="time-ago"><i class="bi bi-clock"></i> ${timeAgo(order.timestamp)}</span>`;
+  orderList.slice(0, 5).forEach((order, index) => {
+    let badge, itemClass, timeText;
+
+    if(index === 0){
+      badge = `<span class="badge badge-warning">Processing...</span>`;
+      itemClass = 'order-item processing';
+      timeText = `<span class="time-ago text-warning"><i class="bi bi-hourglass-split"></i> Processing</span>`;
+    } else if(index === 1){
+      badge = `<span class="badge badge-danger">Pending</span>`;
+      itemClass = 'order-item pending';
+      timeText = `<span class="time-ago text-danger"><i class="bi bi-clock"></i> Queued</span>`;
+    } else {
+      badge = `<span class="badge badge-success">Completed</span>`;
+      itemClass = 'order-item';
+      timeText = `<span class="time-ago"><i class="bi bi-check-circle"></i> ${timeAgo(order.timestamp)}</span>`;
+    }
 
     html += `<div class="${itemClass}">
       <div class="d-flex justify-content-between align-items-center">
@@ -274,23 +284,30 @@ function renderOrders(){
   recentOrderList.innerHTML = html;
 }
 
-// Start
-for(let i=0; i<10; i++){
-  let status = i === 0? 'pending' : 'completed';
+// Start: 5 ta order
+for(let i=0; i<5; i++){
+  let status = i === 0? 'processing' : i === 1? 'pending' : 'completed';
   orderList.push(createOrderObject(timeGaps[i], status));
 }
 renderOrders();
 
-// প্রতি 3 মিনিট পর
+// প্রতি 3 মিনিট পর Logic
 setInterval(() => {
+  // 1. Processing -> Completed
   orderList[0].status = 'completed';
   orderList[0].timestamp = new Date();
 
+  // 2. Pending -> Processing
+  orderList[1].status = 'processing';
+
+  // 3. নতুন Pending উপরে Add
   const newPending = createOrderObject(0, 'pending');
   orderList.unshift(newPending);
 
-  if(orderList.length > 10) orderList.pop();
+  // 4. 5 tar beshi hole bad
+  if(orderList.length > 5) orderList.pop();
 
+  // 5. নিচের সবগুলার time +3 min
   for(let i=1; i<orderList.length; i++){
     orderList[i].timestamp = new Date(orderList[i].timestamp.getTime() + 3 * 60 * 1000);
   }
