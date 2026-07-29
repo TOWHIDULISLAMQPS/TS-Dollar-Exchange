@@ -1,74 +1,169 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>Admin Panel - TS Dollar</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TS Dollar - Admin Panel</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
-<style>body{background:#071826;color:white;}</style>
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+body { font-family: 'Poppins', sans-serif; background: #f8f9fa; }
+.navbar { background: linear-gradient(135deg, #0d6efd, #00a859); }
+.card { border-radius: 12px; border: none; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+h4 { color: #0d6efd; font-weight: 700; }
+.btn-primary { background: #0d6efd; border: none; }
+</style>
 </head>
 <body>
-<div class="container mt-4">
-<h2 class="mb-4">TS Dollar - Admin Panel <button onclick="logout()" class="btn btn-danger float-end">Logout</button></h2>
 
-<!-- Rate Control -->
-<div class="card bg-dark p-3 mb-4">
-<h4>Rate Control</h4>
-<div class="row g-2">
-<div class="col-md-4"><input id="buyRate" type="number" placeholder="Buy Rate BDT" class="form-control"></div>
-<div class="col-md-4"><input id="sellRate" type="number" placeholder="Sell Rate BDT" class="form-control"></div>
-<div class="col-md-4"><button onclick="updateRate()" class="btn btn-success w-100">Update Rate</button></div>
-</div>
+<nav class="navbar navbar-dark mb-4">
+  <div class="container">
+    <a class="navbar-brand fw-bold fs-3" href="#">TS Dollar Exchange - Admin</a>
+    <button class="btn btn-danger" onclick="logout()">Logout</button>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="card p-4">
+    <h4 class="mb-4">Update Exchange Rates</h4>
+    <p class="text-muted">Buy Rate = We buy from customer. Sell Rate = We sell to customer</p>
+
+    <div class="row g-4">
+
+      <!-- USD WALLETS -->
+      <div class="col-md-3">
+        <div class="border p-3 rounded">
+          <h6 class="text-success">Payoneer USDT</h6>
+          <label>Buy Rate</label>
+          <input type="number" id="payoneer_buy" class="form-control mb-2" step="0.01">
+          <label>Sell Rate</label>
+          <input type="number" id="payoneer_sell" class="form-control" step="0.01">
+        </div>
+      </div>
+
+      <div class="col-md-3">
+        <div class="border p-3 rounded">
+          <h6 class="text-success">Wise USDT</h6>
+          <label>Buy Rate</label>
+          <input type="number" id="wise_buy" class="form-control mb-2" step="0.01">
+          <label>Sell Rate</label>
+          <input type="number" id="wise_sell" class="form-control" step="0.01">
+        </div>
+      </div>
+
+      <div class="col-md-3">
+        <div class="border p-3 rounded">
+          <h6 class="text-success">USDT</h6>
+          <label>Buy Rate</label>
+          <input type="number" id="usdt_buy" class="form-control mb-2" step="0.01">
+          <label>Sell Rate</label>
+          <input type="number" id="usdt_sell" class="form-control" step="0.01">
+        </div>
+      </div>
+
+      <div class="col-md-3">
+        <div class="border p-3 rounded">
+          <h6 class="text-success">Skrill USDT</h6>
+          <label>Buy Rate</label>
+          <input type="number" id="skrill_buy" class="form-control mb-2" step="0.01">
+          <label>Sell Rate</label>
+          <input type="number" id="skrill_sell" class="form-control" step="0.01">
+        </div>
+      </div>
+
+      <!-- BDT WALLETS - NEW 4 TA -->
+      <div class="col-md-3">
+        <div class="border p-3 rounded">
+          <h6 class="text-danger">Bkash</h6>
+          <label>Buy Rate</label>
+          <input type="number" id="bkash_buy" class="form-control mb-2" step="0.01">
+          <label>Sell Rate</label>
+          <input type="number" id="bkash_sell" class="form-control" step="0.01">
+        </div>
+      </div>
+
+      <div class="col-md-3">
+        <div class="border p-3 rounded">
+          <h6 class="text-danger">Nagad</h6>
+          <label>Buy Rate</label>
+          <input type="number" id="nagad_buy" class="form-control mb-2" step="0.01">
+          <label>Sell Rate</label>
+          <input type="number" id="nagad_sell" class="form-control" step="0.01">
+        </div>
+      </div>
+
+      <div class="col-md-3">
+        <div class="border p-3 rounded">
+          <h6 class="text-danger">Rocket</h6>
+          <label>Buy Rate</label>
+          <input type="number" id="rocket_buy" class="form-control mb-2" step="0.01">
+          <label>Sell Rate</label>
+          <input type="number" id="rocket_sell" class="form-control" step="0.01">
+        </div>
+      </div>
+
+      <div class="col-md-3">
+        <div class="border p-3 rounded">
+          <h6 class="text-danger">Upay</h6>
+          <label>Buy Rate</label>
+          <input type="number" id="upay_buy" class="form-control mb-2" step="0.01">
+          <label>Sell Rate</label>
+          <input type="number" id="upay_sell" class="form-control" step="0.01">
+        </div>
+      </div>
+
+    </div>
+
+    <button id="updateBtn" class="btn btn-primary btn-lg w-100 mt-4">Update All Rates</button>
+    <div id="msg" class="mt-3 text-center"></div>
+  </div>
 </div>
 
-<!-- Orders -->
-<div class="card bg-dark p-3">
-<h4>New Orders</h4>
-<table class="table table-dark table-striped">
-<thead><tr><th>Email</th><th>Amount $</th><th>Type</th><th>Time</th></tr></thead>
-<tbody id="orderTable"></tbody>
-</table>
-</div>
-</div>
-
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
 <script>
-firebase.initializeApp({apiKey:"AIzaSyBC0OA7gEWg1dfVzqVpI1YgbKzNKllz4pg",authDomain:"ts-dollar-exchange.firebaseapp.com",databaseURL:"https://ts-dollar-exchange-default-rtdb.asia-southeast1.firebasedatabase.app"});
-const auth = firebase.auth();
+const firebaseConfig = {
+  apiKey:"AIzaSyBC0OA7gEWg1dfVzqVpI1YgbKzNKllz4pg",
+  authDomain:"ts-dollar-exchange.firebaseapp.com",
+  databaseURL:"https://ts-dollar-exchange-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId:"ts-dollar-exchange"
+};
+firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
-// 1. Login Check - Login না থাকলে ফেরত পাঠাবে
-auth.onAuthStateChanged((user) => {
-if (!user) {
-window.location.href = "login.html";
-}
+// 1. আগের Rate Load করা
+db.ref('rates/wallets').on('value',(snap)=>{
+  let data = snap.val() || {};
+  for(let key in data){
+    if(document.getElementById(key+'_buy')) document.getElementById(key+'_buy').value = data[key].buy;
+    if(document.getElementById(key+'_sell')) document.getElementById(key+'_sell').value = data[key].sell;
+  }
 });
 
-// 2. Rate Load
-db.ref('rates').on('value',(snap)=>{
-let data=snap.val() || {buy:120,sell:122};
-document.getElementById('buyRate').value=data.buy;
-document.getElementById('sellRate').value=data.sell;
+// 2. Update Button Click
+document.getElementById('updateBtn').addEventListener('click', ()=>{
+  const rates = {
+    payoneer: { buy: parseFloat(payoneer_buy.value) || 0, sell: parseFloat(payoneer_sell.value) || 0 },
+    wise: { buy: parseFloat(wise_buy.value) || 0, sell: parseFloat(wise_sell.value) || 0 },
+    usdt: { buy: parseFloat(usdt_buy.value) || 0, sell: parseFloat(usdt_sell.value) || 0 },
+    skrill: { buy: parseFloat(skrill_buy.value) || 0, sell: parseFloat(skrill_sell.value) || 0 },
+    bkash: { buy: parseFloat(bkash_buy.value) || 0, sell: parseFloat(bkash_sell.value) || 0 },
+    nagad: { buy: parseFloat(nagad_buy.value) || 0, sell: parseFloat(nagad_sell.value) || 0 },
+    rocket: { buy: parseFloat(rocket_buy.value) || 0, sell: parseFloat(rocket_sell.value) || 0 },
+    upay: { buy: parseFloat(upay_buy.value) || 0, sell: parseFloat(upay_sell.value) || 0 }
+  };
+
+  db.ref('rates/wallets').set(rates).then(()=>{
+    document.getElementById('msg').innerHTML = '<div class="alert alert-success">Rates Updated Successfully!</div>';
+    setTimeout(()=> document.getElementById('msg').innerHTML = '', 3000);
+  });
 });
 
-// 3. Rate Update
-function updateRate(){
-let buy=document.getElementById('buyRate').value;
-let sell=document.getElementById('sellRate').value;
-db.ref('rates').set({buy:buy,sell:sell});
-alert("✅ Rate Updated! Home + Exchange এ Auto Update হবে");
-}
-
-// 4. Order Load
-db.ref('orders').on('child_added',(snap)=>{
-let o=snap.val();
-document.getElementById('orderTable').innerHTML=`<tr><td>${o.email}</td><td>${o.amount}</td><td>${o.type}</td><td>${o.time}</td></tr>` + document.getElementById('orderTable').innerHTML;
-});
-
-// 5. Logout
 function logout(){
-auth.signOut().then(()=>{window.location.href="login.html";});
+  alert('Logout done');
+  window.location.href = 'login.html';
 }
 </script>
+
 </body>
 </html>
