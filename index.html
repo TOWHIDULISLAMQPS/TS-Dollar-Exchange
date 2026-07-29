@@ -266,7 +266,7 @@ function calculate(){
   getAmount.value = result.toFixed(2);
 }
 sendAmount.addEventListener('input', calculate);
-
+  
 function goToOrder(){
   if(sendAmount.value <= 0){ alert('Amount দিন'); return; }
   localStorage.setItem('exchangeData', JSON.stringify({
