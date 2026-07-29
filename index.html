@@ -262,30 +262,58 @@ function goToOrder(){
   window.location.href = 'order.html';
 }
 
-const demoNames = ["Rahim K.", "Sadia A.", "Tanvir H.", "Nusrat J.", "Kamal U.", "Fatema B.", "Hasan M.", "Ayesha R.", "Rony S.", "Jannat F."];
-const demoStatus = ["pending", "processing", "completed"];
+// DEMO MODE - FIREBASE E SAVE HOBE NA, SUDHU DEKHTE PABA
+const demoNames = ["Arafat Islam", "Mst. Jannat", "Kazi Rahman", "Sabrina Akter", "Naimul Haque", "Fatema Begum", "Tanvir Ahmed", "Roksana Parvin", "Hasibul Hasan", "Nasima Khatun", "Shakil Khan", "Tania Sultana", "Mahmudul Karim", "Sharmin Akhi", "Imran Hossain"];
+let shownNames = [];
 
-function addDemoOrder() {
-  const randomName = demoNames[Math.floor(Math.random() * demoNames.length)];
-  const randomStatus = demoStatus[Math.floor(Math.random() * demoStatus.length)];
-  const randomSendAmount = (Math.random() * 500 + 50).toFixed(0);
-  const randomGetAmount = (randomSendAmount * 125).toFixed(0);
-  const newOrder = {
-    name: randomName,
-    sendAmount: randomSendAmount,
-    sendWallet: "payoneer",
-    getAmount: randomGetAmount,
-    getWallet: "bkash",
-    status: randomStatus,
-    timestamp: Date.now()
-  };
-  db.ref('orders').push(newOrder);
+function getUniqueName() {
+  let available = demoNames.filter(n => !shownNames.includes(n));
+  if(available.length === 0) shownNames = []; // sob sesh hole abar reset
+  let name = available[Math.floor(Math.random() * available.length)];
+  shownNames.push(name);
+  return name;
 }
 
-setTimeout(() => {
-  setInterval(addDemoOrder, 10000);
-  addDemoOrder();
-}, 3000);
+function timeAgo(minutes) {
+  if(minutes < 60) return minutes + " min ago";
+  if(minutes < 1440) return Math.floor(minutes/60) + " hour ago";
+  return Math.floor(minutes/1440) + " day ago";
+}
+
+function renderDemoOrders() {
+  const recentOrderList = document.getElementById('recentOrderList');
+  let html = '';
+  
+  const demoData = [
+    {name: getUniqueName(), send: 200, status: 'processing', time: 5},
+    {name: getUniqueName(), send: 150, status: 'pending', time: 20},
+    {name: getUniqueName(), send: 350, status: 'completed', time: 60},
+    {name: getUniqueName(), send: 80, status: 'completed', time: 120},
+    {name: getUniqueName(), send: 500, status: 'completed', time: 180}
+  ];
+
+  demoData.forEach(order => {
+    let badge, itemClass;
+    if(order.status == 'pending'){ badge = `<span class="badge badge-danger">Pending</span>`; itemClass = 'order-item pending'; }
+    else if(order.status == 'processing'){ badge = `<span class="badge badge-warning">Processing</span>`; itemClass = 'order-item processing'; }
+    else{ badge = `<span class="badge badge-success">Completed</span>`; itemClass = 'order-item'; }
+
+    html += `<div class="${itemClass}">
+      <div class="d-flex justify-content-between align-items-center">
+        <div>
+          <b>${order.name}</b><br>
+          <small class="text-muted">${order.send} USD → ${(order.send*125).toFixed(0)} BDT</small><br>
+          <small><i class="bi bi-clock"></i> ${timeAgo(order.time)}</small>
+        </div>
+        ${badge}
+      </div>
+    </div>`;
+  });
+  recentOrderList.innerHTML = html;
+}
+
+renderDemoOrders(); // 1 bar load hobe
+setInterval(renderDemoOrders, 60000); // 1 minit por por update
 
 </script>
 </body>
