@@ -61,7 +61,7 @@ databaseURL:"https://ts-dollar-exchange-default-rtdb.asia-southeast1.firebasedat
 });
 const auth = firebase.auth();
 const db = firebase.database();
-const wallets = ["USD", "Payoneer", "Wise", "Skrill"]; // 4 টা
+const wallets = ["USDT", "Payoneer", "Wise", "Skrill"]; // <-- শুধু এখানে USD থেকে USDT করলাম
 
 auth.onAuthStateChanged((user) => {if (!user) {window.location.href = "login.html";}});
 
@@ -76,8 +76,8 @@ wallets.forEach(w=>{
 let buy=data[w]?.buy||120;
 let sell=data[w]?.sell||122;
 html+=`
-<div class="mb-3 p-3 border border-secondary rounded">
-<h5 class="text-warning">${w} USD</h5>
+<div class="mb-3 p-3 border-secondary rounded">
+<h5 class="text-warning">${w} ${w === 'USDT' ? '' : 'USD'}</h5>
 <div class="row g-3">
 <div class="col-6"><label>Buy Rate BDT</label><input id="${w}_buy" type="number" value="${buy}" class="form-control bg-dark text-white"></div>
 <div class="col-6"><label>Sell Rate BDT</label><input id="${w}_sell" type="number" value="${sell}" class="form-control bg-dark text-white"></div>
