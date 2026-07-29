@@ -47,7 +47,6 @@ h3,h5 { font-weight: 900; letter-spacing: -0.8px; }
 </head>
 <body>
 
-<!-- WELCOME POPUP -->
 <div id="welcomeModal" class="welcome-modal">
   <div class="welcome-box">
     <h2 class="fw-bold mb-3"><i class="bi bi-shield-check text-success"></i> Welcome!</h2>
@@ -56,7 +55,6 @@ h3,h5 { font-weight: 900; letter-spacing: -0.8px; }
   </div>
 </div>
 
-<!-- ADMIN LOGIN MODAL -->
 <div id="adminModal" class="admin-modal">
   <div class="admin-box">
     <h4 class="fw-bold mb-3"><i class="bi bi-shield-lock"></i> Admin Login</h4>
@@ -80,7 +78,6 @@ h3,h5 { font-weight: 900; letter-spacing: -0.8px; }
     <h3 class="text-center mb-2">⚡ Instant & Secure Exchange</h3>
     <p class="text-center text-muted mb-4">Trusted by 10,000+ Users in Bangladesh</p>
 
-    <!-- YOU SEND -->
     <div class="mb-4">
       <label class="fw-bold mb-2">You Send</label>
       <div class="input-box d-flex align-items-center mb-3">
@@ -90,12 +87,10 @@ h3,h5 { font-weight: 900; letter-spacing: -0.8px; }
       <div class="row g-3" id="sendWallets"></div>
     </div>
 
-    <!-- SWAP BUTTON -->
     <div class="text-center my-3">
       <button class="swap-btn" onclick="swapWallets()"><i class="bi bi-arrow-down-up"></i></button>
     </div>
 
-    <!-- YOU GET -->
     <div class="mb-4">
       <label class="fw-bold mb-2">You Get</label>
       <div class="input-box d-flex align-items-center mb-3">
@@ -116,21 +111,18 @@ h3,h5 { font-weight: 900; letter-spacing: -0.8px; }
     </div>
   </div>
 
-  <!-- LIVE RATE TABLE -->
   <div class="section-card mt-4">
     <h5 class="mb-3 text-center"><i class="bi bi-graph-up-arrow text-primary"></i> USD Wallet Rates <span id="rateLoading" class="spinner-border spinner-border-sm"></span></h5>
     <div id="rateList"><p class="text-center text-muted">Loading Rates...</p></div>
     <small class="text-muted">* Rates updated live from Admin Panel</small>
   </div>
 
-  <!-- RECENT ORDERS -->
   <div class="section-card mt-4">
     <h5 class="mb-3 text-center"><i class="bi bi-activity text-success"></i> Live Transactions</h5>
     <div id="recentOrderList"><p class="text-center text-muted">Loading Orders...</p></div>
   </div>
 </div>
 
-<!-- FOOTER -->
 <footer class="footer">
   <div class="container">
     <div class="row">
@@ -143,7 +135,6 @@ h3,h5 { font-weight: 900; letter-spacing: -0.8px; }
   </div>
 </footer>
 
-<!-- STICKY WHATSAPP BUTTON -->
 <a href="https://wa.me/8801726858565" target="_blank" class="whatsapp-float"><i class="bi bi-whatsapp fs-4"></i> Chat Now</a>
 
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
@@ -175,11 +166,9 @@ let rates = {};
 let selectedSend = 'payoneer';
 let selectedGet = 'bkash';
 
-// WELCOME POPUP
 function closeWelcome(){ document.getElementById('welcomeModal').style.display = 'none'; }
 setTimeout(closeWelcome, 5000);
 
-// ADMIN FUNCTIONS
 function openAdmin(){ document.getElementById('adminModal').style.display = 'flex'; }
 function closeAdmin(){ document.getElementById('adminModal').style.display = 'none'; }
 function adminLogin(){
@@ -187,11 +176,10 @@ function adminLogin(){
   const pass = document.getElementById('adminPass').value;
   const msg = document.getElementById('adminMsg');
   auth.signInWithEmailAndPassword(email, pass)
- .then(()=>{ window.location.href = 'dashboard.html'; })
- .catch((e)=>{ msg.innerHTML = "Error: "+e.message; msg.className="text-danger"; });
+.then(()=>{ window.location.href = 'dashboard.html'; })
+.catch((e)=>{ msg.innerHTML = "Error: "+e.message; msg.className="text-danger"; });
 }
 
-// FIREBASE: LOAD RATES LIVE
 db.ref('rates/wallets').on('value',(snap)=>{
   rates = snap.val() || {};
   document.getElementById('rateLoading').style.display='none';
@@ -200,19 +188,17 @@ db.ref('rates/wallets').on('value',(snap)=>{
   calculate();
 });
 
-// FIREBASE: LOAD ORDERS LIVE
 db.ref('orders').orderByChild('timestamp').limitToLast(5).on('value', snap=>{
   let html = '';
-  if(!snap.exists()){ recentOrderList.innerHTML='<p class="text-center text-muted">No orders yet</p>'; return; }
+  const recentOrderList = document.getElementById('recentOrderList');
+  if(!snap.exists()){ recentOrderList.innerHTML='<p class="text-center text-muted">Ekhono kono transaction nai</p>'; return; }
   let orders = [];
   snap.forEach(child=>{ orders.unshift({id:child.key,...child.val()}); });
-
-  orders.forEach((order, index) => {
+  orders.forEach((order) => {
     let badge, itemClass;
     if(order.status == 'pending'){ badge = `<span class="badge badge-danger">Pending</span>`; itemClass = 'order-item pending'; }
     else if(order.status == 'processing'){ badge = `<span class="badge badge-warning">Processing</span>`; itemClass = 'order-item processing'; }
     else{ badge = `<span class="badge badge-success">Completed</span>`; itemClass = 'order-item'; }
-
     html += `<div class="${itemClass}">
       <div class="d-flex justify-content-between align-items-center">
         <div>
@@ -275,6 +261,32 @@ function goToOrder(){
   }));
   window.location.href = 'order.html';
 }
+
+const demoNames = ["Rahim K.", "Sadia A.", "Tanvir H.", "Nusrat J.", "Kamal U.", "Fatema B.", "Hasan M.", "Ayesha R.", "Rony S.", "Jannat F."];
+const demoStatus = ["pending", "processing", "completed"];
+
+function addDemoOrder() {
+  const randomName = demoNames[Math.floor(Math.random() * demoNames.length)];
+  const randomStatus = demoStatus[Math.floor(Math.random() * demoStatus.length)];
+  const randomSendAmount = (Math.random() * 500 + 50).toFixed(0);
+  const randomGetAmount = (randomSendAmount * 125).toFixed(0);
+  const newOrder = {
+    name: randomName,
+    sendAmount: randomSendAmount,
+    sendWallet: "payoneer",
+    getAmount: randomGetAmount,
+    getWallet: "bkash",
+    status: randomStatus,
+    timestamp: Date.now()
+  };
+  db.ref('orders').push(newOrder);
+}
+
+setTimeout(() => {
+  setInterval(addDemoOrder, 10000);
+  addDemoOrder();
+}, 3000);
+
 </script>
 </body>
 </html>
