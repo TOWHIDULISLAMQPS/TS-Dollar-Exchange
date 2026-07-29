@@ -6,13 +6,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>TS Dollar Exchange</title>
 
-<!-- Bootstrap -->
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
-<!-- Font Awesome -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
-<!-- Google Font -->
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-<!-- Main CSS -->
 <link rel="stylesheet" href="style.css">
 
 <style>
@@ -29,7 +25,6 @@ body{font-family: 'Poppins', sans-serif;}
 
 <body>
 
-<!-- TOP BAR -->
 <div class="top-bar bg-dark text-white py-2">
 <div class="container d-flex justify-content-between">
 <div><i class="fa-solid fa-envelope"></i> support@tsdollarexchange.com</div>
@@ -37,7 +32,6 @@ body{font-family: 'Poppins', sans-serif;}
 </div>
 </div>
 
-<!-- NAVBAR -->
 <nav class="navbar navbar-expand-lg bg-white shadow-sm sticky-top">
 <div class="container">
 <a class="navbar-brand fw-bold text-primary fs-3" href="#">TS Dollar Exchange</a>
@@ -60,7 +54,7 @@ body{font-family: 'Poppins', sans-serif;}
 <div class="row align-items-center">
 <div class="col-lg-6">
 <h1>Fast & Secure Dollar Exchange</h1>
-<p>Exchange Payoneer, Wise, Skrill, USDT, Perfect Money and more safely with TS Dollar Exchange.</p>
+<p>Exchange Payoneer, Wise, Skrill, USDT safely with Bkash, Nagad, Rocket, Upay.</p>
 </div>
 
 <div class="col-lg-6">
@@ -78,6 +72,14 @@ body{font-family: 'Poppins', sans-serif;}
 
 <label class="form-label">Amount USD</label>
 <input id="sendAmount" type="number" class="form-control mb-3" placeholder="Enter Amount" value="1">
+
+<label class="form-label">You Will Receive Via</label> <!-- NEW -->
+<select id="receiveWallet" class="form-select mb-3">
+<option value="bkash">Bkash</option>
+<option value="nagad">Nagad</option>
+<option value="rocket">Rocket</option>
+<option value="upay">Upay</option>
+</select>
 
 <label class="form-label">You Will Receive</label>
 <input id="receiveAmount" type="text" class="form-control mb-4" placeholder="0.00 BDT" readonly>
@@ -107,10 +109,8 @@ body{font-family: 'Poppins', sans-serif;}
 </div>
 </section>
 
-<!-- WHY CHOOSE US -->
 <section class="why-us py-5"><div class="container"><div class="text-center mb-5"><h2>Why Choose TS Dollar Exchange?</h2></div><div class="row g-4 text-center"><div class="col-lg-3"><div class="p-3"><i class="fa-solid fa-shield-halved fa-2x text-primary"></i><h4 class="mt-2">100% Secure</h4></div></div><div class="col-lg-3"><div class="p-3"><i class="fa-solid fa-bolt fa-2x text-primary"></i><h4 class="mt-2">Instant Payment</h4></div></div><div class="col-lg-3"><div class="p-3"><i class="fa-solid fa-headset fa-2x text-primary"></i><h4 class="mt-2">24/7 Support</h4></div></div><div class="col-lg-3"><div class="p-3"><i class="fa-solid fa-star fa-2x text-primary"></i><h4 class="mt-2">Trusted Service</h4></div></div></div></div></section>
 
-<!-- CONTACT -->
 <section id="contact" class="py-5 bg-light">
 <div class="container"><div class="text-center mb-5"><h2>Contact Us</h2></div>
 <div class="row"><div class="col-lg-6">
@@ -122,15 +122,12 @@ body{font-family: 'Poppins', sans-serif;}
 <div class="col-lg-6"><form><input type="text" class="form-control mb-3" placeholder="Your Name"><input type="email" class="form-control mb-3" placeholder="Email Address"><textarea class="form-control mb-3" rows="5" placeholder="Your Message"></textarea><button class="btn btn-primary w-100">Send Message</button></form></div>
 </div></div></section>
 
-<!-- FOOTER -->
 <footer class="bg-dark text-white py-4"><div class="container text-center">© 2026 TS Dollar Exchange. All Rights Reserved.</div></footer>
 
-<!-- WhatsApp Floating Button -->
 <a href="https://wa.me/8801726858565" class="whatsapp-float" target="_blank"><i class="fab fa-whatsapp"></i></a>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
 
-<!-- NEW Firebase CDN - Github e eta cholbe -->
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
 <script>
@@ -147,9 +144,7 @@ let rates = {};
 // 1. RATE AUTO LOAD
 db.ref('rates/wallets').on('value',(snap)=>{
 rates = snap.val() || {};
-console.log("Rates Loaded:", rates);
 
-// Rate Card Update
 document.getElementById('payoneerBuy').innerText = (rates.Payoneer?.buy || 0).toFixed(2);
 document.getElementById('payoneerSell').innerText = (rates.Payoneer?.sell || 0).toFixed(2);
 document.getElementById('wiseBuy').innerText = (rates.Wise?.buy || 0).toFixed(2);
@@ -159,7 +154,7 @@ document.getElementById('skrillSell').innerText = (rates.Skrill?.sell || 0).toFi
 document.getElementById('usdtBuy').innerText = (rates.USDT?.buy || 0).toFixed(2);
 document.getElementById('usdtSell').innerText = (rates.USDT?.sell || 0).toFixed(2);
 
-calculate(); // Calculator ও Update হবে
+calculate();
 });
 
 // 2. CALCULATOR AUTO
@@ -177,6 +172,7 @@ document.getElementById('receiveAmount').value = (amount * rate).toFixed(2) + ' 
 }
 document.getElementById('sendWallet').addEventListener('change', calculate);
 document.getElementById('sendAmount').addEventListener('input', calculate);
+document.getElementById('receiveWallet').addEventListener('change', calculate); // NEW
 </script>
   
 </body>
