@@ -1,212 +1,151 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>TS Dollar Exchange</title>
-
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css">
-
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-body{font-family: 'Poppins', sans-serif;}
-.exchange-card { background:#fff; padding:30px; border-radius:16px; box-shadow:0 10px 30px rgba(0,0,0,0.1); }
-.rate-card { background:#fff; padding:20px; border-radius:12px; box-shadow:0 5px 15px rgba(0,0,0,0.05); }
-.rate-card.buy { color: #00a859; }
-.rate-card.sell { color: #dc3545; }
-.hero { padding: 100px 0; background: linear-gradient(135deg, #0d6efd, #00a859); color: #fff; }
-.whatsapp-float { position:fixed; bottom:20px; right:20px; background:#25D366; color:#fff; border-radius:50%; width:60px; height:60px; display:flex; align-items:center; justify-content:center; font-size:30px; z-index:1000; }
-.swap-btn { cursor:pointer; font-size:24px; color:#0d6efd; }
+body { font-family: 'Poppins', sans-serif; background: #f8f9fa; }
+.navbar { background: linear-gradient(135deg, #0d6efd, #00a859); }
+.card { border-radius: 16px; border: none; box-shadow: 0 5px 20px rgba(0,0,0,0.08); }
+.wallet-card { cursor: pointer; border: 2px solid #eee; transition: 0.2s; border-radius: 12px; padding: 15px; text-align: center; }
+.wallet-card:hover { border-color: #0d6efd; }
+.wallet-card.selected { border-color: #00a859; background: #e8f5e9; }
+.swap-btn { width: 50px; height: 50px; border-radius: 50%; border: none; background: #0d6efd; color: #fff; font-size: 20px; }
+.input-box { background: #f1f3f5; border-radius: 10px; padding: 15px; }
 </style>
-
 </head>
-
 <body>
 
-<div class="top-bar bg-dark text-white py-2">
-<div class="container d-flex justify-content-between">
-<div><i class="fa-solid fa-envelope"></i> support@tsdollarexchange.com</div>
-<div><i class="fa-brands fa-whatsapp"></i> WhatsApp Support</div>
-</div>
-</div>
-
-<nav class="navbar navbar-expand-lg bg-white shadow-sm sticky-top">
-<div class="container">
-<a class="navbar-brand fw-bold text-primary fs-3" href="#">TS Dollar Exchange</a>
-<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar"><span class="navbar-toggler-icon"></span></button>
-<div class="collapse navbar-collapse" id="navbar">
-<ul class="navbar-nav ms-auto align-items-lg-center">
-<li class="nav-item"><a class="nav-link active" href="#">Home</a></li>
-<li class="nav-item"><a class="nav-link" href="#exchange">Exchange</a></li>
-<li class="nav-item"><a class="nav-link" href="#rates">Rates</a></li>
-<li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
-<li class="nav-item ms-lg-3"><a href="login.html" class="btn btn-primary">Login</a></li>
-</ul>
-</div>
-</div>
+<nav class="navbar navbar-dark">
+  <div class="container">
+    <a class="navbar-brand fw-bold fs-3" href="#">TS Dollar Exchange</a>
+  </div>
 </nav>
 
-<!-- HERO SECTION + 2 WAY CALCULATOR -->
-<section id="exchange" class="hero">
-<div class="container">
-<div class="row align-items-center">
-<div class="col-lg-6">
-<h1>Fast & Secure Exchange</h1>
-<p>USD to BDT, BDT to USD, Crypto, Bank - All in one place</p>
+<div class="container my-5">
+  <div class="card p-4 p-md-5">
+    <h3 class="text-center fw-bold mb-4">Instant Exchange</h3>
+
+    <!-- YOU SEND -->
+    <div class="mb-4">
+      <label class="fw-semibold mb-2">You Send</label>
+      <div class="input-box d-flex align-items-center mb-3">
+        <input type="number" id="sendAmount" class="form-control border-0 bg-transparent fs-4" placeholder="0.00">
+        <span id="sendCurrency" class="fw-bold fs-5 ms-2">USD</span>
+      </div>
+      <div class="row g-2" id="sendWallets"></div>
+    </div>
+
+    <!-- SWAP BUTTON -->
+    <div class="text-center my-3">
+      <button class="swap-btn" onclick="swapWallets()">⇅</button>
+    </div>
+
+    <!-- YOU GET -->
+    <div class="mb-4">
+      <label class="fw-semibold mb-2">You Get</label>
+      <div class="input-box d-flex align-items-center mb-3">
+        <input type="text" id="getAmount" class="form-control border-0 bg-transparent fs-4" placeholder="0.00" readonly>
+        <span id="getCurrency" class="fw-bold fs-5 ms-2">BDT</span>
+      </div>
+      <div class="row g-2" id="getWallets"></div>
+    </div>
+
+    <button class="btn btn-success btn-lg w-100 fw-bold" onclick="goToOrder()">Exchange Now</button>
+  </div>
 </div>
-
-<div class="col-lg-6">
-<div class="exchange-card text-dark">
-<h3 class="text-center mb-4">Instant Exchange</h3>
-
-<form id="calculatorForm">
-<!-- SEND WALLET -->
-<label class="form-label">You Send</label>
-<select id="sendWallet" class="form-select mb-2">
-<optgroup label="USD Wallets">
-<option value="payoneer">Payoneer USDT</option>
-<option value="wise">Wise USDT</option>
-<option value="usdt">USDT</option>
-<option value="skrill">Skrill USDT</option>
-</optgroup>
-<optgroup label="BDT Wallets">
-<option value="bkash">Bkash</option>
-<option value="nagad">Nagad</option>
-<option value="rocket">Rocket</option>
-<option value="upay">Upay</option>
-</optgroup>
-</select>
-
-<label class="form-label">Amount</label>
-<input id="sendAmount" type="number" class="form-control mb-3" placeholder="Enter Amount" value="1">
-
-<div class="text-center my-2"><i class="fa-solid fa-arrow-down-up swap-btn" id="swapBtn"></i></div>
-
-<!-- RECEIVE WALLET -->
-<label class="form-label">You Will Receive</label>
-<select id="receiveWallet" class="form-select mb-2">
-<optgroup label="BDT Wallets">
-<option value="bkash">Bkash</option>
-<option value="nagad">Nagad</option>
-<option value="rocket">Rocket</option>
-<option value="upay">Upay</option>
-</optgroup>
-<optgroup label="USD Wallets">
-<option value="payoneer">Payoneer USDT</option>
-<option value="wise">Wise USDT</option>
-<option value="usdt">USDT</option>
-<option value="skrill">Skrill USDT</option>
-</optgroup>
-</select>
-
-<label class="form-label">You Will Get</label>
-<input id="receiveAmount" type="text" class="form-control mb-4" placeholder="0.00" readonly>
-
-<a id="startExchangeBtn" href="order.html" class="btn btn-success w-100 btn-lg">Start Exchange</a>
-
-</form>
-</div>
-</div>
-</div>
-</div>
-</section>
-
-<!-- LIVE EXCHANGE RATES -->
-<section id="rates" class="py-5 bg-light">
-<div class="container">
-<div class="text-center mb-5">
-<h2 class="fw-bold">Today's Exchange Rates</h2>
-<p class="text-muted">Updated in real time from Admin Panel</p>
-</div>
-<div class="row g-4">
-<div class="col-lg-3 col-md-6"><div class="rate-card text-center"><h5>Payoneer USDT</h5><h3 class="buy">Buy: <span id="payoneerBuy">0.00</span></h3><h3 class="sell">Sell: <span id="payoneerSell">0.00</span></h3></div></div>
-<div class="col-lg-3 col-md-6"><div class="rate-card text-center"><h5>Wise USDT</h5><h3 class="buy">Buy: <span id="wiseBuy">0.00</span></h3><h3 class="sell">Sell: <span id="wiseSell">0.00</span></h3></div></div>
-<div class="col-lg-3 col-md-6"><div class="rate-card text-center"><h5>USDT</h5><h3 class="buy">Buy: <span id="usdtBuy">0.00</span></h3><h3 class="sell">Sell: <span id="usdtSell">0.00</span></h3></div></div>
-<div class="col-lg-3 col-md-6"><div class="rate-card text-center"><h5>Skrill USDT</h5><h3 class="buy">Buy: <span id="skrillBuy">0.00</span></h3><h3 class="sell">Sell: <span id="skrillSell">0.00</span></h3></div></div>
-<div class="col-lg-3 col-md-6"><div class="rate-card text-center"><h5>Bkash</h5><h3 class="buy">Buy: <span id="bkashBuy">0.00</span></h3><h3 class="sell">Sell: <span id="bkashSell">0.00</span></h3></div></div>
-<div class="col-lg-3 col-md-6"><div class="rate-card text-center"><h5>Nagad</h5><h3 class="buy">Buy: <span id="nagadBuy">0.00</span></h3><h3 class="sell">Sell: <span id="nagadSell">0.00</span></h3></div></div>
-<div class="col-lg-3 col-md-6"><div class="rate-card text-center"><h5>Rocket</h5><h3 class="buy">Buy: <span id="rocketBuy">0.00</span></h3><h3 class="sell">Sell: <span id="rocketSell">0.00</span></h3></div></div>
-<div class="col-lg-3 col-md-6"><div class="rate-card text-center"><h5>Upay</h5><h3 class="buy">Buy: <span id="upayBuy">0.00</span></h3><h3 class="sell">Sell: <span id="upaySell">0.00</span></h3></div></div>
-</div>
-</div>
-</section>
-
-<section class="why-us py-5"><div class="container"><div class="text-center mb-5"><h2>Why Choose TS Dollar Exchange?</h2></div><div class="row g-4 text-center"><div class="col-lg-3"><div class="p-3"><i class="fa-solid fa-shield-halved fa-2x text-primary"></i><h4 class="mt-2">100% Secure</h4></div></div><div class="col-lg-3"><div class="p-3"><i class="fa-solid fa-bolt fa-2x text-primary"></i><h4 class="mt-2">Instant Payment</h4></div></div><div class="col-lg-3"><div class="p-3"><i class="fa-solid fa-headset fa-2x text-primary"></i><h4 class="mt-2">24/7 Support</h4></div></div><div class="col-lg-3"><div class="p-3"><i class="fa-solid fa-star fa-2x text-primary"></i><h4 class="mt-2">Trusted Service</h4></div></div></div></div></section>
-
-<section id="contact" class="py-5 bg-light">
-<div class="container"><div class="text-center mb-5"><h2>Contact Us</h2></div>
-<div class="row"><div class="col-lg-6">
-<h4>Office Information</h4>
-<p><i class="fa-solid fa-location-dot"></i> Dhaka, Bangladesh</p>
-<p><i class="fa-solid fa-envelope"></i> support@tsdollarexchange.com</p>
-<p><i class="fa-brands fa-whatsapp"></i> +8801726858565</p>
-</div>
-<div class="col-lg-6"><form><input type="text" class="form-control mb-3" placeholder="Your Name"><input type="email" class="form-control mb-3" placeholder="Email Address"><textarea class="form-control mb-3" rows="5" placeholder="Your Message"></textarea><button class="btn btn-primary w-100">Send Message</button></form></div>
-</div></div></section>
-
-<footer class="bg-dark text-white py-4"><div class="container text-center">© 2026 TS Dollar Exchange. All Rights Reserved.</div></footer>
-
-<a href="https://wa.me/8801726858565" class="whatsapp-float" target="_blank"><i class="fab fa-whatsapp"></i></a>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
 
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
 <script>
 const firebaseConfig = {
-apiKey:"AIzaSyBC0OA7gEWg1dfVzqVpI1YgbKzNKllz4pg",
-authDomain:"ts-dollar-exchange.firebaseapp.com",
-databaseURL:"https://ts-dollar-exchange-default-rtdb.asia-southeast1.firebasedatabase.app",
-projectId:"ts-dollar-exchange"
+  apiKey:"AIzaSyBC0OA7gEWg1dfVzqVpI1YgbKzNKllz4pg",
+  authDomain:"ts-dollar-exchange.firebaseapp.com",
+  databaseURL:"https://ts-dollar-exchange-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId:"ts-dollar-exchange"
 };
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
+
+const wallets = {
+  usdt: { name: "USDT", type: "USD", icon: "₮" },
+  payoneer: { name: "Payoneer", type: "USD", icon: "P" },
+  wise: { name: "Wise", type: "USD", icon: "W" },
+  skrill: { name: "Skrill", type: "USD", icon: "S" },
+  bkash: { name: "Bkash", type: "BDT", icon: "bK" },
+  nagad: { name: "Nagad", type: "BDT", icon: "N" },
+  rocket: { name: "Rocket", type: "BDT", icon: "R" },
+  upay: { name: "Upay", type: "BDT", icon: "U" }
+};
+
 let rates = {};
+let selectedSend = 'payoneer';
+let selectedGet = 'bkash';
 
-// 1. RATE AUTO LOAD
 db.ref('rates/wallets').on('value',(snap)=>{
-rates = snap.val() || {};
-["payoneer","wise","usdt","skrill","bkash","nagad","rocket","upay"].forEach(w=>{
-  if(document.getElementById(w+'Buy'))
-  document.getElementById(w+'Buy').innerText = (rates[w]?.buy || 0).toFixed(2);
-  if(document.getElementById(w+'Sell'))
-  document.getElementById(w+'Sell').innerText = (rates[w]?.sell || 0).toFixed(2);
-});
-calculate();
-});
-
-// 2. CALCULATOR AUTO - 2 WAY
-function calculate(){
-let send = document.getElementById('sendWallet').value;
-let receive = document.getElementById('receiveWallet').value;
-let amount = parseFloat(document.getElementById('sendAmount').value) || 0;
-let sendRate = rates[send]?.sell || 0; // we sell to customer
-let receiveRate = rates[receive]?.buy || 0; // we buy from customer
-
-let result = 0;
-if(amount > 0 && sendRate > 0 && receiveRate > 0){
-  result = (amount * sendRate) / receiveRate; // USD to BDT or BDT to USD formula
-}
-
-document.getElementById('receiveAmount').value = result.toFixed(2);
-}
-
-// 3. SWAP BUTTON
-document.getElementById('swapBtn').addEventListener('click', ()=>{
-  let s = document.getElementById('sendWallet').value;
-  let r = document.getElementById('receiveWallet').value;
-  document.getElementById('sendWallet').value = r;
-  document.getElementById('receiveWallet').value = s;
+  rates = snap.val() || {};
+  renderWallets();
   calculate();
 });
 
-document.getElementById('sendWallet').addEventListener('change', calculate);
-document.getElementById('receiveWallet').addEventListener('change', calculate);
-document.getElementById('sendAmount').addEventListener('input', calculate);
-</script>
+function renderWallets(){
+  let sendHtml = '', getHtml = '';
+  for(let key in wallets){
+    sendHtml += `<div class="col-3 col-md-1-5"><div class="wallet-card ${selectedSend==key?'selected':''}" onclick="selectSend('${key}')"><div class="fs-4">${wallets[key].icon}</div><small>${wallets[key].name}</small></div></div>`;
+    getHtml += `<div class="col-3 col-md-1-5"><div class="wallet-card ${selectedGet==key?'selected':''}" onclick="selectGet('${key}')"><div class="fs-4">${wallets[key].icon}</div><small>${wallets[key].name}</small></div></div>`;
+  }
+  sendWallets.innerHTML = sendHtml;
+  getWallets.innerHTML = getHtml;
+}
 
+function selectSend(key){ selectedSend = key; sendCurrency.innerText = wallets[key].type; renderWallets(); calculate(); }
+function selectGet(key){ selectedGet = key; getCurrency.innerText = wallets[key].type; renderWallets(); calculate(); }
+
+function swapWallets(){
+  let temp = selectedSend;
+  selectedSend = selectedGet;
+  selectedGet = temp;
+  renderWallets(); calculate();
+}
+
+function calculate(){
+  let amount = parseFloat(sendAmount.value) || 0;
+  if(!rates[selectedSend] ||!rates[selectedGet]) return;
+
+  let result = 0;
+  // USD to BDT
+  if(wallets[selectedSend].type == 'USD' && wallets[selectedGet].type == 'BDT'){
+    result = amount * rates[selectedSend].sell;
+  }
+  // BDT to USD
+  if(wallets[selectedSend].type == 'BDT' && wallets[selectedGet].type == 'USD'){
+    result = amount / rates[selectedGet].buy;
+  }
+  // USD to USD
+  if(wallets[selectedSend].type == 'USD' && wallets[selectedGet].type == 'USD'){
+    result = amount * (rates[selectedSend].sell / rates[selectedGet].buy);
+  }
+  // BDT to BDT
+  if(wallets[selectedSend].type == 'BDT' && wallets[selectedGet].type == 'BDT'){
+    result = amount * (rates[selectedSend].sell / rates[selectedGet].buy);
+  }
+
+  getAmount.value = result.toFixed(2);
+}
+
+sendAmount.addEventListener('input', calculate);
+
+function goToOrder(){
+  if(sendAmount.value <= 0){ alert('Amount দিন'); return; }
+  localStorage.setItem('exchangeData', JSON.stringify({
+    send: { wallet: selectedSend, amount: sendAmount.value },
+    get: { wallet: selectedGet, amount: getAmount.value }
+  }));
+  window.location.href = 'order.html';
+}
+</script>
 </body>
 </html>
