@@ -2,65 +2,69 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Admin Panel - TS Dollar Exchange</title>
+<title>TS Admin - Pro Dashboard</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 <style>
-body{background:#0f172a;color:#fff;font-family:'Poppins',sans-serif;}
-.login-box{width:420px;margin:100px auto;background:#1e293b;padding:40px;border-radius:20px;box-shadow:0 0 30px rgba(16,185,129,.3);}
-.card{background:#1e293b;border:1px solid #334155;border-radius:15px;padding:20px;margin-bottom:20px;}
+body{background:linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);color:#fff;font-family:'Poppins',sans-serif;min-height:100vh;}
+.login-box{width:420px;margin:100px auto;background:rgba(30,41,59,0.8);padding:40px;border-radius:20px;backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.1);}
+.card{background:rgba(30,41,59,0.6);border:1px solid rgba(255,255,255,0.1);border-radius:20px;padding:25px;margin-bottom:25px;backdrop-filter:blur(20px);}
+.stat-card{background:linear-gradient(135deg, #1e293b, #334155);padding:20px;border-radius:15px;border-left:4px solid #10b981;}
 .form-control{background:#0f172a !important;border:1px solid #334155;color:#fff !important;}
-#dashboardContent{display:none;}
-.table-dark{--bs-table-bg:#0f172a;}
-.stat-card { background: #2e3247; padding: 15px; border-radius: 8px; text-align: center; }
+.table-dark{--bs-table-bg:transparent;}
+.badge{padding:8px 12px;border-radius:8px;font-weight:600;}
 .badge-pending{background:#ef4444;} 
 .badge-processing{background:#f59e0b;} 
 .badge-completed{background:#10b981;}
-.btn-process{background:#f59e0b;border:none;}
-.btn-release{background:#10b981;border:none;}
+#dashboardContent{display:none;}
 </style>
 </head>
 <body>
 
 <!-- LOGIN -->
 <div id="loginPage" class="login-box">
-  <h3 class="text-center mb-4"><i class="bi bi-shield-lock text-success"></i> Admin Login</h3>
+  <h3 class="text-center mb-4 fw-bold"><i class="bi bi-shield-check text-success"></i> TS Admin Login</h3>
   <input id="email" type="email" value="towhidulislamtuhin872@gmail.com" class="form-control mb-3">
   <input id="password" type="password" placeholder="Password" class="form-control mb-3">
-  <button onclick="login()" class="btn btn-success w-100 fw-bold">Login</button>
+  <button onclick="login()" class="btn btn-success w-100 fw-bold py-2">Login</button>
   <p id="loginMsg" class="text-center mt-3"></p>
 </div>
 
 <!-- DASHBOARD -->
 <div id="dashboardContent" class="container py-4">
-  <div class="d-flex justify-content-between mb-4">
-    <h3>TS Admin Dashboard</h3>
-    <button class="btn btn-danger btn-sm" onclick="logout()"><i class="bi bi-box-arrow-right"></i> Logout</button>
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h3 class="fw-bold"><i class="bi bi-speedometer2 text-warning"></i> TS Admin Dashboard</h3>
+    <button class="btn btn-danger" onclick="logout()"><i class="bi bi-box-arrow-right"></i> Logout</button>
   </div>
 
   <!-- STATS -->
   <div class="row g-3 mb-4">
-    <div class="col-md-3"><div class="stat-card"><small>Total Orders</small><h4 id="totalOrders">0</h4></div></div>
-    <div class="col-md-3"><div class="stat-card"><small>Pending</small><h4 id="pendingOrders" class="text-danger">0</h4></div></div>
-    <div class="col-md-3"><div class="stat-card"><small>Processing</small><h4 id="processingOrders" class="text-warning">0</h4></div></div>
-    <div class="col-md-3"><div class="stat-card"><small>Completed</small><h4 id="completedOrders" class="text-success">0</h4></div></div>
+    <div class="col-md-3"><div class="stat-card"><small class="text-muted">Total Orders</small><h3 id="totalOrders">0</h3></div></div>
+    <div class="col-md-3"><div class="stat-card" style="border-color:#ef4444"><small class="text-muted">Pending</small><h3 id="pendingOrders" class="text-danger">0</h3></div></div>
+    <div class="col-md-3"><div class="stat-card" style="border-color:#f59e0b"><small class="text-muted">Processing</small><h3 id="processingOrders" class="text-warning">0</h3></div></div>
+    <div class="col-md-3"><div class="stat-card" style="border-color:#10b981"><small class="text-muted">Completed</small><h3 id="completedOrders" class="text-success">0</h3></div></div>
   </div>
 
   <!-- RATE CONTROL -->
   <div class="card">
-    <h5><i class="bi bi-graph-up"></i> Exchange Rate Control</h5>
-    <p class="text-muted">এখানে Rate Change করলে Main Page এ Auto Update হবে</p>
+    <h5 class="mb-3"><i class="bi bi-graph-up-arrow text-success"></i> Live Exchange Rate Control</h5>
+    <p class="text-muted small">Rate Update করলে Main Website এ Auto Change হবে</p>
     <div id="rateForm"></div>
-    <button class="btn btn-success w-100 mt-3 fw-bold" onclick="updateRates()">Save All Rates</button>
-    <p id="rateStatus" class="mt-2"></p>
+    <button class="btn btn-success w-100 mt-3 fw-bold py-2" onclick="updateRates()"><i class="bi bi-cloud-arrow-up"></i> Save All Rates</button>
+    <p id="rateStatus" class="mt-2 text-center"></p>
   </div>
 
   <!-- ORDERS -->
   <div class="card">
-    <h5><i class="bi bi-list-check"></i> New Orders</h5>
+    <h5 class="mb-3"><i class="bi bi-list-task text-primary"></i> Recent Orders</h5>
     <div class="table-responsive">
-      <table class="table table-dark table-sm align-middle">
-        <thead><tr><th>Time</th><th>Customer</th><th>Send</th><th>Get</th><th>BDT Amount</th><th>Status</th><th>Action</th></tr></thead>
+      <table class="table table-dark table-hover align-middle">
+        <thead style="border-bottom:2px solid #334155">
+          <tr>
+            <th>Time</th><th>Customer</th><th>Send</th><th>Receive</th>
+            <th>Amount</th><th>Status</th><th>Action</th>
+          </tr>
+        </thead>
         <tbody id="ordersTable"></tbody>
       </table>
     </div>
@@ -81,21 +85,18 @@ firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.database();
 
-const wallets = {
+const walletNames = {
   usdt:"USDT", payoneer:"Payoneer", wise:"Wise", skrill:"Skrill",
   bkash:"Bkash", nagad:"Nagad", rocket:"Rocket", upay:"Upay"
 };
 
-// Auth Check
+// Auth
 auth.onAuthStateChanged(user => {
   if(user){ showDashboard(); } 
-  else { document.getElementById('loginPage').style.display='block'; document.getElementById('dashboardContent').style.display='none'; }
+  else { document.getElementById('loginPage').style.display='block'; }
 })
-
 function login(){
-  loginMsg.innerHTML="Logging in..."; loginMsg.className="text-warning";
   auth.signInWithEmailAndPassword(email.value, password.value)
-  .then(()=>{ loginMsg.innerHTML="Login Success!"; loginMsg.className="text-success"; })
   .catch(e=>{ loginMsg.innerHTML="Error: "+e.message; loginMsg.className="text-danger"; })
 }
 function logout(){ auth.signOut(); }
@@ -105,16 +106,16 @@ function showDashboard(){
   loadRates(); loadOrders();
 }
 
-// LOAD RATES TO FORM
+// LOAD RATES
 function loadRates(){
   db.ref('rates/wallets').on('value', snap=>{
     const rates = snap.val() || {};
     let html='';
-    for(let key in wallets){
+    for(let key in walletNames){
       html += `<div class="row mb-3 align-items-center">
-        <div class="col-3"><b>${wallets[key]}</b></div>
-        <div class="col-4">Buy Rate: <input type="number" step="0.01" id="buy_${key}" value="${rates[key]?.buy || ''}" class="form-control form-control-sm"></div>
-        <div class="col-4">Sell Rate: <input type="number" step="0.01" id="sell_${key}" value="${rates[key]?.sell || ''}" class="form-control form-control-sm"></div>
+        <div class="col-2"><b>${walletNames[key]}</b></div>
+        <div class="col-5"><label class="small text-success">Buy Rate ৳</label><input type="number" step="0.01" id="buy_${key}" value="${rates[key]?.buy || ''}" class="form-control"></div>
+        <div class="col-5"><label class="small text-danger">Sell Rate ৳</label><input type="number" step="0.01" id="sell_${key}" value="${rates[key]?.sell || ''}" class="form-control"></div>
       </div>`;
     }
     document.getElementById('rateForm').innerHTML=html;
@@ -125,82 +126,52 @@ function loadRates(){
 function updateRates(){
   rateStatus.innerHTML="Saving..."; rateStatus.className="text-warning";
   let updates={};
-  for(let key in wallets){
-    let buyVal = document.getElementById(`buy_${key}`).value;
-    let sellVal = document.getElementById(`sell_${key}`).value;
-    if(buyVal) updates[`rates/wallets/${key}/buy`] = parseFloat(buyVal);
-    if(sellVal) updates[`rates/wallets/${key}/sell`] = parseFloat(sellVal);
+  for(let key in walletNames){
+    updates[`rates/wallets/${key}/buy`] = parseFloat(document.getElementById(`buy_${key}`).value) || 0;
+    updates[`rates/wallets/${key}/sell`] = parseFloat(document.getElementById(`sell_${key}`).value) || 0;
   }
   db.ref().update(updates).then(()=>{
-    rateStatus.innerHTML="✅ Rates Updated! Main page এ auto show হবে"; 
-    rateStatus.className="text-success";
-    setTimeout(()=>rateStatus.innerHTML='', 3000);
-  }).catch(e=>{
-    rateStatus.innerHTML="❌ Error: "+e.message; 
-    rateStatus.className="text-danger";
+    rateStatus.innerHTML="✅ Updated Successfully!"; rateStatus.className="text-success";
+    setTimeout(()=>rateStatus.innerHTML='', 2000);
   });
 }
 
-// LOAD ORDERS + 2 STEP ACTION
+// LOAD ORDERS - FIXED undefined
 function loadOrders(){
-  db.ref('orders').orderByChild('timestamp').limitToLast(30).on('value', snap=>{
-    let html='';
-    let total=0, pending=0, processing=0, completed=0;
-    
+  db.ref('orders').orderByChild('timestamp').limitToLast(20).on('value', snap=>{
+    let html=''; let t=0,p=0,pr=0,c=0;
     snap.forEach(child=>{
       let o = child.val(); let id = child.key;
-      total++;
-      if(o.status=='pending') pending++;
-      if(o.status=='processing') processing++;
-      if(o.status=='completed') completed++;
+      t++; if(o.status=='pending')p++; if(o.status=='processing')pr++; if(o.status=='completed')c++;
 
-      let statusBadge = '';
-      let actionBtn = '';
-      
-      if(o.status=='pending'){
-        statusBadge = `<span class="badge badge-pending">Pending</span>`;
-        actionBtn = `<button class="btn btn-sm btn-process" onclick="updateOrderStatus('${id}','processing')"><i class="bi bi-hourglass-split"></i> Process</button>`;
-      }
-      else if(o.status=='processing'){
-        statusBadge = `<span class="badge badge-processing">Processing</span>`;
-        actionBtn = `<button class="btn btn-sm btn-release" onclick="updateOrderStatus('${id}','completed')"><i class="bi bi-check-circle"></i> Release</button>`;
-      }
-      else{
-        statusBadge = `<span class="badge badge-completed">Completed</span>`;
-        actionBtn = `<span class="text-muted">Done</span>`;
-      }
+      let badge = o.status=='pending'?'<span class="badge badge-pending">Pending</span>':
+                  o.status=='processing'?'<span class="badge badge-processing">Processing</span>':
+                  '<span class="badge badge-completed">Completed</span>';
+
+      let action = o.status=='pending'?`<button class="btn btn-sm btn-warning" onclick="updateStatus('${id}','processing')">Process</button>`:
+                   o.status=='processing'?`<button class="btn btn-sm btn-success" onclick="updateStatus('${id}','completed')">Release</button>`:
+                   '<span class="text-muted">Done</span>';
 
       html = `<tr>
         <td><small>${new Date(o.timestamp).toLocaleString('bn-BD')}</small></td>
         <td>${o.name}<br><small class="text-muted">${o.email}</small></td>
-        <td>${o.sendAmount} ${wallets[o.sendWallet]}</td>
-        <td>${o.getAmount} ${wallets[o.getWallet]}</td>
+        <td>${o.sendAmount} ${walletNames[o.sendWallet] || o.sendWallet}</td>
+        <td>${o.getAmount} ${walletNames[o.getWallet] || o.getWallet}</td>
         <td><b>৳${o.bdtAmount}</b></td>
-        <td>${statusBadge}</td>
-        <td>${actionBtn}</td>
+        <td>${badge}</td>
+        <td>${action}</td>
       </tr>` + html;
     });
-    
-    ordersTable.innerHTML=html || '<tr><td colspan="7" class="text-center">No Orders Yet</td></tr>';
-    totalOrders.innerText=total;
-    pendingOrders.innerText=pending;
-    processingOrders.innerText=processing;
-    completedOrders.innerText=completed;
+    ordersTable.innerHTML=html || '<tr><td colspan="7" class="text-center">No Orders</td></tr>';
+    totalOrders.innerText=t; pendingOrders.innerText=p; processingOrders.innerText=pr; completedOrders.innerText=c;
   });
 }
 
-function updateOrderStatus(id, status){
-  let confirmMsg = status=='processing' ? "Order Processing এ নিবেন?" : "Order Release করবেন?";
-  if(confirm(confirmMsg)){
-    db.ref('orders/'+id).update({
-      status: status, 
-      updatedAt: Date.now()
-    });
+function updateStatus(id, status){
+  if(confirm("Status Update করবেন?")){
+    db.ref('orders/'+id).update({status: status});
   }
 }
-
-// Enter Key Login
-document.addEventListener('keypress', function(e){ if(e.key === 'Enter'){ login(); } })
 </script>
 </body>
 </html>
