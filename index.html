@@ -66,8 +66,8 @@ h3,h5 { font-weight: 900; letter-spacing: -0.8px; }
   <div class="container">
     <a class="navbar-brand fs-3" href="#"><i class="bi bi-shield-shaded text-warning"></i> TS Dollar Exchange</a>
     <div>
-      <a href="customer.html" class="btn btn-outline-success btn-sm me-2"><i class="bi bi-person"></i> Customer</a>
-      <button class="btn btn-outline-light btn-sm" onclick="openAdmin()"><i class="bi bi-gear"></i> Admin</button>
+      <a href="customer.html" class="btn btn-outline-success btn-sm me-2"><i class="bi bi-person"></i> Customer Login</a>
+      <a href="login.html" class="btn btn-outline-light btn-sm"><i class="bi bi-gear"></i> Admin Login</a>
     </div>
   </div>
 </nav>
@@ -241,13 +241,5 @@ function goToOrder(){
   window.location.href = 'order.html';
 }
 </script>
-  function openAdmin(){
-  let pass = prompt("Enter Admin Password");
-  if(pass === "tsadmin123"){ // ei password change kore nio
-    window.location.href = "dashboard.html";
-  }else{
-    alert("Wrong Password!");
-  }
-}
 </body>
 </html>
