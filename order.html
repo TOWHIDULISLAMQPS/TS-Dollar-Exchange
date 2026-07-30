@@ -27,7 +27,9 @@ body{
   border-radius: 22px;
   padding: 35px 30px;
   box-shadow: 0 0 0 1px rgba(34,197,94,0.1), 0 30px 80px rgba(0,0,0,0.6);
+  animation: slideUp 0.5s ease;
 }
+@keyframes slideUp{ from{transform:translateY(30px); opacity:0;} to{transform:translateY(0); opacity:1;} }
 
 /* Floating Label Input */
 .form-floating{ position: relative; margin-bottom: 18px; }
@@ -59,13 +61,22 @@ input[readonly]{ opacity: 0.8; }
   transform: translateY(-2px);
   box-shadow: 0 12px 35px var(--primary-glow);
 }
+.btn-premium:disabled{ opacity: 0.6; }
 .back-link{ color: #38bdf8; font-size: 13px; text-decoration: none; }
 .back-link:hover{ text-decoration: underline; }
+
+/* NEW: Success Animation */
+.success-check{ width:70px; height:70px; margin:0 auto 15px; border-radius:50%; background:var(--primary); display:flex; align-items:center; justify-content:center; animation:pop 0.6s; }
+@keyframes pop{ 0%{transform:scale(0);} 50%{transform:scale(1.2);} 100%{transform:scale(1);} }
+
+/* NEW: If modal e thakle topbar hide korbe */
+.in-modal.topbar{ display:none!important; }
+.in-modal.order-wrap{ padding: 20px 15px!important; }
 </style>
 </head>
 <body>
 
-<div class="topbar">
+<div class="topbar" id="topbar">
   <div class="container d-flex justify-content-between align-items-center">
     <div class="brand"><i class="bi bi-shield-shaded"></i> TS Dollar Exchange</div>
     <a href="index.html" class="btn btn-sm" style="border:1px solid #334155; color:#cbd5e1;"><i class="bi bi-house"></i> Back to Home</a>
@@ -75,6 +86,15 @@ input[readonly]{ opacity: 0.8; }
 <div class="order-wrap">
   <div class="order-card">
     <h4 class="text-center mb-4 fw-bold"><i class="bi bi-lock-fill text-success"></i> Complete Your Order</h4>
+
+    <div id="summaryBox" class="mb-4 p-3 rounded-3" style="background:rgba(34,197,94,0.1); border:1px solid rgba(34,197,94,0.3); display:none;">
+      <small class="text-info">Exchange Summary</small>
+      <div class="d-flex justify-content-between mt-1">
+        <span id="summarySend" class="fw-bold"></span>
+        <i class="bi bi-arrow-right"></i>
+        <span id="summaryGet" class="fw-bold text-success"></span>
+      </div>
+    </div>
 
     <form id="orderForm">
       <div class="form-floating">
@@ -111,10 +131,16 @@ input[readonly]{ opacity: 0.8; }
         <i class="bi bi-check-circle"></i> Confirm & Submit Order
       </button>
 
-      <div class="text-center mt-3">
+      <div class="text-center mt-3" id="backBtnDiv">
         <a href="index.html" class="back-link"><i class="bi bi-arrow-left"></i> Back to Home</a>
       </div>
     </form>
+
+    <div id="successBox" style="display:none;" class="text-center">
+      <div class="success-check"><i class="bi bi-check-lg fs-1 text-white"></i></div>
+      <h5 class="text-success fw-bold">Order Submitted!</h5>
+      <p class="text-muted">We will contact you on WhatsApp within 2 minutes</p>
+    </div>
 
     <p id="orderMsg" class="text-center mt-3"></p>
   </div>
@@ -139,14 +165,32 @@ const wallets = {
   bkash: "Bkash", nagad: "Nagad", rocket: "Rocket", upay: "Upay"
 };
 
+// Check if this page is inside iframe/modal
+if(window.self!== window.top){
+  document.body.classList.add('in-modal');
+  document.getElementById('backBtnDiv').innerHTML = `<button onclick="parent.closeOrderModal()" class="back-link btn-link"><i class="bi bi-x-lg"></i> Close</button>`;
+}
+
 window.onload = function(){
   const data = JSON.parse(localStorage.getItem('exchangeData'));
-  if(!data){ window.location.href = 'index.html'; return; }
+  if(!data){
+    if(window.self === window.top) window.location.href = 'index.html';
+    return;
+  }
 
+  // Auto fill wallets and amount
   sendWallet.value = wallets[data.send.wallet];
-  sendAmount.value = data.send.amount + " + (['bkash','nagad','rocket','upay'].includes(data.send.wallet)? 'BDT' : 'USD');
-  getAmount.value = data.get.amount + " + (['bkash','nagad','rocket','upay'].includes(data.get.wallet)? 'BDT' : 'USD');
+  let sendCurr = ['bkash','nagad','rocket','upay'].includes(data.send.wallet)? 'BDT' : 'USD';
+  let getCurr = ['bkash','nagad','rocket','upay'].includes(data.get.wallet)? 'BDT' : 'USD';
+  sendAmount.value = data.send.amount + " + sendCurr;
+  getAmount.value = data.get.amount + " + getCurr;
 
+  // Show summary
+  summaryBox.style.display = 'block';
+  summarySend.innerText = data.send.amount + " + sendCurr + " via " + wallets[data.send.wallet];
+  summaryGet.innerText = data.get.amount + " + getCurr + " via " + wallets[data.get.wallet];
+
+  // Auto fill user info from firebase
   auth.onAuthStateChanged(user => {
     if(user){
       fullName.value = user.displayName || '';
@@ -155,6 +199,9 @@ window.onload = function(){
         const userData = snap.val();
         if(userData && userData.mobile){ walletAddress.value = userData.mobile; }
       });
+    } else {
+      // Not logged in
+      if(window.self === window.top) window.location.href = 'customer.html';
     }
   });
 }
@@ -168,15 +215,25 @@ document.getElementById('orderForm').onsubmit = function(e){
   const orderData = {
     name: fullName.value, email: email.value, sendWallet: sendWallet.value,
     sendAmount: sendAmount.value, getAmount: getAmount.value,
-    walletAddress: walletAddress.value, status: 'Pending', timestamp: Date.now()
+    walletAddress: walletAddress.value, status: 'Pending', timestamp: Date.now(),
+    userId: auth.currentUser? auth.currentUser.uid : null
   };
 
   db.ref('orders').push(orderData)
 .then(() => {
-    orderMsg.innerHTML = "✅ Order Submitted Successfully! We will contact you soon.";
-    orderMsg.className = "text-success";
+    document.getElementById('orderForm').style.display = 'none';
+    document.getElementById('summaryBox').style.display = 'none';
+    document.getElementById('successBox').style.display = 'block';
     localStorage.removeItem('exchangeData');
-    setTimeout(() => { window.location.href = 'index.html'; }, 2000);
+
+    // 2.5s por modal bondho hobe
+    setTimeout(() => {
+      if(window.self!== window.top){
+        parent.closeOrderModal();
+      } else {
+        window.location.href = 'index.html';
+      }
+    }, 2500);
   })
 .catch((error) => {
     orderMsg.innerHTML = "❌ Error: " + error.message;
