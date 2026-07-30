@@ -10,24 +10,19 @@
 <style>
 :root{ --bg1:#05051a; --bg2:#1a0a2e; --primary:#22c55e; --primary-glow:rgba(34,197,94,0.3); --card-bg:rgba(18,18,42,0.7); }
 body{
-  background: linear-gradient(135deg, var(--bg1), var(--bg2))!important; /* IMPORTANT */
+  background: linear-gradient(135deg, var(--bg1), var(--bg2))!important;
   color:#e2e8f0; font-family:'Outfit',sans-serif; min-height:100vh; margin:0;
 }
-
 .order-wrap{ display:flex; align-items:center; justify-content:center; padding: 20px 10px; min-height:100vh; }
 .order-card{
   width:100%; max-width: 500px;
   background: linear-gradient(180deg, rgba(18,18,42,0.95), rgba(12,12,30,0.95));
   border: 1px solid rgba(34,197,94,0.2);
-  border-radius: 24px;
-  padding: 0;
+  border-radius: 24px; padding: 0;
   box-shadow: 0 0 40px rgba(34,197,94,0.1), 0 30px 80px rgba(0,0,0,0.6);
-  backdrop-filter: blur(20px);
-  overflow: hidden;
-  animation: slideUp 0.5s ease;
+  backdrop-filter: blur(20px); overflow: hidden; animation: slideUp 0.5s ease;
 }
 @keyframes slideUp{ from{transform:translateY(30px); opacity:0;} to{transform:translateY(0); opacity:1;} }
-
 .card-header{
   background: linear-gradient(135deg, var(--primary), #16a34a);
   padding: 25px 30px; text-align: center;
@@ -156,9 +151,10 @@ input[readonly]{ opacity: 0.9; background: rgba(10,15,30,0.8)!important; }
   </div>
 </div>
 
-<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+<!-- ========== COMBINED JS ========== -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 <script>
 const firebaseConfig = {
   apiKey:"AIzaSyBC0OA7gEWg1dfVzqVpI1YgbKzNKllz4pg",
@@ -175,67 +171,109 @@ const wallets = {
   bkash: {name: "Bkash"}, nagad: {name: "Nagad"}, rocket: {name: "Rocket"}, upay: {name: "Upay"}
 };
 
+let exchangeData = {};
+let currentRates = {};
+let currentUserId = "guest";
+
+// Auto fill user
+auth.onAuthStateChanged(user => {
+  if(user){
+    currentUserId = user.uid;
+    fullName.value = user.displayName || '';
+    email.value = user.email || '';
+    db.ref('users/' + user.uid).once('value').then(snap => {
+      const userData = snap.val();
+      if(userData && userData.mobile){ walletAddress.value = userData.mobile; }
+    });
+  } else {
+    currentUserId = "guest";
+  }
+});
+
+// Load data + rates
 window.onload = function(){
-  const data = JSON.parse(localStorage.getItem('exchangeData'));
-  if(!data){
+  exchangeData = JSON.parse(localStorage.getItem('exchangeData'));
+  if(!exchangeData){
     if(window.self === window.top) window.location.href = 'index.html';
     return;
   }
-
-  let sendCurr = ['bkash','nagad','rocket','upay'].includes(data.send.wallet)? 'BDT' : 'USD';
-  let getCurr = ['bkash','nagad','rocket','upay'].includes(data.get.wallet)? 'BDT' : 'USD';
-
-  // Summary box fill
-  summaryBox.style.display = 'grid';
-  summarySendAmount.innerText = data.send.amount + " + sendCurr;
-  summarySendWallet.innerText = wallets[data.send.wallet].name;
-  summaryGetAmount.innerText = data.get.amount + " + getCurr;
-  summaryGetWallet.innerText = wallets[data.get.wallet].name;
-
-  // Form fill
-  sendWallet.value = wallets[data.send.wallet].name;
-  sendAmount.value = data.send.amount + " + sendCurr;
-  getAmount.value = data.get.amount + " " + getCurr;
-
-  // Auto fill user info
-  auth.onAuthStateChanged(user => {
-    if(user){
-      fullName.value = user.displayName || '';
-      email.value = user.email || '';
-      db.ref('users/' + user.uid).once('value').then(snap => {
-        const userData = snap.val();
-        if(userData && userData.mobile){ walletAddress.value = userData.mobile; }
-      });
+  // Load rates then calculate
+  db.ref('rates/wallets').on('value',(snap)=>{
+    if(snap.exists()){
+      currentRates = snap.val();
+      calculateBDT();
     }
   });
 }
 
-document.getElementById('orderForm').onsubmit = function(e){
+function calculateBDT() {
+  if(!exchangeData ||!currentRates) return;
+
+  let sendCurr = ['bkash','nagad','rocket','upay'].includes(exchangeData.send.wallet)? 'BDT' : 'USD';
+  let getCurr = ['bkash','nagad','rocket','upay'].includes(exchangeData.get.wallet)? 'BDT' : 'USD';
+  const amount = parseFloat(exchangeData.send.amount) || 0;
+  let result = 0;
+
+  // USD to BDT
+  if(['usdt','payoneer','wise','skrill'].includes(exchangeData.send.wallet) && ['bkash','nagad','rocket','upay'].includes(exchangeData.get.wallet)){
+    result = amount * currentRates[exchangeData.send.wallet]?.sell;
+  }
+  // BDT to USD
+  if(['bkash','nagad','rocket','upay'].includes(exchangeData.send.wallet) && ['usdt','payoneer','wise','skrill'].includes(exchangeData.get.wallet)){
+    result = amount / currentRates[exchangeData.get.wallet]?.buy;
+  }
+
+  // Summary box fill
+  summaryBox.style.display = 'grid';
+  summarySendAmount.innerText = exchangeData.send.amount + " + sendCurr;
+  summarySendWallet.innerText = wallets[exchangeData.send.wallet].name;
+  summaryGetAmount.innerText = result.toFixed(2) + " " + getCurr;
+  summaryGetWallet.innerText = wallets[exchangeData.get.wallet].name;
+
+  // Form fill
+  sendWallet.value = wallets[exchangeData.send.wallet].name;
+  sendAmount.value = exchangeData.send.amount + " + sendCurr;
+  getAmount.value = result.toFixed(2) + " " + getCurr;
+  exchangeData.get.amount = result.toFixed(2); // for submit
+}
+
+// Submit Order
+document.getElementById('orderForm').onsubmit = async function(e){
   e.preventDefault();
   const btn = e.target.querySelector('button');
   btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Processing...';
   btn.disabled = true;
 
   const orderData = {
-    name: fullName.value, email: email.value, walletAddress: walletAddress.value,
-    sendWallet: sendWallet.value, sendAmount: sendAmount.value, getAmount: getAmount.value,
-    status: 'Pending', timestamp: Date.now(), userId: auth.currentUser? auth.currentUser.uid : null
+    userId: currentUserId,
+    orderId: "TS" + Date.now(),
+    name: fullName.value,
+    email: email.value,
+    walletAddress: walletAddress.value,
+    sendWallet: exchangeData.send.wallet,
+    getWallet: exchangeData.get.wallet,
+    sendAmount: exchangeData.send.amount,
+    getAmount: exchangeData.get.amount,
+    status: 'pending',
+    timestamp: Date.now()
   };
 
-  db.ref('orders').push(orderData)
-.then(() => {
+  try {
+    await db.ref('orders').push(orderData);
     document.getElementById('orderForm').style.display = 'none';
     document.getElementById('summaryBox').style.display = 'none';
     document.getElementById('successBox').style.display = 'block';
     localStorage.removeItem('exchangeData');
-    setTimeout(() => { if(window.self!== window.top){ parent.closeOrderModal(); } }, 2500);
-  })
-.catch((error) => {
+    setTimeout(() => {
+      if(window.self!== window.top){ parent.closeOrderModal(); }
+      else { window.location.href = "index.html"; }
+    }, 2500);
+  } catch (error) {
     orderMsg.innerHTML = "❌ Error: " + error.message;
     orderMsg.className = "text-danger";
     btn.innerHTML = '<i class="bi bi-check-circle-fill"></i> Confirm & Submit Order';
     btn.disabled = false;
-  });
+  }
 }
 </script>
 </body>
