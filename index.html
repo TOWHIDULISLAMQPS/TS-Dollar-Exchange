@@ -72,51 +72,63 @@ h3,h5 { font-weight: 900; letter-spacing: -0.8px; }
 </nav>
 
 <div class="container my-5">
-  <div class="main-card p-4 p-md-5">
-    <h3 class="text-center mb-2">⚡ Instant & Secure Exchange</h3>
-    <p class="text-center text-muted mb-4">Trusted by 10,000+ Users in Bangladesh</p>
 
-    <!-- YOU SEND -->
-    <div class="mb-4">
-      <label class="fw-bold mb-2">You Send</label>
-      <div class="input-box d-flex align-items-center mb-3">
-        <input type="number" id="sendAmount" class="form-control border-0 bg-transparent fs-3 fw-bold" placeholder="0.00">
-        <span id="sendCurrency" class="fw-bold fs-5 ms-2">USD</span>
-      </div>
-      <div class="row g-3" id="sendWallets"></div>
-    </div>
-
-    <!-- SWAP BUTTON -->
-    <div class="text-center my-3">
-      <button class="swap-btn" onclick="swapWallets()"><i class="bi bi-arrow-down-up"></i></button>
-    </div>
-
-    <!-- YOU GET -->
-    <div class="mb-4">
-      <label class="fw-bold mb-2">You Get</label>
-      <div class="input-box d-flex align-items-center mb-3">
-        <input type="text" id="getAmount" class="form-control border-0 bg-transparent fs-3 fw-bold" placeholder="0.00" readonly>
-        <span id="getCurrency" class="fw-bold fs-5 ms-2">BDT</span>
-      </div>
-      <div class="row g-3" id="getWallets"></div>
-    </div>
-
-    <button class="btn btn-lg w-100 fw-bold text-white" style="background: linear-gradient(135deg, var(--success), #059669); border-radius: 16px; padding: 16px;" onclick="goToOrder()">
-      Exchange Now <i class="bi bi-arrow-right-circle"></i>
-    </button>
-
-    <div class="trust-badges">
-      <span class="trust-badge"><i class="bi bi-shield-check"></i> 100% Secure</span>
-      <span class="trust-badge"><i class="bi bi-lightning"></i> Instant Delivery</span>
-      <span class="trust-badge"><i class="bi bi-headset"></i> 24/7 Support</span>
-    </div>
+  <!-- 1. LOGIN NA THAKLE ETA DEKHABE -->
+  <div id="loginGate" class="main-card p-5 text-center" style="display:none;">
+    <h3><i class="bi bi-lock-fill text-warning fs-1"></i></h3>
+    <h4 class="fw-bold mt-3">Login Required</h4>
+    <p class="text-muted mb-4">Exchange korte hole age account e Login korun</p>
+    <a href="customer.html" class="btn btn-success btn-lg px-5">Login / Signup</a>
   </div>
 
-  <!-- LIVE RATE TABLE -->
-  <div class="section-card mt-4">
-    <h5 class="mb-3 text-center"><i class="bi bi-graph-up-arrow text-primary"></i> USD Wallet Rates <span id="rateLoading" class="spinner-border spinner-border-sm"></span></h5>
-    <div id="rateList"><p class="text-center text-muted">Loading Rates...</p></div>
-    <small class="text-muted">* Rates updated live from Admin Panel</small>
+  <!-- 2. LOGIN THAKLE ETA DEKHABE -->
+  <div id="exchangeBox" style="display:none;">
+    <div class="main-card p-4 p-md-5">
+      <h3 class="text-center mb-2">⚡ Instant & Secure Exchange</h3>
+      <p class="text-center text-muted mb-4">Trusted by 10,000+ Users in Bangladesh</p>
+
+      <!-- YOU SEND -->
+      <div class="mb-4">
+        <label class="fw-bold mb-2">You Send</label>
+        <div class="input-box d-flex align-items-center mb-3">
+          <input type="number" id="sendAmount" class="form-control border-0 bg-transparent fs-3 fw-bold" placeholder="0.00">
+          <span id="sendCurrency" class="fw-bold fs-5 ms-2">USD</span>
+        </div>
+        <div class="row g-3" id="sendWallets"></div>
+      </div>
+
+      <!-- SWAP BUTTON -->
+      <div class="text-center my-3">
+        <button class="swap-btn" onclick="swapWallets()"><i class="bi bi-arrow-down-up"></i></button>
+      </div>
+
+      <!-- YOU GET -->
+      <div class="mb-4">
+        <label class="fw-bold mb-2">You Get</label>
+        <div class="input-box d-flex align-items-center mb-3">
+          <input type="text" id="getAmount" class="form-control border-0 bg-transparent fs-3 fw-bold" placeholder="0.00" readonly>
+          <span id="getCurrency" class="fw-bold fs-5 ms-2">BDT</span>
+        </div>
+        <div class="row g-3" id="getWallets"></div>
+      </div>
+
+      <button id="exchangeBtn" class="btn btn-lg w-100 fw-bold text-white" style="background: linear-gradient(135deg, var(--success), #059669); border-radius: 16px; padding: 16px;">
+        Exchange Now <i class="bi bi-arrow-right-circle"></i>
+      </button>
+
+      <div class="trust-badges">
+        <span class="trust-badge"><i class="bi bi-shield-check"></i> 100% Secure</span>
+        <span class="trust-badge"><i class="bi bi-lightning"></i> Instant Delivery</span>
+        <span class="trust-badge"><i class="bi bi-headset"></i> 24/7 Support</span>
+      </div>
+    </div>
+
+    <!-- LIVE RATE TABLE -->
+    <div class="section-card mt-4">
+      <h5 class="mb-3 text-center"><i class="bi bi-graph-up-arrow text-primary"></i> USD Wallet Rates <span id="rateLoading" class="spinner-border spinner-border-sm"></span></h5>
+      <div id="rateList"><p class="text-center text-muted">Loading Rates...</p></div>
+      <small class="text-muted">* Rates updated live from Admin Panel</small>
+    </div>
   </div>
 
 </div>
@@ -239,6 +251,32 @@ function goToOrder(){
   }));
   window.location.href = 'order.html';
 }
+
+// LOGIN GATE SYSTEM - NEW ADD
+document.addEventListener('DOMContentLoaded', function() {
+    auth.onAuthStateChanged(function(user) {
+      const exchangeBox = document.getElementById('exchangeBox');
+      const loginGate = document.getElementById('loginGate');
+
+      if (user) {
+        exchangeBox.style.display = 'block';
+        loginGate.style.display = 'none';
+      } else {
+        exchangeBox.style.display = 'none';
+        loginGate.style.display = 'block';
+      }
+    });
+
+    document.getElementById('exchangeBtn').addEventListener('click', function(e){
+        if(!auth.currentUser){
+            e.preventDefault();
+            alert("Please Login First to Exchange!");
+            window.location.href = "customer.html";
+        } else {
+            goToOrder(); // login thakle order e pathabe
+        }
+    });
+});
 </script>
 </body>
 </html>
