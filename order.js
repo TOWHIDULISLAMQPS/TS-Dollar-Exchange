@@ -1,17 +1,26 @@
 import { db } from "./firebase.js";
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js"; // <-- 1. EI LINE ADD
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { ref, onValue, push, set } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
-const auth = getAuth(); // <-- 2. EI LINE ADD
+const auth = getAuth();
 
 let currentRates = {};
 let exchangeData = {};
-let currentUserId = "guest"; // <-- 3. EI LINE ADD
+let currentUserId = "guest";
 
 // User login thakle userId niye rakhbo
-onAuthStateChanged(auth, (user) => { // <-- 4. EI BLOCK ADD
+onAuthStateChanged(auth, (user) => {
   if (user) {
     currentUserId = user.uid;
+    // NEW: Auto fill name, email, mobile
+    if(user.displayName) document.getElementById("name").value = user.displayName;
+    if(user.email) document.getElementById("email").value = user.email;
+    // mobile ta firebase users theke nibe
+    onValue(ref(db, "users/" + user.uid), (snap) => {
+      if(snap.exists() && snap.val().mobile){
+        document.getElementById("walletAddress").value = snap.val().mobile;
+      }
+    }, {onlyOnce: true});
   } else {
     currentUserId = "guest";
   }
@@ -32,7 +41,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
     if(!exchangeData){
         alert("Please select amount first from home page");
-        window.location.href = 'index.html';
+        if(window.self === window.top) window.location.href = 'index.html'; // modal check
         return;
     }
 
@@ -40,12 +49,12 @@ window.addEventListener('DOMContentLoaded', () => {
     document.getElementById('orderSummary').style.display = 'block';
     document.getElementById('sendWallet').value = getWalletName(exchangeData.send.wallet);
     document.getElementById('sendAmount').value = exchangeData.send.amount;
-    document.getElementById('getWallet').value = getWalletName(exchangeData.get.wallet);
-    document.getElementById('getAmount').value = exchangeData.get.amount + ' BDT';
+
+    // CHANGE 1: getAmount ekhane set korbo na. calculateBDT() korbe
+    // document.getElementById('getAmount').value = exchangeData.get.amount + ' BDT'; // EI LINE BAD
 
     // FIXED LINE
     document.getElementById('summarySend').innerText = exchangeData.send.amount + ' ' + getWalletName(exchangeData.send.wallet);
-    document.getElementById('summaryGet').innerText = exchangeData.get.amount + ' BDT to ' + getWalletName(exchangeData.get.wallet);
 });
 
 // 2. Live Rate নিয়ে Calculation
@@ -77,9 +86,9 @@ function calculateBDT() {
         }
     }
 
-    document.getElementById("getAmount").value = result.toFixed(2) + ' BDT';
-    document.getElementById('summaryGet').innerText = result.toFixed(2) + ' BDT to ' + getWalletName(getWallet); // summary o update
-    exchangeData.get.amount = result.toFixed(2); // Update for submit
+    document.getElementById("getAmount").value = result.toFixed(2); // CHANGE 2: shudhu number
+    document.getElementById('summaryGet').innerText = result.toFixed(2) + ' BDT to ' + getWalletName(getWallet);
+    exchangeData.get.amount = result.toFixed(2);
 }
 
 // 3. Form Submit to Firebase
@@ -87,12 +96,12 @@ document.getElementById("orderForm").addEventListener("submit", async (e) => {
     e.preventDefault();
     const submitBtn = e.target.querySelector("button[type='submit']");
     const submitMsg = document.getElementById('submitMsg');
-    submitBtn.innerText = "Submitting...";
+    submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Submitting...';
     submitBtn.disabled = true;
     submitMsg.innerHTML = '';
 
     const orderData = {
-        userId: currentUserId, // <-- 5. SUDHU EI LINE ADD KORO
+        userId: currentUserId,
         orderId: "TS" + Date.now(),
         name: document.getElementById("name").value,
         email: document.getElementById("email").value,
@@ -102,7 +111,7 @@ document.getElementById("orderForm").addEventListener("submit", async (e) => {
         sendAmount: exchangeData.send.amount,
         getAmount: exchangeData.get.amount,
         bdtAmount: exchangeData.get.amount,
-        status: "pending", // lowercase রাখলাম dashboard এর সাথে match করার জন্য
+        status: "pending",
         timestamp: Date.now()
     };
 
@@ -113,7 +122,12 @@ document.getElementById("orderForm").addEventListener("submit", async (e) => {
         localStorage.removeItem('exchangeData');
 
         setTimeout(() => {
-            window.location.href = "index.html";
+            // CHANGE 3: Modal e thakle parent ke close bolbe
+            if(window.self!== window.top){
+              parent.closeOrderModal();
+            } else {
+              window.location.href = "index.html";
+            }
         }, 2000);
 
     } catch (error) {
@@ -121,6 +135,6 @@ document.getElementById("orderForm").addEventListener("submit", async (e) => {
         submitMsg.className = "text-danger";
     }
 
-    submitBtn.innerText = "Confirm & Submit Order";
+    submitBtn.innerHTML = "Confirm & Submit Order";
     submitBtn.disabled = false;
 });
