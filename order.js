@@ -1,8 +1,21 @@
 import { db } from "./firebase.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js"; // <-- 1. EI LINE ADD
 import { ref, onValue, push, set } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+const auth = getAuth(); // <-- 2. EI LINE ADD
 
 let currentRates = {};
 let exchangeData = {};
+let currentUserId = "guest"; // <-- 3. EI LINE ADD
+
+// User login thakle userId niye rakhbo
+onAuthStateChanged(auth, (user) => { // <-- 4. EI BLOCK ADD
+  if (user) {
+    currentUserId = user.uid;
+  } else {
+    currentUserId = "guest";
+  }
+});
 
 // Wallet Key to Name
 function getWalletName(key){
@@ -79,6 +92,7 @@ document.getElementById("orderForm").addEventListener("submit", async (e) => {
     submitMsg.innerHTML = '';
 
     const orderData = {
+        userId: currentUserId, // <-- 5. SUDHU EI LINE ADD KORO
         orderId: "TS" + Date.now(),
         name: document.getElementById("name").value,
         email: document.getElementById("email").value,
