@@ -56,7 +56,7 @@ h3,h5 { font-weight: 900; letter-spacing: -0.8px; }
   background: radial-gradient(circle, rgba(79,70,229,0.15) 0%, transparent 60%);
   animation: rotate 8s linear infinite;
 }
-@keyframes rotate { from{transform:rotate(0deg);} to{transform:rotate(360deg);} }
+@keyframes rotate { from{transform:rotate(0deg);} to{transform:rotate(rotate(0deg);} }
 @keyframes scaleUp { from {transform: scale(0.8);} to {transform: scale(1);} }
 .welcome-icon {
   width: 80px; height: 80px; margin: 0 auto 20px;
@@ -70,6 +70,24 @@ h3,h5 { font-weight: 900; letter-spacing: -0.8px; }
   color: #92400e; padding: 6px 14px; border-radius: 50px;
   font-size: 12px; font-weight: 700; display: inline-block; margin-bottom: 15px;
 }
+
+/* ========== NEW: ORDER MODAL CSS ========== */
+.order-modal{
+  position: fixed; top:0; left:0; width:100%; height:100%;
+  background: rgba(15,23,42,0.92); backdrop-filter: blur(15px);
+  z-index: 10000; display: none; align-items: center; justify-content: center;
+  animation: fadeIn 0.3s;
+}
+.order-box{
+  width: 95%; max-width: 500px; background: transparent;
+  border-radius: 22px; padding: 0; position: relative;
+}
+.btn-close-modal{
+  position: absolute; top: -15px; right: -15px; z-index: 10001;
+  background: #ef4444; color:#fff; border: none; border-radius: 50%;
+  width: 35px; height: 35px; display: flex; align-items: center; justify-content: center;
+}
+.order-box iframe{ width:100%; height: 650px; border: none; border-radius: 22px; }
 </style>
 </head>
 <body>
@@ -94,6 +112,14 @@ h3,h5 { font-weight: 900; letter-spacing: -0.8px; }
       onclick="closeWelcome()">
       Get Started <i class="bi bi-arrow-right-circle"></i>
     </button>
+  </div>
+</div>
+
+<!-- ========== NEW: ORDER MODAL ========== -->
+<div id="orderModal" class="order-modal">
+  <div class="order-box">
+    <button class="btn-close-modal" onclick="closeOrderModal()"><i class="bi bi-x-lg"></i></button>
+    <div id="orderIframeContainer"></div>
   </div>
 </div>
 
@@ -278,20 +304,28 @@ function calculate(){
 }
 sendAmount.addEventListener('input', calculate);
 
-// ========= UPDATED LOGIN CHECK CODE =========
-function goToOrder(){
-  if(sendAmount.value <= 0){ alert('Amount দিন'); return; }
+// ========= UPDATED: MODAL E ORDER OPEN KORBE =========
+function openOrderModal(){
+  // 1. Data localStorage e save
   localStorage.setItem('exchangeData', JSON.stringify({
     send: { wallet: selectedSend, amount: sendAmount.value },
     get: { wallet: selectedGet, amount: getAmount.value }
   }));
-  window.location.href = 'order.html';
+  // 2. order.html ke iframe e load kore modal show
+  document.getElementById('orderIframeContainer').innerHTML = `<iframe src="order.html"></iframe>`;
+  document.getElementById('orderModal').style.display = 'flex';
+}
+
+function closeOrderModal(){
+  document.getElementById('orderModal').style.display = 'none';
+  document.getElementById('orderIframeContainer').innerHTML = '';
 }
 
 function checkLoginAndExchange(){
+    if(sendAmount.value <= 0){ alert('Amount দিন'); return; }
     auth.onAuthStateChanged(function(user) {
         if (user) {
-            goToOrder(); // Login thakle order e pathabe
+            openOrderModal(); // Login thakle modal khulbe
         } else {
             showLoginModal(); // Login na thakle popup dekhabe
         }
@@ -314,7 +348,13 @@ function showLoginModal(){
     if(oldModal) oldModal.remove();
     document.body.insertAdjacentHTML('beforeend', modalHtml);
 }
-// ========= CODE END =========
+
+// Pichone click korle modal bondho
+window.onclick = function(event) {
+  if (event.target == document.getElementById('orderModal')) {
+    closeOrderModal();
+  }
+}
 </script>
 </body>
 </html>
