@@ -209,11 +209,15 @@ ${o.time}
 
 }
 
+document.addEventListener("DOMContentLoaded",()=>{
+
 let available=uniqueNames();
 
 available.forEach(n=>orders.push(generateOrder(n)));
 
 renderOrders();
+
+});
 
 setInterval(()=>{
 
