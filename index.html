@@ -401,13 +401,6 @@ db.ref('rates/wallets').on('value',(snap)=>{
   calculate();
 });
 
-// FIREBASE: LOAD ORDERS LIVE
-db.ref('orders').orderByChild('timestamp').limitToLast(5).on('value', snap=>{
-  let html = '';
-  if(!snap.exists()){ recentOrderList.innerHTML='<p class="text-center text-muted">No orders yet</p>'; return; }
-  let orders = [];
-  snap.forEach(child=>{ orders.unshift({id:child.key,...child.val()}); });
-
   orders.forEach((order, index) => {
     let badge, itemClass;
     if(order.status == 'pending'){ badge = `<span class="badge badge-danger">Pending</span>`; itemClass = 'order-item pending'; }
