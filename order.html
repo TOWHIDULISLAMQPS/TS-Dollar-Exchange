@@ -10,11 +10,11 @@
 <style>
 :root{ --bg1:#05051a; --bg2:#1a0a2e; --primary:#22c55e; --primary-glow:rgba(34,197,94,0.3); --card-bg:rgba(18,18,42,0.7); }
 body{
-  background: transparent!important; /* Modal er jonno transparent */
-  color:#e2e8f0; font-family:'Outfit',sans-serif; min-height:100vh;
+  background: linear-gradient(135deg, var(--bg1), var(--bg2))!important; /* IMPORTANT */
+  color:#e2e8f0; font-family:'Outfit',sans-serif; min-height:100vh; margin:0;
 }
 
-.order-wrap{ display:flex; align-items:center; justify-content:center; padding: 20px 10px; }
+.order-wrap{ display:flex; align-items:center; justify-content:center; padding: 20px 10px; min-height:100vh; }
 .order-card{
   width:100%; max-width: 500px;
   background: linear-gradient(180deg, rgba(18,18,42,0.95), rgba(12,12,30,0.95));
@@ -32,7 +32,8 @@ body{
   background: linear-gradient(135deg, var(--primary), #16a34a);
   padding: 25px 30px; text-align: center;
 }
-.card-header h4{ margin:0; font-weight: 800; color:#fff; }
+.card-header h4{ margin:0; font-weight: 800; color:#fff; font-size: 20px; }
+.card-header small{ opacity:0.9; font-size:12px; }
 
 /* Exchange Summary Card */
 .summary-grid{
@@ -41,22 +42,22 @@ body{
   border-radius: 16px; border: 1px solid rgba(255,255,255,0.05);
 }
 .summary-item{ text-align: center; }
-.summary-item small{ color: #94a3b8; font-size: 11px; }
+.summary-item small{ color: #94a3b8; font-size: 11px; font-weight:600; }
 .summary-item.amount{ font-size: 18px; font-weight: 800; }
-.summary-item.wallet{ font-size: 12px; color: #cbd5e1; }
+.summary-item.wallet{ font-size: 12px; color: #cbd5e1; margin-top:2px; }
 .arrow{ display:flex; align-items:center; justify-content:center; font-size: 20px; color: var(--primary); }
 
 .form-body{ padding: 0 25px 25px; }
 
-/* Floating Label Input */
+/* Floating Label Input - BIG */
 .form-floating{ position: relative; margin-bottom: 16px; }
 .form-floating input{
   background: rgba(5,8,20,0.8); border: 1.5px solid #1e293b; color:#fff;
-  height: 54px; border-radius: 12px; padding: 22px 14px 10px;
+  height: 54px; border-radius: 12px; padding: 22px 14px 10px; width:100%; font-size:15px; font-weight:600;
 }
 .form-floating input:focus{
   background: rgba(5,8,20,1); border-color: var(--primary);
-  box-shadow: 0 0 0 3px var(--primary-glow);
+  box-shadow: 0 0 0 3px var(--primary-glow); outline:none;
 }
 .form-floating label{
   position: absolute; top: 16px; left: 14px; color: #64748b;
@@ -72,7 +73,7 @@ input[readonly]{ opacity: 0.9; background: rgba(10,15,30,0.8)!important; }
   background: linear-gradient(135deg, var(--primary), #16a34a);
   border: none; border-radius: 14px; height: 54px; font-weight: 800; font-size: 16px;
   box-shadow: 0 8px 25px var(--primary-glow);
-  transition: 0.3s;
+  transition: 0.3s; color:#fff;
 }
 .btn-premium:hover{
   transform: translateY(-2px);
@@ -90,7 +91,7 @@ input[readonly]{ opacity: 0.9; background: rgba(10,15,30,0.8)!important; }
   <div class="order-card">
     <div class="card-header">
       <h4><i class="bi bi-shield-lock-fill"></i> Secure Order</h4>
-      <small style="opacity:0.8;">Your information is 100% encrypted</small>
+      <small>Your information is 100% encrypted</small>
     </div>
 
     <div id="summaryBox" class="summary-grid" style="display:none;">
@@ -194,7 +195,7 @@ window.onload = function(){
   // Form fill
   sendWallet.value = wallets[data.send.wallet].name;
   sendAmount.value = data.send.amount + " + sendCurr;
-  getAmount.value = data.get.amount + " + getCurr;
+  getAmount.value = data.get.amount + " " + getCurr;
 
   // Auto fill user info
   auth.onAuthStateChanged(user => {
