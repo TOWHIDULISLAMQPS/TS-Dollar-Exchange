@@ -278,6 +278,7 @@ function calculate(){
 }
 sendAmount.addEventListener('input', calculate);
 
+// ========= UPDATED: DATA SAVE + REDIRECT =========
 function goToOrder(){
   if(sendAmount.value <= 0){ alert('Amount দিন'); return; }
   localStorage.setItem('exchangeData', JSON.stringify({
@@ -296,6 +297,7 @@ function checkLoginAndExchange(){
         }
     });
 }
+// ========= CODE END =========
 
 function showLoginModal(){
     const modalHtml = `
