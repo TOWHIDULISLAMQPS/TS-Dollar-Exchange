@@ -158,10 +158,11 @@ time:Math.floor(Math.random()*5+1)+" sec ago"
 }
 
 }
-
 function renderOrders(){
 
 const box=document.getElementById("liveOrders");
+
+if(!box) return;
 
 box.innerHTML="";
 
