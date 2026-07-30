@@ -32,16 +32,49 @@ h3,h5 { font-weight: 900; letter-spacing: -0.8px; }
 .footer { background: rgba(15,23,42,0.9); color: #cbd5e1; padding: 40px 0; margin-top: 60px; border-top: 1px solid rgba(255,255,255,0.1); }
 .footer a { color: #a5b4fc; text-decoration: none; }
 .footer a:hover { color: #fff; }
-.welcome-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 9999; display: flex; align-items: center; justify-content: center; animation: fadeIn 0.5s; }
-.welcome-box { background: #fff; padding: 40px; border-radius: 24px; text-align: center; max-width: 400px; box-shadow: 0 20px 60px rgba(0,0,0,0.5); animation: scaleUp 0.5s; }
-@keyframes scaleUp { from {transform: scale(0.8);} to {transform: scale(1);} }
 .admin-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 10000; align-items: center; justify-content: center; }
 .admin-box { background: #fff; padding: 40px; border-radius: 24px; max-width: 400px; width: 90%; }
+
+/* PREMIUM WELCOME POPUP CSS */
+.welcome-modal {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(15,23,42,0.85); backdrop-filter: blur(12px);
+  z-index: 9999; display: flex; align-items: center; justify-content: center;
+  animation: fadeIn 0.5s;
+}
+.welcome-box {
+  background: linear-gradient(135deg, #fff 0%, #f8fafc 100%);
+  padding: 45px 35px; border-radius: 28px; text-align: center;
+  max-width: 420px; width: 90%;
+  box-shadow: 0 25px 80px rgba(79,70,229,0.4);
+  border: 1px solid rgba(255,255,255,0.3);
+  animation: scaleUp 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+  position: relative; overflow: hidden;
+}
+.welcome-box::before{
+  content:''; position:absolute; top:-50%; left:-50%; width:200%; height:200%;
+  background: radial-gradient(circle, rgba(79,70,229,0.15) 0%, transparent 60%);
+  animation: rotate 8s linear infinite;
+}
+@keyframes rotate { from{transform:rotate(0deg);} to{transform:rotate(360deg);} }
+@keyframes scaleUp { from {transform: scale(0.8);} to {transform: scale(1);} }
+.welcome-icon {
+  width: 80px; height: 80px; margin: 0 auto 20px;
+  background: linear-gradient(135deg, var(--success), #059669);
+  border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  font-size: 40px; color: #fff; box-shadow: 0 10px 30px rgba(16,185,129,0.4);
+  position: relative; z-index: 2;
+}
+.welcome-badge {
+  background: linear-gradient(135deg, #fef3c7, #fde68a);
+  color: #92400e; padding: 6px 14px; border-radius: 50px;
+  font-size: 12px; font-weight: 700; display: inline-block; margin-bottom: 15px;
+}
 </style>
 </head>
 <body>
 
-<!-- WELCOME POPUP PREMIUM -->
+<!-- PREMIUM WELCOME POPUP -->
 <div id="welcomeModal" class="welcome-modal">
   <div class="welcome-box">
     <div class="welcome-badge"><i class="bi bi-stars"></i> #1 TRUSTED IN BD</div>
@@ -56,14 +89,14 @@ h3,h5 { font-weight: 900; letter-spacing: -0.8px; }
       <span class="trust-badge"><i class="bi bi-lightning"></i> Instant</span>
       <span class="trust-badge"><i class="bi bi-headset"></i> 24/7</span>
     </div>
-    <button class="btn btn-lg w-100 fw-bold text-white" 
-      style="background: linear-gradient(135deg, var(--primary), #8b5cf6); border-radius: 16px; padding: 14px; position:relative; z-index:2;" 
+    <button class="btn btn-lg w-100 fw-bold text-white"
+      style="background: linear-gradient(135deg, var(--primary), #8b5cf6); border-radius: 16px; padding: 14px; position:relative; z-index:2;"
       onclick="closeWelcome()">
       Get Started <i class="bi bi-arrow-right-circle"></i>
     </button>
   </div>
 </div>
-  
+
 <!-- ADMIN LOGIN MODAL -->
 <div id="adminModal" class="admin-modal">
   <div class="admin-box">
@@ -115,7 +148,6 @@ h3,h5 { font-weight: 900; letter-spacing: -0.8px; }
       <div class="row g-3" id="getWallets"></div>
     </div>
 
-    <!-- CHANGE 1: onclick change -->
     <button id="exchangeBtn" class="btn btn-lg w-100 fw-bold text-white" style="background: linear-gradient(135deg, var(--success), #059669); border-radius: 16px; padding: 16px;" onclick="checkLoginAndExchange()">
       Exchange Now <i class="bi bi-arrow-right-circle"></i>
     </button>
@@ -183,7 +215,7 @@ let selectedGet = 'bkash';
 
 // WELCOME POPUP
 function closeWelcome(){ document.getElementById('welcomeModal').style.display = 'none'; }
-setTimeout(closeWelcome, 2000);
+setTimeout(closeWelcome, 5000);
 
 // ADMIN FUNCTIONS
 function openAdmin(){ document.getElementById('adminModal').style.display = 'flex'; }
@@ -255,20 +287,16 @@ function goToOrder(){
   window.location.href = 'order.html';
 }
 
-// CHANGE 2: NEW LOGIN CHECK FUNCTION ADD
 function checkLoginAndExchange(){
     auth.onAuthStateChanged(function(user) {
         if (user) {
-            // Login thakle direct order e pathao
             goToOrder();
         } else {
-            // Login na thakle apnar deya design er moto popup
             showLoginModal();
         }
     });
 }
 
-// LOGIN REQUIRED MODAL - apnar screenshot er moto
 function showLoginModal(){
     const modalHtml = `
     <div id="loginRequiredModal" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); z-index:9999; display:flex; align-items:center; justify-content:center; padding:20px;">
@@ -281,7 +309,6 @@ function showLoginModal(){
         </div>
     </div>
     `;
-    // age theke thakle remove kore dibe
     const oldModal = document.getElementById('loginRequiredModal');
     if(oldModal) oldModal.remove();
     document.body.insertAdjacentHTML('beforeend', modalHtml);
