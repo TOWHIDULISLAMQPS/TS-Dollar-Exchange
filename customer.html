@@ -3,22 +3,23 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Complete Order - TS Dollar Exchange</title>
+<title>Login - TS Dollar Exchange</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
-
 <style>
 body{
   background:linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #581c87 100%);
   color:#fff;
   font-family:'Poppins',sans-serif;
   min-height:100vh;
-  padding:40px 0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
 }
-.order-box{
-  max-width:600px;
-  margin:auto;
+.login-box{
+  max-width:450px;
+  width:90%;
   background:rgba(30,41,59,0.85);
   padding:40px;
   border-radius:24px;
@@ -26,7 +27,7 @@ body{
   border:1px solid rgba(255,255,255,0.1);
   box-shadow:0 25px 70px rgba(0,0,0,0.5);
 }
-.form-control, .form-select{
+.form-control{
   background:#0f172a !important;
   border:1px solid #334155;
   color:#fff !important;
@@ -34,8 +35,8 @@ body{
   height:50px;
 }
 label{ color:#cbd5e1; font-weight:600; }
-.btn-success{
-  background:linear-gradient(135deg, #10b981, #059669);
+.btn-primary{
+  background:linear-gradient(135deg, #4f46e5, #8b5cf6);
   border:none;
   border-radius:12px;
   height:50px;
@@ -44,51 +45,43 @@ label{ color:#cbd5e1; font-weight:600; }
 </head>
 <body>
 
-<div class="order-box">
-  <h3 class="text-center mb-4 fw-bold"><i class="bi bi-bag-check-fill text-success"></i> Complete Your Order</h3>
+<div class="login-box">
+  <h3 class="text-center mb-4 fw-bold"><i class="bi bi-person-circle text-primary"></i> Login / Signup</h3>
   
-  <form id="orderForm">
+  <!-- LOGIN FORM -->
+  <div id="loginForm">
     <div class="mb-3">
-      <label>Your Full Name</label>
-      <input id="name" type="text" class="form-control" required>
+      <label>Email</label>
+      <input id="loginEmail" type="email" class="form-control" placeholder="Enter Email" required>
     </div>
     <div class="mb-3">
-      <label>Your Email</label>
-      <input id="email" type="email" class="form-control" readonly>
+      <label>Password</label>
+      <input id="loginPassword" type="password" class="form-control" placeholder="Enter Password" required>
     </div>
-    <div class="mb-3">
-      <label>You Send</label>
-      <select id="sendWallet" class="form-select">
-        <option value="Payoneer">Payoneer</option>
-        <option value="Wise">Wise</option>
-        <option value="USDT">USDT</option>
-      </select>
-    </div>
-    <div class="mb-3">
-      <label>Amount (USD)</label>
-      <input id="amount" type="number" class="form-control" placeholder="Enter Amount" required>
-    </div>
-    <div class="mb-3">
-      <label>You Will Receive (BDT)</label>
-      <input id="receiveAmount" type="text" class="form-control" readonly>
-    </div>
-    <div class="mb-3">
-      <label>You Will Receive in</label>
-      <select id="receiveWallet" class="form-select">
-        <option value="Bkash">Bkash</option>
-        <option value="Nagad">Nagad</option>
-        <option value="Bank">Bank</option>
-      </select>
-    </div>
-    <div class="mb-3">
-      <label>Your Wallet Address / Number</label>
-      <input id="walletAddress" type="text" placeholder="Bkash/Nagad/Bank Number" class="form-control" required>
-    </div>
-    <button type="submit" class="btn btn-success w-100 fw-bold">Confirm & Submit Order</button>
-  </form>
+    <button id="loginBtn" class="btn btn-primary w-100 fw-bold">Login</button>
+    <p class="text-center mt-3">Don't have account? <a href="#" onclick="showSignup()" class="text-info">Sign Up</a></p>
+  </div>
 
-  <p id="orderMsg" class="text-center mt-3"></p>
-  <a href="index.html" class="d-block text-center mt-3 text-info"><i class="bi bi-arrow-left"></i> Back to Home</a>
+  <!-- SIGNUP FORM -->
+  <div id="signupForm" style="display:none;">
+    <div class="mb-3">
+      <label>Full Name</label>
+      <input id="signupName" type="text" class="form-control" placeholder="Enter Name" required>
+    </div>
+    <div class="mb-3">
+      <label>Email</label>
+      <input id="signupEmail" type="email" class="form-control" placeholder="Enter Email" required>
+    </div>
+    <div class="mb-3">
+      <label>Password</label>
+      <input id="signupPassword" type="password" class="form-control" placeholder="Min 6 characters" required>
+    </div>
+    <button id="signupBtn" class="btn btn-success w-100 fw-bold">Create Account</button>
+    <p class="text-center mt-3">Already have account? <a href="#" onclick="showLogin()" class="text-info">Login</a></p>
+  </div>
+
+  <p id="authMsg" class="text-center mt-3"></p>
+  <a href="index.html" class="d-block text-center mt-2 text-info"><i class="bi bi-arrow-left"></i> Back to Home</a>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
@@ -105,68 +98,66 @@ firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.database();
 
-const rate = 122; // 1 USD = 122 BDT
+// Show/Hide Forms
+function showSignup(){ loginForm.style.display='none'; signupForm.style.display='block'; }
+function showLogin(){ signupForm.style.display='none'; loginForm.style.display='block'; }
 
-// ========= NEW AUTO-FILL CODE START =========
-window.onload = function() {
-  auth.onAuthStateChanged(user => {
-    if(user){
-      // 1. Auto fill Name and Email from Firebase
-      document.getElementById('name').value = user.displayName || '';
-      document.getElementById('email').value = user.email || '';
+// ========= LOGIN CODE =========
+document.getElementById('loginBtn').onclick = () => {
+  const email = loginEmail.value;
+  const password = loginPassword.value;
+  authMsg.innerHTML = "Logging in...";
 
-      // 2. Auto fill Wallet and Amount from index.html localStorage
-      const savedWallet = localStorage.getItem('selectedWallet');
-      const savedAmount = localStorage.getItem('selectedAmount');
-      
-      if(savedWallet) document.getElementById('sendWallet').value = savedWallet;
-      if(savedAmount) document.getElementById('amount').value = savedAmount;
-      
-      // 3. Calculate BDT auto
-      calculateBDT();
-    } else {
-      window.location.href = 'customer.html'; // login page e pathay dibe
-    }
+  auth.signInWithEmailAndPassword(email, password)
+  .then((userCredential) => {
+    authMsg.innerHTML = "✅ Login Successful!";
+    authMsg.className = "text-success";
+    setTimeout(() => {
+      window.location.href = 'index.html'; // LOGIN ER POR HOME E PATHABE
+    }, 1000);
+  })
+  .catch((error) => {
+    authMsg.innerHTML = "❌ " + error.message;
+    authMsg.className = "text-danger";
   });
 }
 
-function calculateBDT(){
-  const usd = document.getElementById('amount').value;
-  document.getElementById('receiveAmount').value = (usd * rate).toFixed(2) + " BDT";
-}
-document.getElementById('amount').oninput = calculateBDT;
-// ========= NEW AUTO-FILL CODE END =========
+// ========= SIGNUP CODE =========
+document.getElementById('signupBtn').onclick = () => {
+  const name = signupName.value;
+  const email = signupEmail.value;
+  const password = signupPassword.value;
+  authMsg.innerHTML = "Creating account...";
 
-// Order Submit
-orderForm.onsubmit = (e) => {
-  e.preventDefault();
-  orderMsg.innerHTML = "Submitting...";
-  const user = auth.currentUser;
-  
-  const orderData = {
-    name: name.value,
-    email: email.value,
-    sendWallet: sendWallet.value,
-    amount: amount.value,
-    receiveAmount: receiveAmount.value,
-    receiveWallet: receiveWallet.value,
-    walletAddress: walletAddress.value,
-    status: "Pending",
-    createdAt: Date.now()
-  };
+  auth.createUserWithEmailAndPassword(email, password)
+  .then((userCredential) => {
+    // Save name to firebase
+    userCredential.user.updateProfile({ displayName: name });
+    
+    db.ref('users/'+userCredential.user.uid).set({
+      name: name,
+      email: email,
+      createdAt: Date.now()
+    });
 
-  db.ref('orders/'+user.uid).push(orderData)
-  .then(()=>{
-    orderMsg.innerHTML = "✅ Order Submitted Successfully!";
-    orderMsg.className = "text-success";
-    localStorage.removeItem('selectedWallet'); // clean
-    localStorage.removeItem('selectedAmount');
+    authMsg.innerHTML = "✅ Account Created!";
+    authMsg.className = "text-success";
+    setTimeout(() => {
+      window.location.href = 'index.html'; // SIGNUP ER POR O HOME E PATHABE
+    }, 1000);
   })
-  .catch(e=>{
-    orderMsg.innerHTML = "❌ Error: "+e.message;
-    orderMsg.className = "text-danger";
-  })
+  .catch((error) => {
+    authMsg.innerHTML = "❌ " + error.message;
+    authMsg.className = "text-danger";
+  });
 }
+
+// Jodi age thekei login thake tahole home e pathay dibe
+auth.onAuthStateChanged(user => {
+  if(user && window.location.pathname.includes('customer.html')){
+    // window.location.href = 'index.html';
+  }
+});
 </script>
 </body>
 </html>
