@@ -86,7 +86,82 @@ body { background: #f8f9fa; font-family: 'Poppins', sans-serif; }
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script> <!-- Auth add korlam -->
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
-<script src="order.js"></script>
+
+<script>
+// Firebase Config
+const firebaseConfig = {
+  apiKey:"AIzaSyBC0OA7gEWg1dfVzqVpI1YgbKzNKllz4pg",
+  authDomain:"ts-dollar-exchange.firebaseapp.com",
+  databaseURL:"https://ts-dollar-exchange-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId:"ts-dollar-exchange"
+};
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.database();
+
+// ========= NEW AUTO-FILL CODE =========
+window.onload = function() {
+  auth.onAuthStateChanged(user => {
+    if(user){
+      // 1. Name and Email auto fill from Firebase
+      document.getElementById('name').value = user.displayName || '';
+      document.getElementById('email').value = user.email || '';
+
+      // 2. index.html theke data niye auto fill
+      const savedData = localStorage.getItem('exchangeData');
+      if(savedData){
+        const data = JSON.parse(savedData);
+        
+        document.getElementById('sendWallet').value = data.send.wallet;
+        document.getElementById('sendAmount').value = data.send.amount;
+        document.getElementById('getWallet').value = data.get.wallet;
+        document.getElementById('getAmount').value = data.get.amount;
+        
+        // Summary box show koro
+        document.getElementById('orderSummary').style.display = 'block';
+        document.getElementById('summarySend').innerText = data.send.amount + ' USD via ' + data.send.wallet;
+        document.getElementById('summaryGet').innerText = data.get.amount + ' BDT via ' + data.get.wallet;
+      }
+      
+    } else {
+      window.location.href = 'customer.html'; // login page e pathay dibe
+    }
+  });
+}
+
+// Order Submit
+document.getElementById('orderForm').onsubmit = (e) => {
+  e.preventDefault();
+  submitMsg.innerHTML = "Submitting...";
+  const user = auth.currentUser;
+  
+  const orderData = {
+    name: name.value,
+    email: email.value,
+    sendWallet: sendWallet.value,
+    sendAmount: sendAmount.value,
+    getWallet: getWallet.value,
+    getAmount: getAmount.value,
+    walletAddress: walletAddress.value,
+    status: "Pending",
+    createdAt: Date.now()
+  };
+
+  db.ref('orders/'+user.uid).push(orderData)
+  .then(()=>{
+    submitMsg.innerHTML = "✅ Order Submitted Successfully!";
+    submitMsg.className = "text-success";
+    localStorage.removeItem('exchangeData'); // data clear
+    setTimeout(()=> window.location.href = 'index.html', 2000);
+  })
+  .catch(e=>{
+    submitMsg.innerHTML = "❌ Error: "+e.message;
+    submitMsg.className = "text-danger";
+  })
+}
+// ========= AUTO-FILL CODE END =========
+</script>
 </body>
 </html>
