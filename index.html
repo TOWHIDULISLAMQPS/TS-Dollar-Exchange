@@ -3,85 +3,190 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Complete Order - TS Dollar Exchange</title>
+<title>TS Dollar Exchange - #1 Trusted Exchange in BD</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 <style>
-body { background: #0f0f1a; font-family: 'Poppins', sans-serif; color: #fff; }
-.order-card { background:#1a1a2e; padding:40px; border-radius:16px; box-shadow:0 10px 30px rgba(0,0,0,0.3); margin-top:50px; border: 1px solid #2e2e4e; }
-.form-control,.form-select { background: #0f0f1a; border: 1px solid #2e2e4e; color: #fff; }
-.form-control:focus { background: #0f0f1a; border-color: #10b981; color: #fff; box-shadow: none; }
-.form-control[readonly] { background: #121220; }
-.form-label { color: #aaa; }
-.btn-success { background: #10b981; border: none; }
-.navbar-brand { color: #fff!important; font-weight: 700; }
+:root { --primary: #4f46e5; --primary-dark: #3730a3; --success: #10b981; --warning: #f59e0b; --danger: #ef4444; --dark: #0f172a; }
+body { font-family: 'Inter', sans-serif; background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #581c87 100%); min-height: 100vh; background-attachment: fixed; }
+.navbar { background: rgba(15,23,42,0.7); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(255,255,255,0.1); }
+.navbar-brand { letter-spacing: -0.5px; font-weight: 900; }
+.main-card { border-radius: 28px; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 25px 70px rgba(0,0,0,0.5); background: rgba(255,255,255,0.98); backdrop-filter: blur(20px); }
+.wallet-card { cursor: pointer; border: 2px solid #e5e7eb; transition: all 0.3s; border-radius: 16px; padding: 16px; text-align: center; background: #fff; font-weight: 700; }
+.wallet-card:hover { border-color: var(--primary); transform: translateY(-4px); box-shadow: 0 10px 25px rgba(79,70,229,0.2); }
+.wallet-card.selected { border-color: var(--success); background: linear-gradient(135deg, #ecfdf5, #d1fae5); box-shadow: 0 0 0 4px rgba(16,185,129,0.2); }
+.wallet-icon { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 8px; font-weight: 900; font-size: 18px; }
+.swap-btn { width: 56px; height: 56px; border-radius: 50%; border: none; background: linear-gradient(135deg, var(--primary), #8b5cf6); color: #fff; font-size: 22px; box-shadow: 0 10px 25px rgba(79,70,229,0.4); transition: 0.4s; }
+.swap-btn:hover { transform: rotate(180deg) scale(1.1); }
+.input-box { background: #f8fafc; border-radius: 16px; padding: 18px; border: 2px solid #e2e8f0; transition: 0.3s; }
+.input-box:focus-within { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(79,70,229,0.1); }
+.section-card { background: rgba(255,255,255,0.98); border-radius: 24px; padding: 28px; border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 10px 40px rgba(0,0,0,0.1); }
+.rate-item { background: #fff; border-radius: 14px; padding: 16px; margin-bottom: 12px; border-left: 5px solid var(--success); animation: fadeIn 0.6s; box-shadow: 0 3px 10px rgba(0,0,0,0.05); }
+@keyframes fadeIn { from {opacity: 0; transform: translateY(15px);} to {opacity: 1; transform: translateY(0);} }
+.whatsapp-float { position: fixed; bottom: 25px; right: 25px; background: linear-gradient(135deg, #25D366, #128C7E); color: #fff; border-radius: 50px; padding: 14px 22px; font-weight: 700; text-decoration: none; box-shadow: 0 10px 30px rgba(37,211,102,0.4); z-index: 999; transition: 0.3s; display: flex; align-items: center; gap: 8px; }
+.whatsapp-float:hover { transform: translateY(-3px) scale(1.05); color: #fff; }
+.trust-badges { display: flex; gap: 15px; justify-content: center; margin-top: 20px; flex-wrap: wrap; }
+.trust-badge { background: #f0fdf4; color: #166534; padding: 8px 16px; border-radius: 50px; font-size: 13px; font-weight: 600; }
+h3,h5 { font-weight: 900; letter-spacing: -0.8px; }
+.footer { background: rgba(15,23,42,0.9); color: #cbd5e1; padding: 40px 0; margin-top: 60px; border-top: 1px solid rgba(255,255,255,0.1); }
+.footer a { color: #a5b4fc; text-decoration: none; }
+.footer a:hover { color: #fff; }
+.admin-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 10000; align-items: center; justify-content: center; }
+.admin-box { background: #fff; padding: 40px; border-radius: 24px; max-width: 400px; width: 90%; }
+
+/* PREMIUM WELCOME POPUP CSS */
+.welcome-modal {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(15,23,42,0.85); backdrop-filter: blur(12px);
+  z-index: 9999; display: flex; align-items: center; justify-content: center;
+  animation: fadeIn 0.5s;
+}
+.welcome-box {
+  background: linear-gradient(135deg, #fff 0%, #f8fafc 100%);
+  padding: 45px 35px; border-radius: 28px; text-align: center;
+  max-width: 420px; width: 90%;
+  box-shadow: 0 25px 80px rgba(79,70,229,0.4);
+  border: 1px solid rgba(255,255,255,0.3);
+  animation: scaleUp 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+  position: relative; overflow: hidden;
+}
+.welcome-box::before{
+  content:''; position:absolute; top:-50%; left:-50%; width:200%; height:200%;
+  background: radial-gradient(circle, rgba(79,70,229,0.15) 0%, transparent 60%);
+  animation: rotate 8s linear infinite;
+}
+@keyframes rotate { from{transform:rotate(0deg);} to{transform:rotate(360deg);} }
+@keyframes scaleUp { from {transform: scale(0.8);} to {transform: scale(1);} }
+.welcome-icon {
+  width: 80px; height: 80px; margin: 0 auto 20px;
+  background: linear-gradient(135deg, var(--success), #059669);
+  border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  font-size: 40px; color: #fff; box-shadow: 0 10px 30px rgba(16,185,129,0.4);
+  position: relative; z-index: 2;
+}
+.welcome-badge {
+  background: linear-gradient(135deg, #fef3c7, #fde68a);
+  color: #92400e; padding: 6px 14px; border-radius: 50px;
+  font-size: 12px; font-weight: 700; display: inline-block; margin-bottom: 15px;
+}
 </style>
 </head>
 <body>
 
-<nav class="navbar navbar-dark" style="background: #0f0f1a;">
-<div class="container">
-<a class="navbar-brand fs-3" href="index.html"><i class="fa fa-shield-halved text-warning"></i> TS Dollar Exchange</a>
-<a href="index.html" class="btn btn-outline-light btn-sm">Back to Home</a>
+<!-- PREMIUM WELCOME POPUP -->
+<div id="welcomeModal" class="welcome-modal">
+  <div class="welcome-box">
+    <div class="welcome-badge"><i class="bi bi-stars"></i> #1 TRUSTED IN BD</div>
+    <div class="welcome-icon"><i class="bi bi-shield-check"></i></div>
+    <h2 class="fw-bold mb-2" style="position:relative; z-index:2;">Welcome to TS Dollar</h2>
+    <p class="mb-3 text-muted" style="position:relative; z-index:2;">
+      Bangladesh er <b>#1 Trusted Exchange Platform</b><br>
+      10,000+ Happy Users • 100% Secure • Instant Delivery
+    </p>
+    <div class="d-flex justify-content-center gap-3 mb-4" style="position:relative; z-index:2;">
+      <span class="trust-badge"><i class="bi bi-shield-check"></i> Secure</span>
+      <span class="trust-badge"><i class="bi bi-lightning"></i> Instant</span>
+      <span class="trust-badge"><i class="bi bi-headset"></i> 24/7</span>
+    </div>
+    <button class="btn btn-lg w-100 fw-bold text-white"
+      style="background: linear-gradient(135deg, var(--primary), #8b5cf6); border-radius: 16px; padding: 14px; position:relative; z-index:2;"
+      onclick="closeWelcome()">
+      Get Started <i class="bi bi-arrow-right-circle"></i>
+    </button>
+  </div>
 </div>
+
+<!-- ADMIN LOGIN MODAL -->
+<div id="adminModal" class="admin-modal">
+  <div class="admin-box">
+    <h4 class="fw-bold mb-3"><i class="bi bi-shield-lock"></i> Admin Login</h4>
+    <input type="email" id="adminEmail" class="form-control mb-2" value="towhidulislamtuhin872@gmail.com">
+    <input type="password" id="adminPass" class="form-control mb-3" placeholder="Enter Password">
+    <button class="btn btn-primary w-100" onclick="adminLogin()">Login</button>
+    <button class="btn btn-secondary w-100 mt-2" onclick="closeAdmin()">Cancel</button>
+    <p id="adminMsg" class="text-center mt-2"></p>
+  </div>
+</div>
+
+<nav class="navbar navbar-dark sticky-top">
+  <div class="container">
+    <a class="navbar-brand fs-3" href="#"><i class="bi bi-shield-shaded text-warning"></i> TS Dollar Exchange</a>
+    <div>
+      <a href="customer.html" class="btn btn-outline-success btn-sm me-2"><i class="bi bi-person"></i>Login</a>
+    </div>
+  </div>
 </nav>
 
-<div class="container">
-<div class="row justify-content-center">
-<div class="col-lg-6">
-<div class="order-card">
-<h3 class="text-center mb-4"><i class="fa fa-lock text-success"></i> Complete Your Order</h3>
+<div class="container my-5">
+  <div class="main-card p-4 p-md-5">
+    <h3 class="text-center mb-2">⚡ Instant & Secure Exchange</h3>
+    <p class="text-center text-muted mb-4">Trusted by 10,000+ Users in Bangladesh</p>
 
-<form id="orderForm">
-<div class="mb-3">
-<label class="form-label">Your Full Name</label>
-<input type="text" id="name" class="form-control" placeholder="Enter Your Name" required>
+    <!-- YOU SEND -->
+    <div class="mb-4">
+      <label class="fw-bold mb-2">You Send</label>
+      <div class="input-box d-flex align-items-center mb-3">
+        <input type="number" id="sendAmount" class="form-control border-0 bg-transparent fs-3 fw-bold" placeholder="0.00">
+        <span id="sendCurrency" class="fw-bold fs-5 ms-2">USD</span>
+      </div>
+      <div class="row g-3" id="sendWallets"></div>
+    </div>
+
+    <!-- SWAP BUTTON -->
+    <div class="text-center my-3">
+      <button class="swap-btn" onclick="swapWallets()"><i class="bi bi-arrow-down-up"></i></button>
+    </div>
+
+    <!-- YOU GET -->
+    <div class="mb-4">
+      <label class="fw-bold mb-2">You Get</label>
+      <div class="input-box d-flex align-items-center mb-3">
+        <input type="text" id="getAmount" class="form-control border-0 bg-transparent fs-3 fw-bold" placeholder="0.00" readonly>
+        <span id="getCurrency" class="fw-bold fs-5 ms-2">BDT</span>
+      </div>
+      <div class="row g-3" id="getWallets"></div>
+    </div>
+
+    <button id="exchangeBtn" class="btn btn-lg w-100 fw-bold text-white" style="background: linear-gradient(135deg, var(--success), #059669); border-radius: 16px; padding: 16px;" onclick="checkLoginAndExchange()">
+      Exchange Now <i class="bi bi-arrow-right-circle"></i>
+    </button>
+
+    <div class="trust-badges">
+      <span class="trust-badge"><i class="bi bi-shield-check"></i> 100% Secure</span>
+      <span class="trust-badge"><i class="bi bi-lightning"></i> Instant Delivery</span>
+      <span class="trust-badge"><i class="bi bi-headset"></i> 24/7 Support</span>
+    </div>
+  </div>
+
+  <!-- LIVE RATE TABLE -->
+  <div class="section-card mt-4">
+    <h5 class="mb-3 text-center"><i class="bi bi-graph-up-arrow text-primary"></i> USD Wallet Rates <span id="rateLoading" class="spinner-border spinner-border-sm"></span></h5>
+    <div id="rateList"><p class="text-center text-muted">Loading Rates...</p></div>
+    <small class="text-muted">* Rates updated live from Admin Panel</small>
+  </div>
+
 </div>
 
-<div class="mb-3">
-<label class="form-label">Your Email</label>
-<input type="email" id="email" class="form-control" placeholder="Enter Your Email" required readonly>
-</div>
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-4 mb-3"><h5 class="text-white mb-3"><i class="bi bi-shield-shaded text-warning"></i> TS Dollar Exchange</h5><p>Fast, Secure & Trusted Currency Exchange in Bangladesh. 24/7 Customer Support.</p></div>
+      <div class="col-md-4 mb-3"><h5 class="text-white mb-3">Contact Us</h5><p><i class="bi bi-whatsapp"></i> WhatsApp: 01726-858565</p><p><i class="bi bi-envelope"></i> Email: support@tsdollar.com</p><p><i class="bi bi-geo-alt"></i> Address: Dhaka, Bangladesh</p></div>
+      <div class="col-md-4 mb-3"><h5 class="text-white mb-3">Working Hours</h5><p><i class="bi bi-clock"></i> 24 Hours / 7 Days</p><p>Instant Response Time</p></div>
+    </div>
+    <hr style="border-color: rgba(255,255,255,0.1);">
+    <p class="text-center mb-0">© 2026 TS Dollar Exchange. All Rights Reserved.</p>
+  </div>
+</footer>
 
-<div class="mb-3">
-<label class="form-label">You Send</label>
-<input id="sendWallet" class="form-control" readonly>
-</div>
-
-<div class="mb-3">
-<label class="form-label">Amount (USD)</label>
-<input id="sendAmount" type="number" class="form-control" readonly>
-</div>
-
-<div class="mb-3">
-<label class="form-label">You Will Receive (BDT)</label>
-<input id="getAmount" type="text" class="form-control" readonly>
-</div>
-
-<div class="mb-3">
-<label class="form-label">You Will Receive in</label>
-<input id="getWallet" class="form-control" readonly>
-</div>
-
-<div class="mb-4">
-<label for="walletAddress" id="walletLabel" class="form-label">Your Wallet Address / Number</label>
-<input type="text" id="walletAddress" class="form-control" placeholder="Bkash/Nagad/Bank Number" required>
-</div>
-
-<button type="submit" class="btn btn-success w-100 btn-lg fw-bold">Confirm & Submit Order</button>
-<p id="submitMsg" class="text-center mt-3"></p>
-</form>
-
-</div>
-</div>
-</div>
-</div>
+<!-- STICKY WHATSAPP BUTTON -->
+<a href="https://wa.me/8801726858565" target="_blank" class="whatsapp-float"><i class="bi bi-whatsapp fs-4"></i> Chat Now</a>
 
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
-
 <script>
 const firebaseConfig = {
   apiKey:"AIzaSyBC0OA7gEWg1dfVzqVpI1YgbKzNKllz4pg",
@@ -94,56 +199,121 @@ const auth = firebase.auth();
 const db = firebase.database();
 
 const wallets = {
-  usdt: { name: "USDT" }, payoneer: { name: "Payoneer" }, wise: { name: "Wise" }, skrill: { name: "Skrill" },
-  bkash: { name: "Bkash" }, nagad: { name: "Nagad" }, rocket: { name: "Rocket" }, upay: { name: "Upay" }
+  usdt: { name: "USDT", type: "USD", icon: "₮", color: "#26A17B" },
+  payoneer: { name: "Payoneer", type: "USD", icon: "P", color: "#FF4800" },
+  wise: { name: "Wise", type: "USD", icon: "W", color: "#00B9FF" },
+  skrill: { name: "Skrill", type: "USD", icon: "S", color: "#8A2BE2" },
+  bkash: { name: "Bkash", type: "BDT", icon: "bK", color: "#E2136E" },
+  nagad: { name: "Nagad", type: "BDT", icon: "N", color: "#F26522" },
+  rocket: { name: "Rocket", type: "BDT", icon: "R", color: "#8B0000" },
+  upay: { name: "Upay", type: "BDT", icon: "U", color: "#FF6B00" }
 };
 
-window.onload = function() {
-  auth.onAuthStateChanged(user => {
-    if(user){
-      let userName = user.displayName || user.email.split('@')[0];
-      userName = userName.replace('.', ' ').replace('_', ' ');
-      userName = userName.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
-      document.getElementById('name').value = userName;
-      document.getElementById('email').value = user.email || '';
+let rates = {};
+let selectedSend = 'payoneer';
+let selectedGet = 'bkash';
 
-      const savedData = localStorage.getItem('exchangeData');
-      if(savedData){
-        const data = JSON.parse(savedData);
-        document.getElementById('sendWallet').value = wallets[data.send.wallet].name;
-        document.getElementById('sendAmount').value = data.send.amount;
-        document.getElementById('getWallet').value = wallets[data.get.wallet].name;
-        document.getElementById('getAmount').value = data.get.amount + ' BDT';
+// WELCOME POPUP
+function closeWelcome(){ document.getElementById('welcomeModal').style.display = 'none'; }
+setTimeout(closeWelcome, 5000);
 
-        let walletName = wallets[data.get.wallet].name;
-        document.getElementById('walletLabel').innerText = "Your " + walletName + " Address / Number";
-        let hint = (data.get.wallet === 'bkash' || data.get.wallet === 'nagad' || data.get.wallet === 'rocket' || data.get.wallet === 'upay')? 'Number' : 'Email/Address';
-        document.getElementById('walletAddress').placeholder = "Enter your " + walletName + " + hint;
-      } else {
-        alert("Please select exchange from home page first");
-        window.location.href = 'index.html';
-      }
-    } else {
-      window.location.href = 'customer.html';
-    }
-  });
+// ADMIN FUNCTIONS
+function openAdmin(){ document.getElementById('adminModal').style.display = 'flex'; }
+function closeAdmin(){ document.getElementById('adminModal').style.display = 'none'; }
+function adminLogin(){
+  const email = document.getElementById('adminEmail').value;
+  const pass = document.getElementById('adminPass').value;
+  const msg = document.getElementById('adminMsg');
+  auth.signInWithEmailAndPassword(email, pass)
+.then(()=>{ window.location.href = 'dashboard.html'; })
+.catch((e)=>{ msg.innerHTML = "Error: "+e.message; msg.className="text-danger"; });
 }
 
-document.getElementById('orderForm').onsubmit = (e) => {
-  e.preventDefault();
-  submitMsg.innerHTML = "Submitting...";
-  submitMsg.className = "text-warning";
-  const user = auth.currentUser;
+// FIREBASE: LOAD RATES LIVE
+db.ref('rates/wallets').on('value',(snap)=>{
+  rates = snap.val() || {};
+  document.getElementById('rateLoading').style.display='none';
+  renderWallets();
+  renderRates();
+  calculate();
+});
 
-  const orderData = {
-    name: name.value, email: email.value, sendWallet: sendWallet.value,
-    sendAmount: sendAmount.value, getWallet: getWallet.value, getAmount: getAmount.value,
-    walletAddress: walletAddress.value, status: "Pending", createdAt: Date.now()
-  };
+function renderWallets(){
+  let sendHtml = '', getHtml = '';
+  for(let key in wallets){
+    sendHtml += `<div class="col-3 col-lg-1-5"><div class="wallet-card ${selectedSend==key?'selected':''}" onclick="selectSend('${key}')"><div class="wallet-icon" style="background:${wallets[key].color}; color:#fff">${wallets[key].icon}</div><small>${wallets[key].name}</small></div></div>`;
+    getHtml += `<div class="col-3 col-lg-1-5"><div class="wallet-card ${selectedGet==key?'selected':''}" onclick="selectGet('${key}')"><div class="wallet-icon" style="background:${wallets[key].color}; color:#fff">${wallets[key].icon}</div><small>${wallets[key].name}</small></div></div>`;
+  }
+  sendWallets.innerHTML = sendHtml;
+  getWallets.innerHTML = getHtml;
+}
 
-  db.ref('orders/'+user.uid).push(orderData)
-.then(()=>{ submitMsg.innerHTML = "✅ Order Submitted Successfully!"; submitMsg.className = "text-success fw-bold"; localStorage.removeItem('exchangeData'); setTimeout(()=> window.location.href = 'index.html', 2000); })
-.catch(e=>{ submitMsg.innerHTML = "❌ Error: "+e.message; submitMsg.className = "text-danger fw-bold"; })
+function renderRates(){
+  let html = '';
+  const usdWallets = ['usdt','payoneer','wise','skrill'];
+  usdWallets.forEach(key => {
+    if(rates[key]){
+      html += `<div class="rate-item d-flex justify-content-between align-items-center">
+        <div class="d-flex align-items-center gap-2"><div class="wallet-icon" style="background:${wallets[key].color}; color:#fff; width:35px; height:35px; font-size:16px">${wallets[key].icon}</div><span class="fw-bold">${wallets[key].name}</span></div>
+        <div><span class="text-success fw-bold">Buy: ${rates[key].buy} ৳</span><span class="mx-2">|</span><span class="text-danger fw-bold">Sell: ${rates[key].sell} ৳</span></div>
+      </div>`;
+    }
+  });
+  rateList.innerHTML = html || '<p class="text-center text-danger">Admin থেকে Rate Set করেন</p>';
+}
+
+function selectSend(key){ selectedSend = key; sendCurrency.innerText = wallets[key].type; renderWallets(); calculate(); }
+function selectGet(key){ selectedGet = key; getCurrency.innerText = wallets[key].type; renderWallets(); calculate(); }
+function swapWallets(){ let temp = selectedSend; selectedSend = selectedGet; selectedGet = temp; renderWallets(); calculate(); }
+
+function calculate(){
+  let amount = parseFloat(sendAmount.value) || 0;
+  if(!rates[selectedSend] ||!rates[selectedGet]) return;
+  let result = 0;
+  if(wallets[selectedSend].type == 'USD' && wallets[selectedGet].type == 'BDT'){ result = amount * rates[selectedSend].sell; }
+  if(wallets[selectedSend].type == 'BDT' && wallets[selectedGet].type == 'USD'){ result = amount / rates[selectedGet].buy; }
+  if(wallets[selectedSend].type == 'USD' && wallets[selectedGet].type == 'USD'){ result = amount * (rates[selectedSend].sell / rates[selectedGet].buy); }
+  if(wallets[selectedSend].type == 'BDT' && wallets[selectedGet].type == 'BDT'){ result = amount * (rates[selectedSend].sell / rates[selectedGet].buy); }
+  getAmount.value = result.toFixed(2);
+}
+sendAmount.addEventListener('input', calculate);
+
+// ========= UPDATED: DATA SAVE + REDIRECT =========
+function goToOrder(){
+  if(sendAmount.value <= 0){ alert('Amount দিন'); return; }
+  localStorage.setItem('exchangeData', JSON.stringify({
+    send: { wallet: selectedSend, amount: sendAmount.value },
+    get: { wallet: selectedGet, amount: getAmount.value }
+  }));
+  window.location.href = 'order.html';
+}
+
+function checkLoginAndExchange(){
+    auth.onAuthStateChanged(function(user) {
+        if (user) {
+            goToOrder();
+        } else {
+            showLoginModal();
+        }
+    });
+}
+// ========= CODE END =========
+
+function showLoginModal(){
+    const modalHtml = `
+    <div id="loginRequiredModal" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); z-index:9999; display:flex; align-items:center; justify-content:center; padding:20px;">
+        <div class="main-card p-5 text-center" style="max-width:450px; width:100%;">
+            <i class="bi bi-lock-fill text-warning fs-1"></i>
+            <h4 class="fw-bold mt-3">Login Required</h4>
+            <p class="text-muted mb-4">Exchange korte hole age account e Login korun</p>
+            <a href="customer.html" class="btn btn-success px-4">Login / Signup</a>
+            <button class="btn btn-secondary px-4 ms-2" onclick="document.getElementById('loginRequiredModal').remove()">Cancel</button>
+        </div>
+    </div>
+    `;
+    const oldModal = document.getElementById('loginRequiredModal');
+    if(oldModal) oldModal.remove();
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
 }
 </script>
 </body>
