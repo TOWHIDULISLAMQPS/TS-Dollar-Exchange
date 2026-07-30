@@ -91,18 +91,13 @@ body{
     </div>
 
     <div class="mb-3">
-      <label class="form-label">Amount (USD)</label>
-      <input id="sendAmount" type="text" class="form-control" placeholder="Enter Amount" readonly>
+      <label class="form-label">Amount</label>
+      <input id="sendAmount" type="text" class="form-control" readonly>
     </div>
 
     <div class="mb-3">
-      <label class="form-label">You Will Receive (BDT)</label>
+      <label class="form-label">You Will Receive</label>
       <input id="getAmount" type="text" class="form-control" readonly>
-    </div>
-
-    <div class="mb-3">
-      <label class="form-label">You Will Receive in</label>
-      <input id="getWallet" type="text" class="form-control" readonly>
     </div>
 
     <div class="mb-4">
@@ -141,24 +136,33 @@ const wallets = {
   bkash: "Bkash", nagad: "Nagad", rocket: "Rocket", upay: "Upay"
 };
 
-// Load data from localStorage
+// ========= FIXED AUTO FILL CODE =========
 window.onload = function(){
   const data = JSON.parse(localStorage.getItem('exchangeData'));
   if(!data){ window.location.href = 'index.html'; return; }
 
+  // 1. Index theke select kora wallet + amount auto fill
   sendWallet.value = wallets[data.send.wallet];
   sendAmount.value = data.send.amount + " + (data.send.wallet=='bkash'||data.send.wallet=='nagad'||data.send.wallet=='rocket'||data.send.wallet=='upay'? 'BDT' : 'USD');
-  getWallet.value = wallets[data.get.wallet];
   getAmount.value = data.get.amount + " " + (data.get.wallet=='bkash'||data.get.wallet=='nagad'||data.get.wallet=='rocket'||data.get.wallet=='upay'? 'BDT' : 'USD');
 
-  // Auto fill if user logged in
+  // 2. Login kora thakle user er info auto fill
   auth.onAuthStateChanged(user => {
     if(user){
       fullName.value = user.displayName || '';
       email.value = user.email || '';
+
+      // Firebase theke user er mobile/address niye wallet address e diye dibe
+      db.ref('users/' + user.uid).once('value').then(snap => {
+        const userData = snap.val();
+        if(userData && userData.mobile){
+          walletAddress.value = userData.mobile;
+        }
+      });
     }
   });
 }
+// ========= CODE END =========
 
 // Submit Order to Firebase
 document.getElementById('orderForm').onsubmit = function(e){
@@ -172,7 +176,6 @@ document.getElementById('orderForm').onsubmit = function(e){
     email: email.value,
     sendWallet: sendWallet.value,
     sendAmount: sendAmount.value,
-    getWallet: getWallet.value,
     getAmount: getAmount.value,
     walletAddress: walletAddress.value,
     status: 'Pending',
@@ -180,13 +183,13 @@ document.getElementById('orderForm').onsubmit = function(e){
   };
 
   db.ref('orders').push(orderData)
- .then(() => {
+.then(() => {
     orderMsg.innerHTML = "✅ Order Submitted Successfully! We will contact you soon.";
     orderMsg.className = "text-success";
     localStorage.removeItem('exchangeData');
     setTimeout(() => { window.location.href = 'index.html'; }, 2000);
   })
- .catch((error) => {
+.catch((error) => {
     orderMsg.innerHTML = "❌ Error: " + error.message;
     orderMsg.className = "text-danger";
     btn.innerHTML = '<i class="bi bi-check-circle"></i> Confirm & Submit Order';
