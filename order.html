@@ -6,55 +6,58 @@
 <title>Complete Order - TS Dollar Exchange</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
+:root{ --bg1:#05051a; --bg2:#1a0a2e; --card:#12122a; --primary:#22c55e; --primary-glow:rgba(34,197,94,0.3); }
 body{
-  background: linear-gradient(135deg, #0a0a2a 0%, #1a1a3a 50%, #3a0a5a 100%);
-  color:#fff;
-  font-family:'Poppins',sans-serif;
-  min-height:100vh;
-  padding: 20px 0;
+  background: radial-gradient(1200px 800px at 20% -10%, #3b0764 0%, transparent 60%),
+              radial-gradient(1200px 800px at 120% 110%, #1e1b4b 0%, transparent 60%),
+              linear-gradient(135deg, var(--bg1), var(--bg2));
+  color:#e2e8f0; font-family:'Outfit',sans-serif; min-height:100vh;
 }
-.navbar-top{
-  background: rgba(10,10,42,0.7); backdrop-filter: blur(20px);
-  padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.1);
-}
-.brand{ font-weight: 800; color: #fff; font-size: 18px; }
-.brand i{ color: #fbbf24; }
+.topbar{ padding:14px 0; background:rgba(5,5,26,0.6); backdrop-filter: blur(20px); border-bottom:1px solid rgba(255,255,255,0.05); }
+.brand{ font-weight: 800; font-size: 18px; color:#fff; }
+.brand i{ color:#fbbf24; }
 
+.order-wrap{ display:flex; align-items:center; justify-content:center; padding: 50px 15px; }
 .order-card{
-  max-width: 520px;
-  background: rgba(20, 20, 40, 0.6);
-  padding:35px 30px;
-  border-radius:20px;
-  backdrop-filter:blur(30px);
-  border:1px solid rgba(255,255,255,0.1);
-  box-shadow:0 25px 70px rgba(0,0,0,0.7);
-  margin: 40px auto;
+  width:100%; max-width: 480px;
+  background: linear-gradient(180deg, rgba(18,18,42,0.9), rgba(12,12,30,0.9));
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 22px;
+  padding: 35px 30px;
+  box-shadow: 0 0 0 1px rgba(34,197,94,0.1), 0 30px 80px rgba(0,0,0,0.6);
 }
-.form-label{ color:#cbd5e1; font-weight:600; font-size: 13px; margin-bottom: 6px; }
-.form-control,.form-control[readonly]{
-  background: rgba(10,15,30,0.8)!important;
-  border:1px solid #2d3748;
-  color:#fff!important;
-  border-radius:10px;
-  height:45px;
-}
-.form-control:focus{
-  background: rgba(10,15,30,1)!important;
-  border-color: #8b5cf6;
-  box-shadow: 0 0 0 3px rgba(139,92,246,0.2);
-}
-.form-control::placeholder{ color: #64748b; }
 
-.btn-submit{
-  background: linear-gradient(135deg, #10b981, #059669);
-  border:none; border-radius:10px; height:48px; font-weight: 700;
+/* Floating Label Input */
+.form-floating{ position: relative; margin-bottom: 18px; }
+.form-floating input{
+  background: rgba(5,8,20,0.8); border: 1.5px solid #1e293b; color:#fff;
+  height: 52px; border-radius: 12px; padding: 20px 14px 8px;
+}
+.form-floating input:focus{
+  background: rgba(5,8,20,1); border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-glow);
+}
+.form-floating label{
+  position: absolute; top: 15px; left: 14px; color: #64748b;
+  transition: 0.2s; pointer-events: none; font-size: 14px;
+}
+.form-floating input:focus ~ label,
+.form-floating input:not(:placeholder-shown) ~ label{
+  top: 6px; font-size: 11px; color: var(--primary);
+}
+input[readonly]{ opacity: 0.8; }
+
+.btn-premium{
+  background: linear-gradient(135deg, var(--primary), #16a34a);
+  border: none; border-radius: 12px; height: 52px; font-weight: 700;
+  box-shadow: 0 8px 25px var(--primary-glow);
   transition: 0.3s;
 }
-.btn-submit:hover{
+.btn-premium:hover{
   transform: translateY(-2px);
-  box-shadow: 0 10px 25px rgba(16,185,129,0.4);
+  box-shadow: 0 12px 35px var(--primary-glow);
 }
 .back-link{ color: #38bdf8; font-size: 13px; text-decoration: none; }
 .back-link:hover{ text-decoration: underline; }
@@ -62,59 +65,59 @@ body{
 </head>
 <body>
 
-<!-- TOP NAV -->
-<div class="navbar-top">
+<div class="topbar">
   <div class="container d-flex justify-content-between align-items-center">
     <div class="brand"><i class="bi bi-shield-shaded"></i> TS Dollar Exchange</div>
-    <a href="index.html" class="btn btn-outline-light btn-sm"><i class="bi bi-house"></i> Back to Home</a>
+    <a href="index.html" class="btn btn-sm" style="border:1px solid #334155; color:#cbd5e1;"><i class="bi bi-house"></i> Back to Home</a>
   </div>
 </div>
 
-<!-- ORDER FORM -->
-<div class="order-card">
-  <h4 class="text-center mb-4 fw-bold"><i class="bi bi-bag-check-fill text-success"></i> Complete Your Order</h4>
+<div class="order-wrap">
+  <div class="order-card">
+    <h4 class="text-center mb-4 fw-bold"><i class="bi bi-lock-fill text-success"></i> Complete Your Order</h4>
 
-  <form id="orderForm">
-    <div class="mb-3">
-      <label class="form-label">Your Full Name</label>
-      <input id="fullName" type="text" class="form-control" placeholder="Enter Your Name" required>
-    </div>
+    <form id="orderForm">
+      <div class="form-floating">
+        <input id="fullName" type="text" placeholder=" " required>
+        <label>Your Full Name</label>
+      </div>
 
-    <div class="mb-3">
-      <label class="form-label">Your Email</label>
-      <input id="email" type="email" class="form-control" placeholder="Enter Your Email" required>
-    </div>
+      <div class="form-floating">
+        <input id="email" type="email" placeholder=" " required>
+        <label>Your Email</label>
+      </div>
 
-    <div class="mb-3">
-      <label class="form-label">You Send</label>
-      <input id="sendWallet" type="text" class="form-control" readonly>
-    </div>
+      <div class="form-floating">
+        <input id="sendWallet" type="text" placeholder=" " readonly>
+        <label>You Send</label>
+      </div>
 
-    <div class="mb-3">
-      <label class="form-label">Amount</label>
-      <input id="sendAmount" type="text" class="form-control" readonly>
-    </div>
+      <div class="form-floating">
+        <input id="sendAmount" type="text" placeholder=" " readonly>
+        <label>Amount</label>
+      </div>
 
-    <div class="mb-3">
-      <label class="form-label">You Will Receive</label>
-      <input id="getAmount" type="text" class="form-control" readonly>
-    </div>
+      <div class="form-floating">
+        <input id="getAmount" type="text" placeholder=" " readonly>
+        <label>You Will Receive</label>
+      </div>
 
-    <div class="mb-4">
-      <label class="form-label">Your Wallet Address / Number</label>
-      <input id="walletAddress" type="text" class="form-control" placeholder="Payoneer/Wise/Bkash Number" required>
-    </div>
+      <div class="form-floating">
+        <input id="walletAddress" type="text" placeholder=" " required>
+        <label>Your Wallet Address / Number</label>
+      </div>
 
-    <button type="submit" class="btn btn-submit w-100 mb-3">
-      <i class="bi bi-check-circle"></i> Confirm & Submit Order
-    </button>
+      <button type="submit" class="btn btn-premium w-100 mt-2">
+        <i class="bi bi-check-circle"></i> Confirm & Submit Order
+      </button>
 
-    <div class="text-center">
-      <a href="index.html" class="back-link"><i class="bi bi-arrow-left"></i> Back to Home</a>
-    </div>
-  </form>
+      <div class="text-center mt-3">
+        <a href="index.html" class="back-link"><i class="bi bi-arrow-left"></i> Back to Home</a>
+      </div>
+    </form>
 
-  <p id="orderMsg" class="text-center mt-3"></p>
+    <p id="orderMsg" class="text-center mt-3"></p>
+  </div>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
@@ -136,35 +139,26 @@ const wallets = {
   bkash: "Bkash", nagad: "Nagad", rocket: "Rocket", upay: "Upay"
 };
 
-// ========= FIXED AUTO FILL CODE =========
 window.onload = function(){
   const data = JSON.parse(localStorage.getItem('exchangeData'));
   if(!data){ window.location.href = 'index.html'; return; }
 
-  // 1. Index theke select kora wallet + amount auto fill
   sendWallet.value = wallets[data.send.wallet];
-  sendAmount.value = data.send.amount + " + (data.send.wallet=='bkash'||data.send.wallet=='nagad'||data.send.wallet=='rocket'||data.send.wallet=='upay'? 'BDT' : 'USD');
-  getAmount.value = data.get.amount + " " + (data.get.wallet=='bkash'||data.get.wallet=='nagad'||data.get.wallet=='rocket'||data.get.wallet=='upay'? 'BDT' : 'USD');
+  sendAmount.value = data.send.amount + " + (['bkash','nagad','rocket','upay'].includes(data.send.wallet)? 'BDT' : 'USD');
+  getAmount.value = data.get.amount + " + (['bkash','nagad','rocket','upay'].includes(data.get.wallet)? 'BDT' : 'USD');
 
-  // 2. Login kora thakle user er info auto fill
   auth.onAuthStateChanged(user => {
     if(user){
       fullName.value = user.displayName || '';
       email.value = user.email || '';
-
-      // Firebase theke user er mobile/address niye wallet address e diye dibe
       db.ref('users/' + user.uid).once('value').then(snap => {
         const userData = snap.val();
-        if(userData && userData.mobile){
-          walletAddress.value = userData.mobile;
-        }
+        if(userData && userData.mobile){ walletAddress.value = userData.mobile; }
       });
     }
   });
 }
-// ========= CODE END =========
 
-// Submit Order to Firebase
 document.getElementById('orderForm').onsubmit = function(e){
   e.preventDefault();
   const btn = e.target.querySelector('button');
@@ -172,14 +166,9 @@ document.getElementById('orderForm').onsubmit = function(e){
   btn.disabled = true;
 
   const orderData = {
-    name: fullName.value,
-    email: email.value,
-    sendWallet: sendWallet.value,
-    sendAmount: sendAmount.value,
-    getAmount: getAmount.value,
-    walletAddress: walletAddress.value,
-    status: 'Pending',
-    timestamp: Date.now()
+    name: fullName.value, email: email.value, sendWallet: sendWallet.value,
+    sendAmount: sendAmount.value, getAmount: getAmount.value,
+    walletAddress: walletAddress.value, status: 'Pending', timestamp: Date.now()
   };
 
   db.ref('orders').push(orderData)
