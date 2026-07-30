@@ -278,6 +278,7 @@ function calculate(){
 }
 sendAmount.addEventListener('input', calculate);
 
+// ========= UPDATED LOGIN CHECK CODE =========
 function goToOrder(){
   if(sendAmount.value <= 0){ alert('Amount দিন'); return; }
   localStorage.setItem('exchangeData', JSON.stringify({
@@ -290,9 +291,9 @@ function goToOrder(){
 function checkLoginAndExchange(){
     auth.onAuthStateChanged(function(user) {
         if (user) {
-            goToOrder();
+            goToOrder(); // Login thakle order e pathabe
         } else {
-            showLoginModal();
+            showLoginModal(); // Login na thakle popup dekhabe
         }
     });
 }
@@ -313,6 +314,7 @@ function showLoginModal(){
     if(oldModal) oldModal.remove();
     document.body.insertAdjacentHTML('beforeend', modalHtml);
 }
+// ========= CODE END =========
 </script>
 </body>
 </html>
