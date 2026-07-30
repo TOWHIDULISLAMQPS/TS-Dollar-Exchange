@@ -4,6 +4,15 @@ import { ref, onValue, push, set } from "https://www.gstatic.com/firebasejs/10.1
 let currentRates = {};
 let exchangeData = {};
 
+// Wallet Key to Name
+function getWalletName(key){
+    const names = {
+        usdt:"USDT", payoneer:"Payoneer", wise:"Wise", skrill:"Skrill",
+        bkash:"Bkash", nagad:"Nagad", rocket:"Rocket", upay:"Upay"
+    };
+    return names[key] || key;
+}
+
 // 1. localStorage থেকে index.html এর Data নেয়া
 window.addEventListener('DOMContentLoaded', () => {
     exchangeData = JSON.parse(localStorage.getItem('exchangeData'));
@@ -21,18 +30,10 @@ window.addEventListener('DOMContentLoaded', () => {
     document.getElementById('getWallet').value = getWalletName(exchangeData.get.wallet);
     document.getElementById('getAmount').value = exchangeData.get.amount + ' BDT';
 
-    document.getElementById('summarySend').innerText = exchangeData.send.amount + ' + getWalletName(exchangeData.send.wallet);
+    // FIXED LINE
+    document.getElementById('summarySend').innerText = exchangeData.send.amount + ' ' + getWalletName(exchangeData.send.wallet);
     document.getElementById('summaryGet').innerText = exchangeData.get.amount + ' BDT to ' + getWalletName(exchangeData.get.wallet);
 });
-
-// Wallet Key to Name
-function getWalletName(key){
-    const names = {
-        usdt:"USDT", payoneer:"Payoneer", wise:"Wise", skrill:"Skrill",
-        bkash:"Bkash", nagad:"Nagad", rocket:"Rocket", upay:"Upay"
-    };
-    return names[key] || key;
-}
 
 // 2. Live Rate নিয়ে Calculation
 onValue(ref(db, "rates/wallets"), (snapshot) => {
@@ -51,19 +52,20 @@ function calculateBDT() {
 
     let result = 0;
     // USD to BDT
-    if(sendWallet == 'usdt' || sendWallet == 'payoneer' || sendWallet == 'wise' || sendWallet == 'skrill'){
-        if(getWallet == 'bkash' || getWallet == 'nagad' || getWallet == 'rocket' || getWallet == 'upay'){
+    if(['usdt','payoneer','wise','skrill'].includes(sendWallet)){
+        if(['bkash','nagad','rocket','upay'].includes(getWallet)){
             result = amount * currentRates[sendWallet]?.sell;
         }
     }
     // BDT to USD
-    if(getWallet == 'usdt' || getWallet == 'payoneer' || getWallet == 'wise' || getWallet == 'skrill'){
-        if(sendWallet == 'bkash' || sendWallet == 'nagad' || sendWallet == 'rocket' || sendWallet == 'upay'){
+    if(['bkash','nagad','rocket','upay'].includes(sendWallet)){
+        if(['usdt','payoneer','wise','skrill'].includes(getWallet)){
             result = amount / currentRates[getWallet]?.buy;
         }
     }
 
     document.getElementById("getAmount").value = result.toFixed(2) + ' BDT';
+    document.getElementById('summaryGet').innerText = result.toFixed(2) + ' BDT to ' + getWalletName(getWallet); // summary o update
     exchangeData.get.amount = result.toFixed(2); // Update for submit
 }
 
