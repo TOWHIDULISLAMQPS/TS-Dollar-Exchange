@@ -8,52 +8,69 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
-:root{ --bg1:#05051a; --bg2:#1a0a2e; --card:#12122a; --primary:#22c55e; --primary-glow:rgba(34,197,94,0.3); }
+:root{ --bg1:#05051a; --bg2:#1a0a2e; --primary:#22c55e; --primary-glow:rgba(34,197,94,0.3); --card-bg:rgba(18,18,42,0.7); }
 body{
-  background: radial-gradient(1200px 800px at 20% -10%, #3b0764 0%, transparent 60%),
-              radial-gradient(1200px 800px at 120% 110%, #1e1b4b 0%, transparent 60%),
-              linear-gradient(135deg, var(--bg1), var(--bg2));
+  background: transparent!important; /* Modal er jonno transparent */
   color:#e2e8f0; font-family:'Outfit',sans-serif; min-height:100vh;
 }
-.topbar{ padding:14px 0; background:rgba(5,5,26,0.6); backdrop-filter: blur(20px); border-bottom:1px solid rgba(255,255,255,0.05); }
-.brand{ font-weight: 800; font-size: 18px; color:#fff; }
-.brand i{ color:#fbbf24; }
 
-.order-wrap{ display:flex; align-items:center; justify-content:center; padding: 50px 15px; }
+.order-wrap{ display:flex; align-items:center; justify-content:center; padding: 20px 10px; }
 .order-card{
-  width:100%; max-width: 480px;
-  background: linear-gradient(180deg, rgba(18,18,42,0.9), rgba(12,12,30,0.9));
-  border: 1px solid rgba(255,255,255,0.08);
-  border-radius: 22px;
-  padding: 35px 30px;
-  box-shadow: 0 0 0 1px rgba(34,197,94,0.1), 0 30px 80px rgba(0,0,0,0.6);
+  width:100%; max-width: 500px;
+  background: linear-gradient(180deg, rgba(18,18,42,0.95), rgba(12,12,30,0.95));
+  border: 1px solid rgba(34,197,94,0.2);
+  border-radius: 24px;
+  padding: 0;
+  box-shadow: 0 0 40px rgba(34,197,94,0.1), 0 30px 80px rgba(0,0,0,0.6);
+  backdrop-filter: blur(20px);
+  overflow: hidden;
   animation: slideUp 0.5s ease;
 }
 @keyframes slideUp{ from{transform:translateY(30px); opacity:0;} to{transform:translateY(0); opacity:1;} }
 
+.card-header{
+  background: linear-gradient(135deg, var(--primary), #16a34a);
+  padding: 25px 30px; text-align: center;
+}
+.card-header h4{ margin:0; font-weight: 800; color:#fff; }
+
+/* Exchange Summary Card */
+.summary-grid{
+  display: grid; grid-template-columns: 1fr auto 1fr; gap: 15px;
+  background: var(--card-bg); padding: 20px; margin: 20px;
+  border-radius: 16px; border: 1px solid rgba(255,255,255,0.05);
+}
+.summary-item{ text-align: center; }
+.summary-item small{ color: #94a3b8; font-size: 11px; }
+.summary-item.amount{ font-size: 18px; font-weight: 800; }
+.summary-item.wallet{ font-size: 12px; color: #cbd5e1; }
+.arrow{ display:flex; align-items:center; justify-content:center; font-size: 20px; color: var(--primary); }
+
+.form-body{ padding: 0 25px 25px; }
+
 /* Floating Label Input */
-.form-floating{ position: relative; margin-bottom: 18px; }
+.form-floating{ position: relative; margin-bottom: 16px; }
 .form-floating input{
   background: rgba(5,8,20,0.8); border: 1.5px solid #1e293b; color:#fff;
-  height: 52px; border-radius: 12px; padding: 20px 14px 8px;
+  height: 54px; border-radius: 12px; padding: 22px 14px 10px;
 }
 .form-floating input:focus{
   background: rgba(5,8,20,1); border-color: var(--primary);
   box-shadow: 0 0 0 3px var(--primary-glow);
 }
 .form-floating label{
-  position: absolute; top: 15px; left: 14px; color: #64748b;
+  position: absolute; top: 16px; left: 14px; color: #64748b;
   transition: 0.2s; pointer-events: none; font-size: 14px;
 }
 .form-floating input:focus ~ label,
 .form-floating input:not(:placeholder-shown) ~ label{
-  top: 6px; font-size: 11px; color: var(--primary);
+  top: 8px; font-size: 11px; color: var(--primary);
 }
-input[readonly]{ opacity: 0.8; }
+input[readonly]{ opacity: 0.9; background: rgba(10,15,30,0.8)!important; }
 
 .btn-premium{
   background: linear-gradient(135deg, var(--primary), #16a34a);
-  border: none; border-radius: 12px; height: 52px; font-weight: 700;
+  border: none; border-radius: 14px; height: 54px; font-weight: 800; font-size: 16px;
   box-shadow: 0 8px 25px var(--primary-glow);
   transition: 0.3s;
 }
@@ -61,88 +78,80 @@ input[readonly]{ opacity: 0.8; }
   transform: translateY(-2px);
   box-shadow: 0 12px 35px var(--primary-glow);
 }
-.btn-premium:disabled{ opacity: 0.6; }
-.back-link{ color: #38bdf8; font-size: 13px; text-decoration: none; }
-.back-link:hover{ text-decoration: underline; }
 
-/* NEW: Success Animation */
-.success-check{ width:70px; height:70px; margin:0 auto 15px; border-radius:50%; background:var(--primary); display:flex; align-items:center; justify-content:center; animation:pop 0.6s; }
+/* Success Animation */
+.success-check{ width:80px; height:80px; margin:0 auto 15px; border-radius:50%; background:var(--primary); display:flex; align-items:center; justify-content:center; animation:pop 0.6s; }
 @keyframes pop{ 0%{transform:scale(0);} 50%{transform:scale(1.2);} 100%{transform:scale(1);} }
-
-/* NEW: If modal e thakle topbar hide korbe */
-.in-modal.topbar{ display:none!important; }
-.in-modal.order-wrap{ padding: 20px 15px!important; }
 </style>
 </head>
 <body>
 
-<div class="topbar" id="topbar">
-  <div class="container d-flex justify-content-between align-items-center">
-    <div class="brand"><i class="bi bi-shield-shaded"></i> TS Dollar Exchange</div>
-    <a href="index.html" class="btn btn-sm" style="border:1px solid #334155; color:#cbd5e1;"><i class="bi bi-house"></i> Back to Home</a>
-  </div>
-</div>
-
 <div class="order-wrap">
   <div class="order-card">
-    <h4 class="text-center mb-4 fw-bold"><i class="bi bi-lock-fill text-success"></i> Complete Your Order</h4>
+    <div class="card-header">
+      <h4><i class="bi bi-shield-lock-fill"></i> Secure Order</h4>
+      <small style="opacity:0.8;">Your information is 100% encrypted</small>
+    </div>
 
-    <div id="summaryBox" class="mb-4 p-3 rounded-3" style="background:rgba(34,197,94,0.1); border:1px solid rgba(34,197,94,0.3); display:none;">
-      <small class="text-info">Exchange Summary</small>
-      <div class="d-flex justify-content-between mt-1">
-        <span id="summarySend" class="fw-bold"></span>
-        <i class="bi bi-arrow-right"></i>
-        <span id="summaryGet" class="fw-bold text-success"></span>
+    <div id="summaryBox" class="summary-grid" style="display:none;">
+      <div class="summary-item">
+        <small>YOU SEND</small>
+        <div class="amount text-danger" id="summarySendAmount">0</div>
+        <div class="wallet" id="summarySendWallet"></div>
+      </div>
+      <div class="arrow"><i class="bi bi-arrow-right"></i></div>
+      <div class="summary-item">
+        <small>YOU GET</small>
+        <div class="amount text-success" id="summaryGetAmount">0</div>
+        <div class="wallet" id="summaryGetWallet"></div>
       </div>
     </div>
 
-    <form id="orderForm">
-      <div class="form-floating">
-        <input id="fullName" type="text" placeholder=" " required>
-        <label>Your Full Name</label>
+    <div class="form-body">
+      <form id="orderForm">
+        <div class="form-floating">
+          <input id="fullName" type="text" placeholder=" " required>
+          <label>Your Full Name</label>
+        </div>
+
+        <div class="form-floating">
+          <input id="email" type="email" placeholder=" " required>
+          <label>Your Email</label>
+        </div>
+
+        <div class="form-floating">
+          <input id="walletAddress" type="text" placeholder=" " required>
+          <label>Your Wallet Number / Address</label>
+        </div>
+
+        <div class="form-floating">
+          <input id="sendWallet" type="text" placeholder=" " readonly>
+          <label>Sending From</label>
+        </div>
+
+        <div class="form-floating">
+          <input id="sendAmount" type="text" placeholder=" " readonly>
+          <label>Send Amount</label>
+        </div>
+
+        <div class="form-floating">
+          <input id="getAmount" type="text" placeholder=" " readonly>
+          <label>You Will Receive</label>
+        </div>
+
+        <button type="submit" class="btn btn-premium w-100 mt-3">
+          <i class="bi bi-check-circle-fill"></i> Confirm & Submit Order
+        </button>
+      </form>
+
+      <div id="successBox" style="display:none;" class="text-center mt-4">
+        <div class="success-check"><i class="bi bi-check-lg fs-1 text-white"></i></div>
+        <h5 class="text-success fw-bold">Order Submitted!</h5>
+        <p class="text-muted">Admin will contact you on WhatsApp in 2 minutes</p>
       </div>
 
-      <div class="form-floating">
-        <input id="email" type="email" placeholder=" " required>
-        <label>Your Email</label>
-      </div>
-
-      <div class="form-floating">
-        <input id="sendWallet" type="text" placeholder=" " readonly>
-        <label>You Send</label>
-      </div>
-
-      <div class="form-floating">
-        <input id="sendAmount" type="text" placeholder=" " readonly>
-        <label>Amount</label>
-      </div>
-
-      <div class="form-floating">
-        <input id="getAmount" type="text" placeholder=" " readonly>
-        <label>You Will Receive</label>
-      </div>
-
-      <div class="form-floating">
-        <input id="walletAddress" type="text" placeholder=" " required>
-        <label>Your Wallet Address / Number</label>
-      </div>
-
-      <button type="submit" class="btn btn-premium w-100 mt-2">
-        <i class="bi bi-check-circle"></i> Confirm & Submit Order
-      </button>
-
-      <div class="text-center mt-3" id="backBtnDiv">
-        <a href="index.html" class="back-link"><i class="bi bi-arrow-left"></i> Back to Home</a>
-      </div>
-    </form>
-
-    <div id="successBox" style="display:none;" class="text-center">
-      <div class="success-check"><i class="bi bi-check-lg fs-1 text-white"></i></div>
-      <h5 class="text-success fw-bold">Order Submitted!</h5>
-      <p class="text-muted">We will contact you on WhatsApp within 2 minutes</p>
+      <p id="orderMsg" class="text-center mt-3"></p>
     </div>
-
-    <p id="orderMsg" class="text-center mt-3"></p>
   </div>
 </div>
 
@@ -161,15 +170,9 @@ const auth = firebase.auth();
 const db = firebase.database();
 
 const wallets = {
-  usdt: "USDT", payoneer: "Payoneer", wise: "Wise", skrill: "Skrill",
-  bkash: "Bkash", nagad: "Nagad", rocket: "Rocket", upay: "Upay"
+  usdt: {name: "USDT"}, payoneer: {name: "Payoneer"}, wise: {name: "Wise"}, skrill: {name: "Skrill"},
+  bkash: {name: "Bkash"}, nagad: {name: "Nagad"}, rocket: {name: "Rocket"}, upay: {name: "Upay"}
 };
-
-// Check if this page is inside iframe/modal
-if(window.self!== window.top){
-  document.body.classList.add('in-modal');
-  document.getElementById('backBtnDiv').innerHTML = `<button onclick="parent.closeOrderModal()" class="back-link btn-link"><i class="bi bi-x-lg"></i> Close</button>`;
-}
 
 window.onload = function(){
   const data = JSON.parse(localStorage.getItem('exchangeData'));
@@ -178,19 +181,22 @@ window.onload = function(){
     return;
   }
 
-  // Auto fill wallets and amount
-  sendWallet.value = wallets[data.send.wallet];
   let sendCurr = ['bkash','nagad','rocket','upay'].includes(data.send.wallet)? 'BDT' : 'USD';
   let getCurr = ['bkash','nagad','rocket','upay'].includes(data.get.wallet)? 'BDT' : 'USD';
+
+  // Summary box fill
+  summaryBox.style.display = 'grid';
+  summarySendAmount.innerText = data.send.amount + " + sendCurr;
+  summarySendWallet.innerText = wallets[data.send.wallet].name;
+  summaryGetAmount.innerText = data.get.amount + " + getCurr;
+  summaryGetWallet.innerText = wallets[data.get.wallet].name;
+
+  // Form fill
+  sendWallet.value = wallets[data.send.wallet].name;
   sendAmount.value = data.send.amount + " + sendCurr;
   getAmount.value = data.get.amount + " + getCurr;
 
-  // Show summary
-  summaryBox.style.display = 'block';
-  summarySend.innerText = data.send.amount + " + sendCurr + " via " + wallets[data.send.wallet];
-  summaryGet.innerText = data.get.amount + " + getCurr + " via " + wallets[data.get.wallet];
-
-  // Auto fill user info from firebase
+  // Auto fill user info
   auth.onAuthStateChanged(user => {
     if(user){
       fullName.value = user.displayName || '';
@@ -199,9 +205,6 @@ window.onload = function(){
         const userData = snap.val();
         if(userData && userData.mobile){ walletAddress.value = userData.mobile; }
       });
-    } else {
-      // Not logged in
-      if(window.self === window.top) window.location.href = 'customer.html';
     }
   });
 }
@@ -209,14 +212,13 @@ window.onload = function(){
 document.getElementById('orderForm').onsubmit = function(e){
   e.preventDefault();
   const btn = e.target.querySelector('button');
-  btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Submitting...';
+  btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Processing...';
   btn.disabled = true;
 
   const orderData = {
-    name: fullName.value, email: email.value, sendWallet: sendWallet.value,
-    sendAmount: sendAmount.value, getAmount: getAmount.value,
-    walletAddress: walletAddress.value, status: 'Pending', timestamp: Date.now(),
-    userId: auth.currentUser? auth.currentUser.uid : null
+    name: fullName.value, email: email.value, walletAddress: walletAddress.value,
+    sendWallet: sendWallet.value, sendAmount: sendAmount.value, getAmount: getAmount.value,
+    status: 'Pending', timestamp: Date.now(), userId: auth.currentUser? auth.currentUser.uid : null
   };
 
   db.ref('orders').push(orderData)
@@ -225,20 +227,12 @@ document.getElementById('orderForm').onsubmit = function(e){
     document.getElementById('summaryBox').style.display = 'none';
     document.getElementById('successBox').style.display = 'block';
     localStorage.removeItem('exchangeData');
-
-    // 2.5s por modal bondho hobe
-    setTimeout(() => {
-      if(window.self!== window.top){
-        parent.closeOrderModal();
-      } else {
-        window.location.href = 'index.html';
-      }
-    }, 2500);
+    setTimeout(() => { if(window.self!== window.top){ parent.closeOrderModal(); } }, 2500);
   })
 .catch((error) => {
     orderMsg.innerHTML = "❌ Error: " + error.message;
     orderMsg.className = "text-danger";
-    btn.innerHTML = '<i class="bi bi-check-circle"></i> Confirm & Submit Order';
+    btn.innerHTML = '<i class="bi bi-check-circle-fill"></i> Confirm & Submit Order';
     btn.disabled = false;
   });
 }
