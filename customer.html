@@ -9,7 +9,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
 body{
-  background: linear-gradient(135deg, #0c0c2e 0%, #1a1a4a 50%, #4a148c 100%);
+  background: linear-gradient(135deg, #0a0a2a 0%, #1a1a3a 50%, #3a0a5a 100%);
   color:#fff;
   font-family:'Poppins',sans-serif;
   min-height:100vh;
@@ -17,68 +17,68 @@ body{
   align-items:center;
   justify-content:center;
   overflow: hidden;
+  position: relative;
 }
-body::before{
-  content:''; position: absolute; width: 600px; height: 600px;
-  background: radial-gradient(circle, rgba(138,43,226,0.3) 0%, transparent 70%);
-  top: -200px; left: -200px; animation: float 8s infinite ease-in-out;
-}
-body::after{
-  content:''; position: absolute; width: 500px; height: 500px;
-  background: radial-gradient(circle, rgba(79,70,229,0.3) 0%, transparent 70%);
-  bottom: -150px; right: -150px; animation: float 10s infinite ease-in-out;
-}
-@keyframes float { 0%,100%{transform: translateY(0);} 50%{transform: translateY(-30px);} }
+.particles { position: absolute; width: 100%; height: 100%; overflow: hidden; }
+.particle { position: absolute; background: rgba(139,92,246,0.3); border-radius: 50%; animation: floatUp 15s infinite linear; }
+@keyframes floatUp { from{transform: translateY(100vh) scale(0);} to{transform: translateY(-10vh) scale(1);} }
 
 .login-box{
   max-width:450px;
   width:90%;
-  background: rgba(20, 20, 40, 0.6);
-  padding:45px 35px;
-  border-radius:24px;
-  backdrop-filter:blur(25px);
-  border:1px solid rgba(255,255,255,0.15);
-  box-shadow:0 25px 70px rgba(0,0,0,0.6);
+  background: rgba(20, 20, 40, 0.5);
+  padding:40px 30px;
+  border-radius:20px;
+  backdrop-filter:blur(30px);
+  border:1px solid rgba(255,255,255,0.1);
+  box-shadow:0 25px 70px rgba(0,0,0,0.7), 0 0 0 1px rgba(139,92,246,0.2);
   position: relative; z-index: 2;
+  max-height: 90vh; overflow-y: auto;
 }
 .form-control{
-  background: rgba(15,23,42,0.8) !important;
-  border:1px solid #334155;
+  background: rgba(10,15,30,0.8) !important;
+  border:1px solid #2d3748;
   color:#fff !important;
-  border-radius:12px;
-  height:50px;
+  border-radius:10px;
+  height:48px;
   padding-left: 15px;
 }
+textarea.form-control{ height: 80px; }
 .form-control:focus{
-  background: rgba(15,23,42,1) !important;
+  background: rgba(10,15,30,1) !important;
   border-color: #8b5cf6;
-  box-shadow: 0 0 0 3px rgba(139,92,246,0.3);
+  box-shadow: 0 0 0 3px rgba(139,92,246,0.2);
 }
-label{ color:#cbd5e1; font-weight:600; }
-.btn-primary{
-  background: linear-gradient(135deg, #8b5cf6, #6366f1);
+label{ color:#a0aec0; font-weight:600; font-size: 14px; }
+.btn-green{
+  background: linear-gradient(135deg, #10b981, #059669);
   border:none;
-  border-radius:12px;
-  height:50px;
+  border-radius:10px;
+  height:48px;
   font-weight: 700;
   transition: 0.3s;
 }
-.btn-primary:hover{
+.btn-green:hover{
   transform: translateY(-2px);
-  box-shadow: 0 10px 25px rgba(139,92,246,0.4);
+  box-shadow: 0 10px 25px rgba(16,185,129,0.4);
 }
-.btn-success{
-  background: linear-gradient(135deg, #10b981, #059669);
-  border:none;
-  border-radius:12px;
-  height:50px;
-  font-weight: 700;
-}
-a{ color: #a5b4fc; text-decoration: none; }
+.password-wrapper{ position: relative; }
+.password-toggle{ position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #a0aec0; }
+a{ color: #a5b4fc; text-decoration: none; font-size: 14px; }
 a:hover{ color: #fff; text-decoration: underline; }
+.divider{ display: flex; align-items: center; text-align: center; color: #718096; font-size: 12px; }
+.divider::before, .divider::after{ content: ''; flex: 1; border-bottom: 1px solid #2d3748; }
 </style>
 </head>
 <body>
+
+<!-- Animated Particles -->
+<div class="particles">
+  <div class="particle" style="width: 10px; height: 10px; left: 10%; animation-duration: 12s;"></div>
+  <div class="particle" style="width: 15px; height: 15px; left: 30%; animation-duration: 18s;"></div>
+  <div class="particle" style="width: 8px; height: 8px; left: 60%; animation-duration: 14s;"></div>
+  <div class="particle" style="width: 12px; height: 12px; left: 80%; animation-duration: 16s;"></div>
+</div>
 
 <div class="login-box">
   <h3 class="text-center mb-4 fw-bold"><i class="bi bi-person-circle text-primary"></i> Login / Signup</h3>
@@ -91,13 +91,16 @@ a:hover{ color: #fff; text-decoration: underline; }
     </div>
     <div class="mb-3">
       <label>Password</label>
-      <input id="loginPassword" type="password" class="form-control" placeholder="Enter Password" required>
+      <div class="password-wrapper">
+        <input id="loginPassword" type="password" class="form-control" placeholder="Enter Password" required>
+        <i class="bi bi-eye password-toggle" onclick="togglePassword('loginPassword', this)"></i>
+      </div>
     </div>
-    <button id="loginBtn" class="btn btn-primary w-100">Login</button>
+    <button id="loginBtn" class="btn btn-green w-100"><span class="btn-text">Login</span> <span class="spinner-border spinner-border-sm d-none"></span></button>
     <p class="text-center mt-3">Don't have account? <a href="#" onclick="showSignup()">Sign Up</a></p>
   </div>
 
-  <!-- SIGNUP FORM -->
+  <!-- SIGNUP FORM WITH MOBILE + ADDRESS -->
   <div id="signupForm" style="display:none;">
     <div class="mb-3">
       <label>Full Name</label>
@@ -108,10 +111,21 @@ a:hover{ color: #fff; text-decoration: underline; }
       <input id="signupEmail" type="email" class="form-control" placeholder="Enter Email" required>
     </div>
     <div class="mb-3">
-      <label>Password</label>
-      <input id="signupPassword" type="password" class="form-control" placeholder="Min 6 characters" required>
+      <label>Mobile Number</label>
+      <input id="signupMobile" type="tel" class="form-control" placeholder="01XXXXXXXXX" required>
     </div>
-    <button id="signupBtn" class="btn btn-success w-100">Create Account</button>
+    <div class="mb-3">
+      <label>Address</label>
+      <textarea id="signupAddress" class="form-control" placeholder="Your Full Address" required></textarea>
+    </div>
+    <div class="mb-3">
+      <label>Password</label>
+      <div class="password-wrapper">
+        <input id="signupPassword" type="password" class="form-control" placeholder="Min 6 characters" required>
+        <i class="bi bi-eye password-toggle" onclick="togglePassword('signupPassword', this)"></i>
+      </div>
+    </div>
+    <button id="signupBtn" class="btn btn-green w-100"><span class="btn-text">Create Account</span> <span class="spinner-border spinner-border-sm d-none"></span></button>
     <p class="text-center mt-3">Already have account? <a href="#" onclick="showLogin()">Login</a></p>
   </div>
 
@@ -137,48 +151,80 @@ const db = firebase.database();
 function showSignup(){ loginForm.style.display='none'; signupForm.style.display='block'; }
 function showLogin(){ signupForm.style.display='none'; loginForm.style.display='block'; }
 
+// Password Toggle
+function togglePassword(id, el){
+  const input = document.getElementById(id);
+  if(input.type === 'password'){ input.type = 'text'; el.classList.replace('bi-eye', 'bi-eye-slash'); }
+  else { input.type = 'password'; el.classList.replace('bi-eye-slash', 'bi-eye'); }
+}
+
+// Loading Button
+function setLoading(btn, loading){
+  btn.querySelector('.btn-text').classList.toggle('d-none', loading);
+  btn.querySelector('.spinner-border').classList.toggle('d-none', !loading);
+  btn.disabled = loading;
+}
+
 // ========= LOGIN CODE =========
 document.getElementById('loginBtn').onclick = () => {
   const email = loginEmail.value;
   const password = loginPassword.value;
-  authMsg.innerHTML = "Logging in...";
+  const btn = document.getElementById('loginBtn');
+  setLoading(btn, true);
+  authMsg.innerHTML = "";
 
   auth.signInWithEmailAndPassword(email, password)
   .then((userCredential) => {
     authMsg.innerHTML = "✅ Login Successful!";
     authMsg.className = "text-success";
-    setTimeout(() => {
-      window.location.href = 'index.html'; // LOGIN ER POR HOME E PATHABE
-    }, 1000);
+    setTimeout(() => { window.location.href = 'index.html'; }, 1000);
   })
   .catch((error) => {
     authMsg.innerHTML = "❌ " + error.message;
     authMsg.className = "text-danger";
+    setLoading(btn, false);
   });
 }
 
-// ========= SIGNUP CODE =========
+// ========= UPDATED SIGNUP CODE WITH MOBILE + ADDRESS =========
 document.getElementById('signupBtn').onclick = () => {
   const name = signupName.value;
   const email = signupEmail.value;
+  const mobile = signupMobile.value;
+  const address = signupAddress.value;
   const password = signupPassword.value;
-  authMsg.innerHTML = "Creating account...";
+  const btn = document.getElementById('signupBtn');
+  
+  if(!mobile || !address){
+    authMsg.innerHTML = "❌ Mobile & Address required";
+    authMsg.className = "text-danger";
+    return;
+  }
+
+  setLoading(btn, true);
+  authMsg.innerHTML = "";
 
   auth.createUserWithEmailAndPassword(email, password)
   .then((userCredential) => {
     userCredential.user.updateProfile({ displayName: name });
+    
+    // EKHANE MOBILE + ADDRESS SAVE HOBE FIREBASE E
     db.ref('users/'+userCredential.user.uid).set({
-      name: name, email: email, createdAt: Date.now()
+      name: name, 
+      email: email, 
+      mobile: mobile,
+      address: address,
+      createdAt: Date.now()
     });
+
     authMsg.innerHTML = "✅ Account Created!";
     authMsg.className = "text-success";
-    setTimeout(() => {
-      window.location.href = 'index.html'; 
-    }, 1000);
+    setTimeout(() => { window.location.href = 'index.html'; }, 1000);
   })
   .catch((error) => {
     authMsg.innerHTML = "❌ " + error.message;
     authMsg.className = "text-danger";
+    setLoading(btn, false);
   });
 }
 </script>
