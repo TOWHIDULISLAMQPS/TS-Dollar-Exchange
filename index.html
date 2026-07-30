@@ -8,133 +8,104 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 <style>
-:root { --primary: #4f46e5; --primary-dark: #3730a3; --success: #10b981; --warning: #f59e0b; --danger: #ef4444; --dark: #0f172a; }
-body { font-family: 'Inter', sans-serif; background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #581c87 100%); min-height: 100vh; background-attachment: fixed; }
-.navbar { background: rgba(15,23,42,0.7); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(255,255,255,0.1); }
-.navbar-brand { letter-spacing: -0.5px; font-weight: 900; }
-.main-card { border-radius: 28px; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 25px 70px rgba(0,0,0,0.5); background: rgba(255,255,255,0.98); backdrop-filter: blur(20px); }
-.wallet-card { cursor: pointer; border: 2px solid #e5e7eb; transition: all 0.3s; border-radius: 16px; padding: 16px; text-align: center; background: #fff; font-weight: 700; }
-.wallet-card:hover { border-color: var(--primary); transform: translateY(-4px); box-shadow: 0 10px 25px rgba(79,70,229,0.2); }
-.wallet-card.selected { border-color: var(--success); background: linear-gradient(135deg, #ecfdf5, #d1fae5); box-shadow: 0 0 0 4px rgba(16,185,129,0.2); }
-.wallet-icon { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 8px; font-weight: 900; font-size: 18px; }
-.swap-btn { width: 56px; height: 56px; border-radius: 50%; border: none; background: linear-gradient(135deg, var(--primary), #8b5cf6); color: #fff; font-size: 22px; box-shadow: 0 10px 25px rgba(79,70,229,0.4); transition: 0.4s; }
-.swap-btn:hover { transform: rotate(180deg) scale(1.1); }
-.input-box { background: #f8fafc; border-radius: 16px; padding: 18px; border: 2px solid #e2e8f0; transition: 0.3s; }
-.input-box:focus-within { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(79,70,229,0.1); }
-.section-card { background: rgba(255,255,255,0.98); border-radius: 24px; padding: 28px; border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 10px 40px rgba(0,0,0,0.1); }
-.rate-item { background: #fff; border-radius: 14px; padding: 16px; margin-bottom: 12px; border-left: 5px solid var(--success); animation: fadeIn 0.6s; box-shadow: 0 3px 10px rgba(0,0,0,0.05); }
-@keyframes fadeIn { from {opacity: 0; transform: translateY(15px);} to {opacity: 1; transform: translateY(0);} }
-.whatsapp-float { position: fixed; bottom: 25px; right: 25px; background: linear-gradient(135deg, #25D366, #128C7E); color: #fff; border-radius: 50px; padding: 14px 22px; font-weight: 700; text-decoration: none; box-shadow: 0 10px 30px rgba(37,211,102,0.4); z-index: 999; transition: 0.3s; display: flex; align-items: center; gap: 8px; }
-.whatsapp-float:hover { transform: translateY(-3px) scale(1.05); color: #fff; }
-.trust-badges { display: flex; gap: 15px; justify-content: center; margin-top: 20px; flex-wrap: wrap; }
-.trust-badge { background: #f0fdf4; color: #166534; padding: 8px 16px; border-radius: 50px; font-size: 13px; font-weight: 600; }
-h3,h5 { font-weight: 900; letter-spacing: -0.8px; }
-.footer { background: rgba(15,23,42,0.9); color: #cbd5e1; padding: 40px 0; margin-top: 60px; border-top: 1px solid rgba(255,255,255,0.1); }
-.footer a { color: #a5b4fc; text-decoration: none; }
-.footer a:hover { color: #fff; }
-.admin-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 10000; align-items: center; justify-content: center; }
-.admin-box { background: #fff; padding: 40px; border-radius: 24px; max-width: 400px; width: 90%; }
+:root { --primary: #8b5cf6; --success: #10b981; --dark1: #0a0a2a; --dark2: #1a1a3a; }
+body {
+  font-family: 'Inter', sans-serif;
+  background: linear-gradient(135deg, var(--dark1) 0%, var(--dark2) 50%, #3a0a5a 100%);
+  min-height: 100vh; background-attachment: fixed; padding-bottom: 80px;
+}
+.navbar { background: rgba(10,10,42,0.7); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(255,255,255,0.1); }
+.navbar-brand { letter-spacing: -0.5px; font-weight: 900; color: #fff!important; }
 
-/* PREMIUM WELCOME POPUP CSS */
-.welcome-modal {
-  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-  background: rgba(15,23,42,0.85); backdrop-filter: blur(12px);
-  z-index: 9999; display: flex; align-items: center; justify-content: center;
-  animation: fadeIn 0.5s;
+.main-card {
+  border-radius: 24px; border: 1px solid rgba(255,255,255,0.1);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+  background: rgba(255,255,255,0.95); backdrop-filter: blur(20px);
 }
-.welcome-box {
-  background: linear-gradient(135deg, #fff 0%, #f8fafc 100%);
-  padding: 45px 35px; border-radius: 28px; text-align: center;
-  max-width: 420px; width: 90%;
-  box-shadow: 0 25px 80px rgba(79,70,229,0.4);
-  border: 1px solid rgba(255,255,255,0.3);
-  animation: scaleUp 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
-  position: relative; overflow: hidden;
+
+.wallet-card {
+  cursor: pointer; border: 2px solid #e5e7eb; transition: all 0.3s;
+  border-radius: 14px; padding: 12px 8px; text-align: center; background: #fff; font-weight: 700;
 }
-.welcome-box::before{
-  content:''; position:absolute; top:-50%; left:-50%; width:200%; height:200%;
-  background: radial-gradient(circle, rgba(79,70,229,0.15) 0%, transparent 60%);
-  animation: rotate 8s linear infinite;
+.wallet-card:hover { border-color: var(--primary); transform: translateY(-3px); }
+.wallet-card.selected {
+  border-color: var(--success);
+  background: linear-gradient(135deg, #ecfdf5, #d1fae5);
+  box-shadow: 0 0 0 3px rgba(16,185,129,0.2);
 }
-@keyframes rotate { from{transform:rotate(0deg);} to{transform:rotate(360deg);} }
-@keyframes scaleUp { from {transform: scale(0.8);} to {transform: scale(1);} }
-.welcome-icon {
-  width: 80px; height: 80px; margin: 0 auto 20px;
+.wallet-icon {
+  width: 38px; height: 38px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 6px; font-weight: 900; font-size: 16px; color: #fff;
+}
+
+.swap-btn {
+  width: 50px; height: 50px; border-radius: 50%; border: none;
+  background: linear-gradient(135deg, var(--primary), #6366f1);
+  color: #fff; font-size: 20px; box-shadow: 0 8px 20px rgba(139,92,246,0.4);
+  transition: 0.4s; margin: -25px auto; position: relative; z-index: 2;
+}
+.swap-btn:hover { transform: rotate(180deg) scale(1.1); }
+
+.input-box {
+  background: #f8fafc; border-radius: 14px; padding: 16px;
+  border: 2px solid #e2e8f0; transition: 0.3s;
+}
+.input-box:focus-within { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(139,92,246,0.1); }
+
+.section-card {
+  background: rgba(255,255,255,0.95); border-radius: 20px; padding: 24px;
+  border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+}
+.rate-item {
+  background: #fff; border-radius: 12px; padding: 14px; margin-bottom: 10px;
+  border-left: 4px solid var(--success); box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+
+.btn-exchange{
   background: linear-gradient(135deg, var(--success), #059669);
-  border-radius: 50%; display: flex; align-items: center; justify-content: center;
-  font-size: 40px; color: #fff; box-shadow: 0 10px 30px rgba(16,185,129,0.4);
-  position: relative; z-index: 2;
+  border-radius: 14px; padding: 16px; font-weight: 800;
+  box-shadow: 0 10px 25px rgba(16,185,129,0.3);
+  transition: 0.3s;
 }
-.welcome-badge {
-  background: linear-gradient(135deg, #fef3c7, #fde68a);
-  color: #92400e; padding: 6px 14px; border-radius: 50px;
-  font-size: 12px; font-weight: 700; display: inline-block; margin-bottom: 15px;
+.btn-exchange:hover{ transform: translateY(-2px); box-shadow: 0 15px 35px rgba(16,185,129,0.4); }
+
+.whatsapp-float {
+  position: fixed; bottom: 20px; right: 20px;
+  background: linear-gradient(135deg, #25D366, #128C7E); color: #fff;
+  border-radius: 50px; padding: 12px 20px; font-weight: 700; text-decoration: none;
+  box-shadow: 0 10px 30px rgba(37,211,102,0.4); z-index: 999;
+  display: flex; align-items: center; gap: 8px;
 }
+.trust-badge { background: #f0fdf4; color: #166534; padding: 6px 12px; border-radius: 50px; font-size: 12px; font-weight: 600; }
 </style>
 </head>
 <body>
 
-<!-- PREMIUM WELCOME POPUP -->
-<div id="welcomeModal" class="welcome-modal">
-  <div class="welcome-box">
-    <div class="welcome-badge"><i class="bi bi-stars"></i> #1 TRUSTED IN BD</div>
-    <div class="welcome-icon"><i class="bi bi-shield-check"></i></div>
-    <h2 class="fw-bold mb-2" style="position:relative; z-index:2;">Welcome to TS Dollar</h2>
-    <p class="mb-3 text-muted" style="position:relative; z-index:2;">
-      Bangladesh er <b>#1 Trusted Exchange Platform</b><br>
-      10,000+ Happy Users • 100% Secure • Instant Delivery
-    </p>
-    <div class="d-flex justify-content-center gap-3 mb-4" style="position:relative; z-index:2;">
-      <span class="trust-badge"><i class="bi bi-shield-check"></i> Secure</span>
-      <span class="trust-badge"><i class="bi bi-lightning"></i> Instant</span>
-      <span class="trust-badge"><i class="bi bi-headset"></i> 24/7</span>
-    </div>
-    <button class="btn btn-lg w-100 fw-bold text-white"
-      style="background: linear-gradient(135deg, var(--primary), #8b5cf6); border-radius: 16px; padding: 14px; position:relative; z-index:2;"
-      onclick="closeWelcome()">
-      Get Started <i class="bi bi-arrow-right-circle"></i>
-    </button>
-  </div>
-</div>
-
-<!-- ADMIN LOGIN MODAL -->
-<div id="adminModal" class="admin-modal">
-  <div class="admin-box">
-    <h4 class="fw-bold mb-3"><i class="bi bi-shield-lock"></i> Admin Login</h4>
-    <input type="email" id="adminEmail" class="form-control mb-2" value="towhidulislamtuhin872@gmail.com">
-    <input type="password" id="adminPass" class="form-control mb-3" placeholder="Enter Password">
-    <button class="btn btn-primary w-100" onclick="adminLogin()">Login</button>
-    <button class="btn btn-secondary w-100 mt-2" onclick="closeAdmin()">Cancel</button>
-    <p id="adminMsg" class="text-center mt-2"></p>
-  </div>
-</div>
-
 <nav class="navbar navbar-dark sticky-top">
   <div class="container">
-    <a class="navbar-brand fs-3" href="#"><i class="bi bi-shield-shaded text-warning"></i> TS Dollar Exchange</a>
-    <div>
-      <a href="customer.html" class="btn btn-outline-success btn-sm me-2"><i class="bi bi-person"></i>Login</a>
-    </div>
+    <a class="navbar-brand fs-4" href="#"><i class="bi bi-shield-shaded text-warning"></i> TS Dollar Exchange</a>
+    <a href="customer.html" class="btn btn-outline-light btn-sm"><i class="bi bi-person"></i> Login</a>
   </div>
 </nav>
 
-<div class="container my-5">
-  <div class="main-card p-4 p-md-5">
-    <h3 class="text-center mb-2">⚡ Instant & Secure Exchange</h3>
-    <p class="text-center text-muted mb-4">Trusted by 10,000+ Users in Bangladesh</p>
+<div class="container my-4">
+  <div class="main-card p-4">
+    <h4 class="text-center mb-1 fw-bold"><i class="bi bi-lightning text-warning"></i> Instant & Secure Exchange</h4>
+    <p class="text-center text-muted mb-4" style="font-size:13px;">Trusted by 10,000+ Users in Bangladesh</p>
 
     <!-- YOU SEND -->
-    <div class="mb-4">
+    <div class="mb-3">
       <label class="fw-bold mb-2">You Send</label>
       <div class="input-box d-flex align-items-center mb-3">
         <input type="number" id="sendAmount" class="form-control border-0 bg-transparent fs-3 fw-bold" placeholder="0.00">
         <span id="sendCurrency" class="fw-bold fs-5 ms-2">USD</span>
       </div>
-      <div class="row g-3" id="sendWallets"></div>
+      <div class="row g-2" id="sendWallets"></div>
     </div>
 
     <!-- SWAP BUTTON -->
-    <div class="text-center my-3">
+    <div class="text-center my-2">
       <button class="swap-btn" onclick="swapWallets()"><i class="bi bi-arrow-down-up"></i></button>
     </div>
 
@@ -145,44 +116,30 @@ h3,h5 { font-weight: 900; letter-spacing: -0.8px; }
         <input type="text" id="getAmount" class="form-control border-0 bg-transparent fs-3 fw-bold" placeholder="0.00" readonly>
         <span id="getCurrency" class="fw-bold fs-5 ms-2">BDT</span>
       </div>
-      <div class="row g-3" id="getWallets"></div>
+      <div class="row g-2" id="getWallets"></div>
     </div>
 
-    <button id="exchangeBtn" class="btn btn-lg w-100 fw-bold text-white" style="background: linear-gradient(135deg, var(--success), #059669); border-radius: 16px; padding: 16px;" onclick="checkLoginAndExchange()">
+    <button class="btn btn-exchange w-100 text-white" onclick="checkLoginAndExchange()">
       Exchange Now <i class="bi bi-arrow-right-circle"></i>
     </button>
 
-    <div class="trust-badges">
+    <div class="d-flex justify-content-center gap-2 mt-3 flex-wrap">
       <span class="trust-badge"><i class="bi bi-shield-check"></i> 100% Secure</span>
-      <span class="trust-badge"><i class="bi bi-lightning"></i> Instant Delivery</span>
-      <span class="trust-badge"><i class="bi bi-headset"></i> 24/7 Support</span>
+      <span class="trust-badge"><i class="bi bi-lightning"></i> Instant</span>
+      <span class="trust-badge"><i class="bi bi-headset"></i> 24/7</span>
     </div>
   </div>
 
   <!-- LIVE RATE TABLE -->
   <div class="section-card mt-4">
-    <h5 class="mb-3 text-center"><i class="bi bi-graph-up-arrow text-primary"></i> USD Wallet Rates <span id="rateLoading" class="spinner-border spinner-border-sm"></span></h5>
+    <h6 class="mb-3 text-center fw-bold"><i class="bi bi-graph-up-arrow text-primary"></i> USD Wallet Rates <span id="rateLoading" class="spinner-border spinner-border-sm"></span></h6>
     <div id="rateList"><p class="text-center text-muted">Loading Rates...</p></div>
     <small class="text-muted">* Rates updated live from Admin Panel</small>
   </div>
-
 </div>
 
-<!-- FOOTER -->
-<footer class="footer">
-  <div class="container">
-    <div class="row">
-      <div class="col-md-4 mb-3"><h5 class="text-white mb-3"><i class="bi bi-shield-shaded text-warning"></i> TS Dollar Exchange</h5><p>Fast, Secure & Trusted Currency Exchange in Bangladesh. 24/7 Customer Support.</p></div>
-      <div class="col-md-4 mb-3"><h5 class="text-white mb-3">Contact Us</h5><p><i class="bi bi-whatsapp"></i> WhatsApp: 01726-858565</p><p><i class="bi bi-envelope"></i> Email: support@tsdollar.com</p><p><i class="bi bi-geo-alt"></i> Address: Dhaka, Bangladesh</p></div>
-      <div class="col-md-4 mb-3"><h5 class="text-white mb-3">Working Hours</h5><p><i class="bi bi-clock"></i> 24 Hours / 7 Days</p><p>Instant Response Time</p></div>
-    </div>
-    <hr style="border-color: rgba(255,255,255,0.1);">
-    <p class="text-center mb-0">© 2026 TS Dollar Exchange. All Rights Reserved.</p>
-  </div>
-</footer>
-
 <!-- STICKY WHATSAPP BUTTON -->
-<a href="https://wa.me/8801726858565" target="_blank" class="whatsapp-float"><i class="bi bi-whatsapp fs-4"></i> Chat Now</a>
+<a href="https://wa.me/8801726858565" target="_blank" class="whatsapp-float"><i class="bi bi-whatsapp fs-5"></i> Chat Now</a>
 
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
@@ -213,23 +170,6 @@ let rates = {};
 let selectedSend = 'payoneer';
 let selectedGet = 'bkash';
 
-// WELCOME POPUP
-function closeWelcome(){ document.getElementById('welcomeModal').style.display = 'none'; }
-setTimeout(closeWelcome, 5000);
-
-// ADMIN FUNCTIONS
-function openAdmin(){ document.getElementById('adminModal').style.display = 'flex'; }
-function closeAdmin(){ document.getElementById('adminModal').style.display = 'none'; }
-function adminLogin(){
-  const email = document.getElementById('adminEmail').value;
-  const pass = document.getElementById('adminPass').value;
-  const msg = document.getElementById('adminMsg');
-  auth.signInWithEmailAndPassword(email, pass)
-.then(()=>{ window.location.href = 'dashboard.html'; })
-.catch((e)=>{ msg.innerHTML = "Error: "+e.message; msg.className="text-danger"; });
-}
-
-// FIREBASE: LOAD RATES LIVE
 db.ref('rates/wallets').on('value',(snap)=>{
   rates = snap.val() || {};
   document.getElementById('rateLoading').style.display='none';
@@ -241,8 +181,8 @@ db.ref('rates/wallets').on('value',(snap)=>{
 function renderWallets(){
   let sendHtml = '', getHtml = '';
   for(let key in wallets){
-    sendHtml += `<div class="col-3 col-lg-1-5"><div class="wallet-card ${selectedSend==key?'selected':''}" onclick="selectSend('${key}')"><div class="wallet-icon" style="background:${wallets[key].color}; color:#fff">${wallets[key].icon}</div><small>${wallets[key].name}</small></div></div>`;
-    getHtml += `<div class="col-3 col-lg-1-5"><div class="wallet-card ${selectedGet==key?'selected':''}" onclick="selectGet('${key}')"><div class="wallet-icon" style="background:${wallets[key].color}; color:#fff">${wallets[key].icon}</div><small>${wallets[key].name}</small></div></div>`;
+    sendHtml += `<div class="col-3"><div class="wallet-card ${selectedSend==key?'selected':''}" onclick="selectSend('${key}')"><div class="wallet-icon" style="background:${wallets[key].color}">${wallets[key].icon}</div><small>${wallets[key].name}</small></div></div>`;
+    getHtml += `<div class="col-3"><div class="wallet-card ${selectedGet==key?'selected':''}" onclick="selectGet('${key}')"><div class="wallet-icon" style="background:${wallets[key].color}">${wallets[key].icon}</div><small>${wallets[key].name}</small></div></div>`;
   }
   sendWallets.innerHTML = sendHtml;
   getWallets.innerHTML = getHtml;
@@ -254,12 +194,12 @@ function renderRates(){
   usdWallets.forEach(key => {
     if(rates[key]){
       html += `<div class="rate-item d-flex justify-content-between align-items-center">
-        <div class="d-flex align-items-center gap-2"><div class="wallet-icon" style="background:${wallets[key].color}; color:#fff; width:35px; height:35px; font-size:16px">${wallets[key].icon}</div><span class="fw-bold">${wallets[key].name}</span></div>
+        <div class="d-flex align-items-center gap-2"><div class="wallet-icon" style="background:${wallets[key].color}; width:32px; height:32px; font-size:14px">${wallets[key].icon}</div><span class="fw-bold">${wallets[key].name}</span></div>
         <div><span class="text-success fw-bold">Buy: ${rates[key].buy} ৳</span><span class="mx-2">|</span><span class="text-danger fw-bold">Sell: ${rates[key].sell} ৳</span></div>
       </div>`;
     }
   });
-  rateList.innerHTML = html || '<p class="text-center text-danger">Admin থেকে Rate Set করেন</p>';
+  rateList.innerHTML = html;
 }
 
 function selectSend(key){ selectedSend = key; sendCurrency.innerText = wallets[key].type; renderWallets(); calculate(); }
@@ -272,13 +212,10 @@ function calculate(){
   let result = 0;
   if(wallets[selectedSend].type == 'USD' && wallets[selectedGet].type == 'BDT'){ result = amount * rates[selectedSend].sell; }
   if(wallets[selectedSend].type == 'BDT' && wallets[selectedGet].type == 'USD'){ result = amount / rates[selectedGet].buy; }
-  if(wallets[selectedSend].type == 'USD' && wallets[selectedGet].type == 'USD'){ result = amount * (rates[selectedSend].sell / rates[selectedGet].buy); }
-  if(wallets[selectedSend].type == 'BDT' && wallets[selectedGet].type == 'BDT'){ result = amount * (rates[selectedSend].sell / rates[selectedGet].buy); }
   getAmount.value = result.toFixed(2);
 }
 sendAmount.addEventListener('input', calculate);
 
-// ========= UPDATED LOGIN CHECK CODE =========
 function goToOrder(){
   if(sendAmount.value <= 0){ alert('Amount দিন'); return; }
   localStorage.setItem('exchangeData', JSON.stringify({
@@ -290,31 +227,13 @@ function goToOrder(){
 
 function checkLoginAndExchange(){
     auth.onAuthStateChanged(function(user) {
-        if (user) {
-            goToOrder(); // Login thakle order e pathabe
-        } else {
-            showLoginModal(); // Login na thakle popup dekhabe
+        if (user) { goToOrder(); }
+        else {
+          alert('Please login first to continue');
+          window.location.href = 'customer.html';
         }
     });
 }
-
-function showLoginModal(){
-    const modalHtml = `
-    <div id="loginRequiredModal" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); z-index:9999; display:flex; align-items:center; justify-content:center; padding:20px;">
-        <div class="main-card p-5 text-center" style="max-width:450px; width:100%;">
-            <i class="bi bi-lock-fill text-warning fs-1"></i>
-            <h4 class="fw-bold mt-3">Login Required</h4>
-            <p class="text-muted mb-4">Exchange korte hole age account e Login korun</p>
-            <a href="customer.html" class="btn btn-success px-4">Login / Signup</a>
-            <button class="btn btn-secondary px-4 ms-2" onclick="document.getElementById('loginRequiredModal').remove()">Cancel</button>
-        </div>
-    </div>
-    `;
-    const oldModal = document.getElementById('loginRequiredModal');
-    if(oldModal) oldModal.remove();
-    document.body.insertAdjacentHTML('beforeend', modalHtml);
-}
-// ========= CODE END =========
 </script>
 </body>
 </html>
