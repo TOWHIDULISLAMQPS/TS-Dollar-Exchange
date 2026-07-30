@@ -241,5 +241,13 @@ function goToOrder(){
   window.location.href = 'order.html';
 }
 </script>
+  function openAdmin(){
+  let pass = prompt("Enter Admin Password");
+  if(pass === "tsadmin123"){ // ei password change kore nio
+    window.location.href = "dashboard.html";
+  }else{
+    alert("Wrong Password!");
+  }
+}
 </body>
 </html>
